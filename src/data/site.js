@@ -28,6 +28,7 @@ export const socials = [
 export const substack = {
   handle: '@jahutton',
   url: 'https://substack.com/@jahutton',
+  embedUrl: 'https://www.unflappable.blog/embed',
   blurb: 'Writing on building, resilience, and the things I’m learning along the way.',
 };
 

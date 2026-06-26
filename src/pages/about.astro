@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SubstackEmbed from '../components/SubstackEmbed.astro';
 import { site } from '../data/site.js';
 ---
 <BaseLayout title="About — Jonathan A. Hutton">
@@ -42,6 +43,8 @@ import { site } from '../data/site.js';
       </p>
     </div>
   </section>
+
+  <SubstackEmbed heading="Follow the work" />
 </BaseLayout>
 
 <style>
