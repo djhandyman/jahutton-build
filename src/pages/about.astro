@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site.js';
+---
+<BaseLayout title="About — Jonathan A. Hutton">
+  <section class="section">
+    <div class="container prose">
+      <h1>About</h1>
+
+      <!-- PLACEHOLDER bio — replace with Jonathan's approved builder narrative. -->
+      <p>
+        I'm a builder. Across software, systems, teams, physical spaces,
+        organizations, and written work, the through-line is the same: take
+        something from idea to working reality, and leave it better than I found
+        it. <em>[Placeholder bio — to be replaced with approved copy.]</em>
+      </p>
+
+      <p>
+        My work spans civic technology and multi-agent software, small-business
+        operations and nonprofit revival, AI strategy and team development, hands-on
+        remodels and print design. <em>[Placeholder — expand with narrative and
+        specifics.]</em>
+      </p>
+
+      <!-- Credibility signal -->
+      <h2>Recognition</h2>
+      <p>
+        <!-- TODO: replace with Jonathan's approved one-sentence framing. -->
+        My reconstructive surgeon at UW Medicine, Dr. Barber, is interviewing me
+        for a department-wide grand rounds talk based in part on my story.
+        <em>[Placeholder phrasing — pending approval.]</em>
+      </p>
+
+      <h2>The book</h2>
+      <p>
+        I wrote <em>Unflappable: Soaring Beyond a Diagnosis</em>, a memoir about
+        rare disease, paragliding, and finding healing even when cures are out of
+        reach — published at
+        <a href={site.bookUrl} rel="noopener">unflappable.press</a>. A second book,
+        on patient and provider stories in head and neck reconstructive surgery, is
+        in progress.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose p { font-size: var(--text-lg); }
+  .prose h2 { margin-top: var(--space-12); }
+</style>

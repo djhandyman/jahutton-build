@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { socials } from '../data/site.js';
+---
+<BaseLayout title="Contact — Jonathan A. Hutton">
+  <section class="section">
+    <div class="container contact">
+      <div class="contact__main">
+        <h1>Get in touch</h1>
+        <p>
+          Interested in working together, a conversation, or a new opportunity?
+          Send a note and I'll get back to you.
+        </p>
+        <ContactForm />
+      </div>
+
+      <aside class="contact__aside">
+        <h2>Elsewhere</h2>
+        <ul class="contact__links">
+          {socials.map((s) => (
+            <li><a href={s.href} rel="noopener">{s.label}</a></li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact { display: grid; gap: var(--space-12); grid-template-columns: 1fr; }
+  @media (min-width: 48rem) { .contact { grid-template-columns: 2fr 1fr; } }
+  .contact__links { list-style: none; margin: 0; padding: 0; }
+  .contact__links li { margin-bottom: var(--space-2); }
+</style>

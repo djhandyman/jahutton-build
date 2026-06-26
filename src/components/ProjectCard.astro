@@ -1,0 +1,40 @@
+---
+const { title, category, role, blurb, href, status } = Astro.props;
+---
+<article class="card">
+  <p class="card__category">{category}</p>
+  <h3 class="card__title">
+    {href ? <a href={href} rel="noopener">{title}</a> : title}
+    {status && <span class="card__status">{status}</span>}
+  </h3>
+  {role && <p class="card__role">{role}</p>}
+  <p class="card__blurb">{blurb}</p>
+</article>
+
+<style>
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    height: 100%;
+  }
+  .card__category {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+  .card__title { font-size: var(--text-xl); margin-bottom: var(--space-2); }
+  .card__title a { text-decoration: none; }
+  .card__status {
+    margin-left: var(--space-2);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+  .card__role { color: var(--color-text-muted); margin-bottom: var(--space-3); font-weight: 600; }
+  .card__blurb { margin: 0; max-width: none; }
+</style>

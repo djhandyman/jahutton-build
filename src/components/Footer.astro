@@ -1,0 +1,62 @@
+---
+import { site, socials } from '../data/site.js';
+import { substack } from '../data/site.js';
+---
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <p class="site-footer__tagline">{site.tagline}</p>
+      <p>
+        <a href={site.bookUrl} rel="noopener">unflappable.press</a> — the book.
+      </p>
+    </div>
+
+    <nav class="site-footer__col" aria-label="Elsewhere">
+      <h2 class="site-footer__heading">Elsewhere</h2>
+      <ul>
+        {socials.map((s) => (
+          <li><a href={s.href} rel="noopener">{s.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-footer__col site-footer__subscribe">
+      <h2 class="site-footer__heading">Newsletter</h2>
+      <p>{substack.blurb}</p>
+      <a class="btn btn--ghost" href={substack.url} rel="noopener">Subscribe on Substack</a>
+    </div>
+  </div>
+
+  <div class="container site-footer__legal">
+    <p>&copy; {new Date().getFullYear()} {site.name}.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding-block: var(--space-12) var(--space-6);
+  }
+  .site-footer__inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--space-8);
+  }
+  .site-footer__tagline {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+  .site-footer__heading { font-size: var(--text-base); margin-bottom: var(--space-3); }
+  .site-footer__col ul { list-style: none; margin: 0; padding: 0; }
+  .site-footer__col li { margin-bottom: var(--space-2); }
+  .site-footer__col a { color: var(--color-text); }
+  .site-footer__legal {
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+</style>

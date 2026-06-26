@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, buildDomains } from '../data/site.js';
+import { projects } from '../data/projects.js';
+
+const featured = projects.slice(0, 4);
+---
+<BaseLayout>
+  <section class="section hero">
+    <div class="container">
+      <h1 class="hero__headline">I build.</h1>
+      <p class="hero__lead">
+        {/* PLACEHOLDER positioning — replace with approved hero copy. */}
+        {site.positioning}
+      </p>
+      <ul class="hero__domains" aria-label="What I build">
+        {buildDomains.map((d) => <li>{d}</li>)}
+      </ul>
+      <p class="cta-row">
+        <a class="btn" href="/work">See the work</a>
+        <a class="btn btn--ghost" href="/about">About me</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Selected work</h2>
+      <ul class="grid">
+        {featured.map((p) => (
+          <li>
+            <a class="mini" href="/work">
+              <span class="mini__cat">{p.category}</span>
+              <span class="mini__title">{p.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p><a class="btn btn--ghost" href="/work">All projects →</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero__headline { font-size: var(--text-4xl); }
+  .hero__lead { font-size: var(--text-lg); max-width: var(--measure); }
+  .hero__domains {
+    list-style: none; margin: var(--space-6) 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: var(--space-2);
+  }
+  .hero__domains li {
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: var(--space-1) var(--space-4);
+    font-size: var(--text-sm);
+    background: var(--color-surface);
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .grid {
+    list-style: none; margin: 0 0 var(--space-6); padding: 0;
+    display: grid; gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  }
+  .mini {
+    display: block; padding: var(--space-4);
+    background: var(--color-bg); border: 1px solid var(--color-border);
+    border-radius: var(--radius); text-decoration: none; color: var(--color-text);
+  }
+  .mini__cat { display: block; font-size: var(--text-sm); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .mini__title { display: block; font-family: var(--font-heading); font-size: var(--text-lg); }
+</style>

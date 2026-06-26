@@ -1,0 +1,50 @@
+/*
+ * DESIGN TOKENS — PLACEHOLDER VALUES.
+ * These are intentionally neutral. The visual design session sets the real
+ * palette, type, and scale here. Components reference only these variables, so
+ * restyling happens in this file + global.css without touching markup.
+ */
+:root {
+  /* Color — neutral placeholders */
+  --color-bg: #ffffff;
+  --color-surface: #f6f7f9;
+  --color-text: #1a1d21;
+  --color-text-muted: #555b62;
+  --color-border: #e2e5e9;
+  --color-accent: #2f6fb0;        /* placeholder blue, echoes book cover */
+  --color-accent-contrast: #ffffff;
+  --color-link: var(--color-accent);
+
+  /* Typography — system stack for now; design session swaps in real faces */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-body: var(--font-sans);
+  --font-heading: var(--font-serif);
+
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+  --leading-body: 1.6;
+  --leading-heading: 1.15;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* Layout */
+  --content-width: 72rem;
+  --measure: 38rem;        /* readable line length */
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.06);
+}

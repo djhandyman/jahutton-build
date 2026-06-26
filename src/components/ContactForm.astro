@@ -1,0 +1,43 @@
+---
+// Formspree-backed contact form. Replace site.formspreeEndpoint with the real
+// form ID before launch. No JS required — native POST + redirect.
+import { site } from '../data/site.js';
+---
+<form class="contact-form" action={site.formspreeEndpoint} method="POST">
+  <div class="contact-form__field">
+    <label for="name">Name</label>
+    <input id="name" name="name" type="text" autocomplete="name" required />
+  </div>
+  <div class="contact-form__field">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" autocomplete="email" required />
+  </div>
+  <div class="contact-form__field">
+    <label for="message">Message</label>
+    <textarea id="message" name="message" rows="6" required></textarea>
+  </div>
+  <!-- Honeypot for spam -->
+  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+  <button class="btn" type="submit">Submit</button>
+</form>
+
+<style>
+  .contact-form { max-width: var(--measure); }
+  .contact-form__field { margin-bottom: var(--space-4); }
+  .contact-form__field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: var(--space-3);
+    font: inherit;
+    color: inherit;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .contact-form textarea { resize: vertical; }
+</style>

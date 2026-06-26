@@ -4,7 +4,9 @@ Professional portfolio and calling-card site for **Jonathan A. Hutton**. The
 `.build` TLD is intentional: the site framing is **"I am a builder"** — of
 software, systems, teams, physical spaces, organizations, and written work.
 
-**Status:** 🏗️ Session 1 — scaffolding. Architecture done; no framework code yet.
+**Status:** 🏗️ Session 2 — Astro scaffolded; Home/Work/About/Contact built with
+placeholder copy (see checklist below). Visual design deferred. Builds clean on
+Node 22 / Astro 7.
 
 ## Stack (planned)
 - **[Astro](https://astro.build)** — static output, near-zero JS.
