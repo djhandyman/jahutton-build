@@ -45,6 +45,17 @@ const path = Astro.url.pathname;
     margin: 0;
     padding: 0;
   }
-  .site-header__nav a { text-decoration: none; color: var(--color-text); }
-  .site-header__nav a[aria-current='page'] { font-weight: 700; }
+  .site-header__nav a {
+    text-decoration: none;
+    color: var(--color-text);
+    padding-block: var(--space-1);
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .site-header__nav a:hover { color: var(--color-accent); }
+  .site-header__nav a[aria-current='page'] {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+  .site-header__brand:hover { color: var(--color-accent); }
 </style>

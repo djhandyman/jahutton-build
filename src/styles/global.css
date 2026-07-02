@@ -1,6 +1,6 @@
 /*
- * Global baseline. Minimal, accessible, mobile-first. Visual design is deferred
- * to the design session — this just makes the content legible and structured.
+ * Global baseline — shared between unflappable.press and jahutton.build (siblings).
+ * Only tokens.css differs between the two. Mobile-first, accessible.
  */
 @import './tokens.css';
 
@@ -17,20 +17,28 @@ body {
   line-height: var(--leading-body);
   color: var(--color-text);
   background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
+  font-weight: var(--heading-weight, 600);
   line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
+  font-optical-sizing: auto;
   margin: 0 0 var(--space-4);
+  text-wrap: balance;
 }
 h1 { font-size: var(--text-4xl); }
 h2 { font-size: var(--text-2xl); }
 h3 { font-size: var(--text-xl); }
 
 p { margin: 0 0 var(--space-4); max-width: var(--measure); }
+p, li { text-wrap: pretty; }
 
-a { color: var(--color-link); }
+a { color: var(--color-link); text-underline-offset: 0.15em; }
+a:hover { text-decoration-thickness: 2px; }
 
 img { max-width: 100%; height: auto; display: block; }
 
@@ -38,24 +46,63 @@ img { max-width: 100%; height: auto; display: block; }
   width: 100%;
   max-width: var(--content-width);
   margin-inline: auto;
-  padding-inline: var(--space-4);
+  padding-inline: var(--space-6);
 }
 
 .section { padding-block: var(--space-16); }
 .section--alt { background: var(--color-surface); }
 
+/* Topographic contour texture (book site brand motif).
+ * The source PNG is opaque white with faint blue lines, so we drop the white
+ * out with mix-blend-mode: multiply and boost the lines with contrast. Tunable
+ * via --topo-tint (ground color), --topo-strength (opacity), --topo-contrast. */
+.section--topo {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--topo-tint, var(--color-surface));
+}
+.section--topo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--topo-image, none);
+  background-size: cover;
+  background-position: center;
+  opacity: var(--topo-strength, 0.6);
+  pointer-events: none;
+}
+
 /* Buttons / CTAs */
 .btn {
   display: inline-block;
   padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius);
+  border-radius: 999px;
   font-weight: 600;
+  font-size: var(--text-base);
+  line-height: 1.2;
   text-decoration: none;
-  border: 1px solid var(--color-accent);
+  cursor: pointer;
+  border: 1.5px solid var(--color-accent);
   background: var(--color-accent);
   color: var(--color-accent-contrast);
+  transition: filter 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
-.btn--ghost { background: transparent; color: var(--color-accent); }
+.btn:hover { filter: brightness(0.92); text-decoration: none; }
+/* White/paper fill with colored text + border (the alternate to the solid btn) */
+.btn--ghost {
+  background: var(--color-bg);
+  color: var(--color-accent);
+}
+.btn--ghost:hover {
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-bg));
+  filter: none;
+}
+.btn--secondary {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: #fff;
+}
 
 /* Accessibility */
 :focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
@@ -67,10 +114,11 @@ img { max-width: 100%; height: auto; display: block; }
   position: absolute; left: var(--space-2); top: -3rem;
   background: var(--color-accent); color: var(--color-accent-contrast);
   padding: var(--space-2) var(--space-4); border-radius: var(--radius);
-  transition: top 0.15s;
+  transition: top 0.15s; z-index: 10;
 }
 .skip-link:focus { top: var(--space-2); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  * { transition: none !important; }
 }

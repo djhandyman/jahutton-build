@@ -1,37 +1,49 @@
 /*
- * DESIGN TOKENS — PLACEHOLDER VALUES.
- * These are intentionally neutral. The visual design session sets the real
- * palette, type, and scale here. Components reference only these variables, so
- * restyling happens in this file + global.css without touching markup.
+ * DESIGN TOKENS — jahutton.build
+ * Direction: warm editorial. Paper/cream ground, ink text, confident Fraunces
+ * headlines. Rust accent deliberately echoes the book's brand orange (#b55627)
+ * so the two sites read as siblings. Balanced intensity: warm neutral base with
+ * purposeful rust pops + a deep teal for occasional contrast.
+ * Type & spacing scale is identical to unflappable.press (shared system).
  */
 :root {
-  /* Color — neutral placeholders */
-  --color-bg: #ffffff;
-  --color-surface: #f6f7f9;
-  --color-text: #1a1d21;
-  --color-text-muted: #555b62;
-  --color-border: #e2e5e9;
-  --color-accent: #2f6fb0;        /* placeholder blue, echoes book cover */
-  --color-accent-contrast: #ffffff;
-  --color-link: var(--color-accent);
+  /* Palette */
+  --paper: #faf7f1;
+  --paper-deep: #f2ebdf;
+  --rust: #b55627;            /* shared accent family with the book */
+  --rust-deep: #9e4a23;       /* accessible rust for text/buttons */
+  --rust-ink: #823a17;        /* hover/active */
+  --teal-deep: #2f5d63;       /* secondary contrast accent */
 
-  /* Typography — system stack for now; design session swaps in real faces */
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-serif: Georgia, "Times New Roman", serif;
+  /* Color roles */
+  --color-bg: var(--paper);
+  --color-surface: var(--paper-deep);
+  --color-text: #221d18;      /* warm near-black ink */
+  --color-text-muted: #5c5246;
+  --color-border: #e6dccb;    /* warm hairline */
+  --color-accent: var(--rust-deep);
+  --color-accent-contrast: #ffffff;
+  --color-secondary: var(--teal-deep);
+  --color-link: var(--rust-deep);
+
+  /* Typography — shared system */
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-body: var(--font-sans);
   --font-heading: var(--font-serif);
 
   --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.375rem;
-  --text-2xl: 1.75rem;
-  --text-3xl: 2.25rem;
-  --text-4xl: 3rem;
-  --leading-body: 1.6;
-  --leading-heading: 1.15;
+  --text-base: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.5rem;
+  --text-4xl: 3.25rem;
+  --leading-body: 1.65;
+  --leading-heading: 1.1;
+  --tracking-tight: -0.01em;
 
-  /* Spacing scale */
+  /* Spacing — shared scale */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -43,8 +55,12 @@
   --space-24: 6rem;
 
   /* Layout */
-  --content-width: 72rem;
-  --measure: 38rem;        /* readable line length */
-  --radius: 8px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.06);
+  --content-width: 70rem;
+  --measure: 38rem;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(60, 45, 30, 0.07), 0 8px 24px rgba(60, 45, 30, 0.08);
+
+  /* No topo motif on the portfolio */
+  --topo-image: none;
 }

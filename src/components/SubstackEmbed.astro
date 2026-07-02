@@ -1,5 +1,5 @@
 ---
-// Substack subscribe — real embed (publication on unflappable.blog) + outbound link.
+// Substack subscribe — outbound link only (no embed; the iframe read as clunky).
 import { substack } from '../data/site.js';
 const { heading = 'Newsletter', blurb = substack.blurb } = Astro.props;
 ---
@@ -7,25 +7,6 @@ const { heading = 'Newsletter', blurb = substack.blurb } = Astro.props;
   <div class="container">
     <h2>{heading}</h2>
     <p>{blurb}</p>
-    <iframe
-      class="substack__frame"
-      src={substack.embedUrl}
-      title="Subscribe to Jonathan's Substack"
-      width="480"
-      height="150"
-      loading="lazy"
-      frameborder="0"
-      scrolling="no"
-    ></iframe>
     <p><a class="btn" href={substack.url} rel="noopener">Subscribe on Substack</a></p>
   </div>
 </section>
-
-<style>
-  .substack__frame {
-    max-width: 100%;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-bg);
-  }
-</style>
