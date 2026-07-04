@@ -7,10 +7,16 @@ import { socials } from '../data/site.js';
   <section class="section">
     <div class="container contact">
       <div class="contact__main">
-        <h1>Get in touch</h1>
+        <h1>Let's build something</h1>
         <p>
-          Interested in working together, a conversation, or a new opportunity?
-          Send a note and I'll get back to you.
+          I take on a small number of engagements — fractional product and
+          delivery work, build-with-you projects, and the occasional
+          zero-to-one problem that needs an operator, not just an advisor.
+          Gov, civic, and mission-driven health tech are home turf.
+        </p>
+        <p class="contact__soft">
+          Not a formal project? Still worth a note. If you're building something
+          in that space and want to compare notes, I'd like to hear about it.
         </p>
         <ContactForm />
       </div>
@@ -29,6 +35,7 @@ import { socials } from '../data/site.js';
 
 <style>
   .contact { display: grid; gap: var(--space-12); grid-template-columns: 1fr; }
+  .contact__soft { color: var(--color-text-muted); }
   @media (min-width: 48rem) { .contact { grid-template-columns: 2fr 1fr; } }
   .contact__links { list-style: none; margin: 0; padding: 0; }
   .contact__links li { margin-bottom: var(--space-2); }

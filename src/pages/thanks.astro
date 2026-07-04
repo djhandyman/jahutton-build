@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Thanks — Jonathan A. Hutton">
+  <section class="section">
+    <div class="container thanks">
+      <h1>Thanks</h1>
+      <p>Your message is on its way — I’ll get back to you soon.</p>
+      <p><a class="btn btn--ghost" href="/">← Back home</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .thanks { max-width: var(--measure); }
+  .thanks p { font-size: var(--text-lg); margin-bottom: var(--space-6); }
+</style>

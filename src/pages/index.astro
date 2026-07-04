@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site, buildDomains } from '../data/site.js';
+import { site } from '../data/site.js';
 import { projects } from '../data/projects.js';
 
 const featured = projects.slice(0, 4);
@@ -9,17 +9,11 @@ const featured = projects.slice(0, 4);
   <section class="section hero">
     <div class="container">
       <p class="hero__kicker">Jonathan A. Hutton</p>
-      <h1 class="hero__headline">I build<span class="hero__dot">.</span></h1>
-      <p class="hero__lead">
-        {/* PLACEHOLDER positioning — replace with approved hero copy. */}
-        {site.positioning}
-      </p>
-      <ul class="hero__domains" aria-label="What I build">
-        {buildDomains.map((d) => <li>{d}</li>)}
-      </ul>
+      <h1 class="hero__headline">{site.headline}</h1>
+      <p class="hero__lead">{site.positioning}</p>
       <p class="cta-row">
-        <a class="btn" href="/work">See the work</a>
-        <a class="btn btn--ghost" href="/about">About me</a>
+        <a class="btn" href="/contact">Let’s build something</a>
+        <a class="btn btn--ghost" href="/work">See the work →</a>
       </p>
     </div>
   </section>
@@ -55,29 +49,19 @@ const featured = projects.slice(0, 4);
     margin-bottom: var(--space-4);
   }
   .hero__headline {
-    font-size: clamp(3.5rem, 13vw, 7rem);
-    line-height: 0.92;
+    font-size: clamp(2.5rem, 6.5vw, 4.75rem);
+    line-height: 1.02;
     font-weight: 600;
+    letter-spacing: -0.02em;
+    max-width: 15ch;
     margin-bottom: var(--space-6);
   }
-  .hero__dot { color: var(--rust); }
   .hero__lead {
     font-size: var(--text-xl);
     line-height: 1.4;
     color: var(--color-text-muted);
-    max-width: 34rem;
-  }
-  .hero__domains {
-    list-style: none; margin: var(--space-8) 0; padding: 0;
-    display: flex; flex-wrap: wrap; gap: var(--space-2);
-  }
-  .hero__domains li {
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    background: var(--color-surface);
+    max-width: 38rem;
+    margin-bottom: var(--space-8);
   }
   .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0; }
 

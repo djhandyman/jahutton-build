@@ -1,0 +1,10 @@
+# Local secrets for `wrangler pages dev` — copy this file to `.dev.vars` (which is gitignored)
+# and fill in the real value. These same vars must also be set in the Cloudflare Pages
+# dashboard (Settings → Environment variables) for production.
+
+RESEND_API_KEY=your_resend_api_key_here
+
+# Optional overrides (the function has sensible defaults):
+# CONTACT_TO=jahutton@gmail.com
+# After verifying jahutton.build in Resend, switch the sender to your own domain:
+# CONTACT_FROM="jahutton.build <forms@jahutton.build>"
