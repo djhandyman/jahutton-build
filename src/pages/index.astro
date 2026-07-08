@@ -7,14 +7,29 @@ const featured = projects.slice(0, 4);
 ---
 <BaseLayout>
   <section class="section hero">
-    <div class="container">
-      <p class="hero__kicker">Jonathan A. Hutton</p>
-      <h1 class="hero__headline">{site.headline}</h1>
-      <p class="hero__lead">{site.positioning}</p>
-      <p class="cta-row">
-        <a class="btn" href="/contact">Let’s build something</a>
-        <a class="btn btn--ghost" href="/work">See the work →</a>
-      </p>
+    <div class="container hero__grid">
+      <div class="hero__content">
+        <p class="hero__kicker">Jonathan A. Hutton</p>
+        <h1 class="hero__headline">{site.headline}</h1>
+        <p class="hero__lead">{site.positioning}</p>
+        <p class="cta-row">
+          <a class="btn" href="/contact">Let’s build something</a>
+          <a class="btn btn--ghost" href="/work">See the work →</a>
+        </p>
+      </div>
+      <div class="hero__media">
+        <picture>
+          <source srcset="/images/hero.webp" type="image/webp" />
+          <img
+            class="hero__img"
+            src="/images/hero.jpg"
+            width="1600"
+            height="1068"
+            alt="Jonathan A. Hutton"
+            fetchpriority="high"
+          />
+        </picture>
+      </div>
     </div>
   </section>
 
@@ -38,7 +53,24 @@ const featured = projects.slice(0, 4);
 
 <style>
   /* Hero — the calling card. Editorial display scale, generous air. */
-  .hero { padding-block: var(--space-24) var(--space-16); }
+  .hero { padding-block: var(--space-16); }
+  .hero__grid { display: grid; gap: var(--space-12); align-items: center; }
+  @media (min-width: 60rem) {
+    .hero { padding-block: var(--space-24) var(--space-16); }
+    .hero__grid { grid-template-columns: 1.05fr 0.95fr; gap: var(--space-16); }
+  }
+  .hero__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: 50% 22%;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+  }
+  @media (min-width: 60rem) {
+    .hero__img { aspect-ratio: 4 / 5; }
+  }
   .hero__kicker {
     font-family: var(--font-sans);
     text-transform: uppercase;
