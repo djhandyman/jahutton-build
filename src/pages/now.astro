@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { substack } from '../data/site.js';
+---
+<BaseLayout title="Now — Jonathan A. Hutton">
+  <section class="section">
+    <div class="container prose">
+      <h1>Now</h1>
+
+      <p class="now-note">
+        A <a href="https://nownownow.com/about" rel="noopener">now page</a> — what
+        I'm focused on at the moment.
+        <!-- TODO(jon): confirm you want the "last updated" line; add a date if so. -->
+      </p>
+
+      <p>
+        Day to day, I'm a Senior Product Manager at the Washington Health Benefit
+        Exchange, leading a team of business systems analysts. It's real work with
+        real stakes, and I care about doing it well.
+      </p>
+
+      <h2>Exploring next</h2>
+      <p>
+        I'm starting to look at what comes after: transformation and change-agent
+        roles, where causing change is the actual mandate rather than a side effect.
+        I'm drawn to mission-driven health tech and to civic and government tech that
+        actually ships. Player-coach, senior individual-contributor-plus — I want to
+        stay close to the building. I'm not looking for more pure people-management.
+      </p>
+
+      <h2>Open to</h2>
+      <p>
+        Conversations, and a small number of engagements, with people building in
+        that space. I'm not blowing up my life — but if you're working on something
+        that fits, whether that's a build-with-you project or a role where causing
+        change is the actual mandate, I'd like to hear about it.
+      </p>
+
+      <h2>Also building</h2>
+      <p>
+        On the side, I'm helping grow the Cloudbase Foundation — a nonprofit
+        <!-- TODO(jon): add a one-line description of Cloudbase Foundation's mission, or a link, if you want one. -->
+        — and I keep writing: a
+        <a href={substack.url} rel="noopener">Substack</a> and a
+        second book in progress.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose p { font-size: var(--text-lg); }
+  .prose h2 { margin-top: var(--space-12); }
+  .now-note {
+    color: var(--color-text-muted);
+    font-size: var(--text-base) !important;
+  }
+</style>

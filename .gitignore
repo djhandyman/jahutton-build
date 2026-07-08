@@ -27,6 +27,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# personal / scratch (LinkedIn export, job-search drafts — keep out of the repo)
+.temp/
+
 # editor / os
 .vscode/*
 !.vscode/extensions.json

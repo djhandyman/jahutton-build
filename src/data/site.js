@@ -3,19 +3,24 @@
 export const site = {
   name: 'Jonathan A. Hutton',
   domain: 'jahutton.build',
-  // ".build" framing — the through-line for copy & architecture.
-  tagline: 'I build.',
-  // PLACEHOLDER positioning — replace with Jonathan's approved hero copy.
+  // Quiet footer line — the through-line, understated (the ".build" pun lives in the domain).
+  tagline: 'Finished things, from a blank sheet.',
+  // Hero headline — the sharpest, most distinctive line, promoted from body to top.
+  // See ~/.claude/plans/misty-dreaming-hinton.md (positioning LOCKED).
+  headline: 'I turn ambiguous problems into finished things.',
+  // Hero lead — supports the headline without repeating it.
   positioning:
-    'Builder of software, systems, teams, physical spaces, organizations, and written work.',
+    'Software, strategy, structure — and a book. A career of zero-to-one work inside regulated, high-stakes environments where change is hard-won — and the result is always something you can use, read, or stand on.',
   bookUrl: 'https://unflappable.press',
-  // Formspree endpoint — replace with the real form ID before launch.
-  formspreeEndpoint: 'https://formspree.io/f/REPLACE_WITH_FORM_ID',
+  // Contact form posts here — a Cloudflare Pages Function (functions/api/contact.js) that
+  // emails submissions via Resend. No third-party form service, no per-seat fee.
+  contactEndpoint: '/api/contact',
 };
 
 export const nav = [
   { label: 'Work', href: '/work' },
   { label: 'About', href: '/about' },
+  { label: 'Now', href: '/now' },
   { label: 'Contact', href: '/contact' },
 ];
 
@@ -31,13 +36,3 @@ export const substack = {
   embedUrl: 'https://www.unflappable.blog/embed',
   blurb: 'Writing on building, resilience, and the things I’m learning along the way.',
 };
-
-// The six "build" domains — used in the hero to express the through-line.
-export const buildDomains = [
-  'software',
-  'systems',
-  'teams',
-  'physical spaces',
-  'organizations',
-  'written work',
-];

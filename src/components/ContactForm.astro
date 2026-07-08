@@ -1,9 +1,10 @@
 ---
-// Formspree-backed contact form. Replace site.formspreeEndpoint with the real
-// form ID before launch. No JS required — native POST + redirect.
+// Contact form → posts to the /api/contact Cloudflare Pages Function, which emails via Resend.
+// Progressive enhancement: JS submits inline via fetch and shows a status message; with JS off,
+// the native POST still works and the function redirects to /thanks/.
 import { site } from '../data/site.js';
 ---
-<form class="contact-form" action={site.formspreeEndpoint} method="POST">
+<form class="contact-form" action={site.contactEndpoint} method="POST">
   <div class="contact-form__field">
     <label for="name">Name</label>
     <input id="name" name="name" type="text" autocomplete="name" required />
@@ -18,8 +19,53 @@ import { site } from '../data/site.js';
   </div>
   <!-- Honeypot for spam -->
   <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
-  <button class="btn" type="submit">Submit</button>
+  <button class="btn" type="submit">Send</button>
+  <p class="contact-form__status" role="status" aria-live="polite"></p>
 </form>
+
+<script>
+  const form = document.querySelector('.contact-form');
+  if (form) {
+    const status = form.querySelector('.contact-form__status');
+    const button = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = '';
+      status.classList.remove('is-error', 'is-ok');
+      const label = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      try {
+        const fd = new FormData(form);
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify({
+            name: fd.get('name'),
+            email: fd.get('email'),
+            message: fd.get('message'),
+            _gotcha: fd.get('_gotcha'),
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          form.reset();
+          status.textContent = 'Thanks — your message is on its way. I’ll get back to you.';
+          status.classList.add('is-ok');
+        } else {
+          status.textContent = data.error || 'Something went wrong. Please try again in a moment.';
+          status.classList.add('is-error');
+        }
+      } catch {
+        status.textContent = 'Couldn’t send just now. Please try again, or reach me on LinkedIn.';
+        status.classList.add('is-error');
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+      }
+    });
+  }
+</script>
 
 <style>
   .contact-form { max-width: var(--measure); }
@@ -40,4 +86,8 @@ import { site } from '../data/site.js';
     border-radius: var(--radius);
   }
   .contact-form textarea { resize: vertical; }
+  .contact-form__status { margin: var(--space-4) 0 0; font-size: var(--text-base); }
+  .contact-form__status.is-ok { color: var(--color-accent); }
+  .contact-form__status.is-error { color: var(--rust, #b3402a); }
+  .contact-form__status:empty { margin: 0; }
 </style>
