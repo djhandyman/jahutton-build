@@ -10,25 +10,29 @@
 
 export const projects = [
   {
-    // TODO(jon): add the headline outcome to lead with (revenue held/grew, what the new owner got).
     // TODO(jon): stack — name the source→target e-commerce platforms for the 20k-SKU migration, to weave in as evidence.
+    // Outcome drafted from Jon's facts (2026-07-23): modernized mobile-forward site; cut costs +
+    // grew profitability; simpler inventory; freed the new owner to focus on service/purchasing/
+    // fulfillment. Deliberately NOT claiming revenue growth (net grew, gross didn't — ad-spend/market).
     title: 'Bello Modo',
     category: 'organizations',
     role: 'Operator',
     blurb:
-      'When this specialty e-commerce business changed hands, I stepped in at the operator level — not just advising — to steady it through the transition and lead a complex platform migration of more than 20,000 SKUs, delivered on schedule.',
+      'When this specialty e-commerce business changed hands, I stepped in at the operator level — not just advising — to steady it through the transition and re-platform its 20,000-plus SKUs onto a modern, mobile-forward store, delivered on schedule. Costs came down, profitability went up, and inventory management got dramatically simpler — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
     href: null,
     status: null,
   },
   {
-    // TODO(jon): one line on what it does for pilots, plus any usage/adoption to cite.
     // TODO(jon): stack — confirm the build to weave in. Detected externally: Cloudflare-hosted, Vite-built SPA
     //   (single hashed /assets/index-*.js module); framework not identifiable from outside. You know the truth.
+    // Outcome drafted from Jon's facts (2026-07-23): reframed from vague "flying community platform"
+    // to its real job — volunteer/logistics coordination for the comps; cut >80% of email back-and-forth;
+    // recruit proven volunteers, vet new applicants, reusable data repository. "80%" is Jon's figure.
     title: 'chelancomps.org',
     category: 'software · systems',
     role: 'Solo builder',
     blurb:
-      'A live platform for the Chelan flying community, designed and shipped end to end by one person — using an AI multi-agent workflow to do the work of a team.',
+      'Volunteer coordination for the Chelan paragliding competitions used to run on scattered email — applications, logistics, guidelines, all handled by hand. I designed and shipped a live platform for it, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut that back-and-forth by more than 80%, lets organizers recruit proven volunteers from past events and vet new applicants quickly, and keeps every event’s data in a reusable repository that carries forward to the next comp.',
     href: 'https://chelancomps.org',
     status: 'Live',
   },
@@ -43,12 +47,15 @@ export const projects = [
     status: null,
   },
   {
-    // TODO(jon): the outcome to cite (promotions, retention, capability gains).
+    // Outcome drafted from Jon's facts (2026-07-23): 4 promotions along the progression
+    // (2 associate PM → PM, 2 BSA → BSA II); every product staffer now has a clear advancement
+    // path — unique in the org. (Note: this card's "teams"/people-mgmt framing is a P3 post-pivot
+    // decision — see .temp/CONTENT-TODO.md §6.)
     title: 'WAHBE — Org Development',
     category: 'teams',
     role: 'Org development',
     blurb:
-      'A growing team inside a state agency was missing its scaffolding. I built it: an agile maturity assessment, a BSA-to-PM progression and competency matrix, and the coaching to go with it — turning vague "grow the team" pressure into a structure people could actually navigate.',
+      'A growing team inside a state agency was missing its scaffolding. I built it: an agile maturity assessment, a BSA-to-PM progression and competency matrix, and the coaching to go with it — turning vague "grow the team" pressure into a structure people could actually navigate. Four people have since advanced along it — two associate PMs to PM, two BSAs to BSA II — and for the first time every member of the product staff has a clear, concrete view of what advancement takes, which is still unique across the organization.',
     href: null,
     status: null,
   },
