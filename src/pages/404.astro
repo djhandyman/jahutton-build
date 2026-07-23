@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="Page not found — Jonathan A. Hutton"
+  description="That page isn't here. Head back home or get in touch."
+>
+  <section class="section">
+    <div class="container notfound">
+      <p class="notfound__code">404</p>
+      <h1>This one's still a blank sheet.</h1>
+      <p>The page you were after isn't here — moved, renamed, or never built. Let's get you somewhere useful.</p>
+      <p class="notfound__actions">
+        <a class="btn" href="/">← Back home</a>
+        <a class="btn btn--ghost" href="/work">See the work</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound { max-width: var(--measure); }
+  .notfound__code {
+    font-family: var(--font-heading);
+    font-size: var(--text-4xl);
+    color: var(--color-accent);
+    line-height: 1;
+    margin-bottom: var(--space-4);
+  }
+  .notfound p { font-size: var(--text-lg); margin-bottom: var(--space-6); }
+  .notfound__actions { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+</style>
