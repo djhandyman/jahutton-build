@@ -3,7 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { projects, writing } from '../data/projects.js';
 ---
-<BaseLayout title="Work — Jonathan A. Hutton">
+<BaseLayout
+  title="Work — Jonathan A. Hutton"
+  description="Selected work by Jonathan A. Hutton across software, systems, organizations, physical spaces, and writing — turning messes into finished things."
+>
   <section class="section">
     <div class="container">
       <h1>Work</h1>
@@ -30,7 +33,7 @@ import { projects, writing } from '../data/projects.js';
         <li>
           <article class="card writing">
             <p class="card__category">{writing.category}</p>
-            <h3 class="card__title">{writing.title}</h3>
+            <h2 class="card__title">{writing.title}</h2>
             <ul class="writing__list">
               {writing.items.map((w) => (
                 <li>

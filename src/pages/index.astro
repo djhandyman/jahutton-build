@@ -5,7 +5,7 @@ import { projects } from '../data/projects.js';
 
 const featured = projects.slice(0, 4);
 ---
-<BaseLayout>
+<BaseLayout description="Jonathan A. Hutton designs, builds, and ships — software, strategy, and structure for solo operators, small businesses, and nonprofits.">
   <section class="section hero">
     <div class="container">
       <p class="hero__kicker">Jonathan A. Hutton</p>
@@ -15,6 +15,15 @@ const featured = projects.slice(0, 4);
         <a class="btn" href="/contact">Let’s build something</a>
         <a class="btn btn--ghost" href="/work">See the work →</a>
       </p>
+      <figure class="hero__figure">
+        <img
+          src="/images/paragliding/coastal-flight.webp"
+          alt="Three paragliders soaring over the sea along a steep coastal bluff under a bright, cloud-scattered sky."
+          width="1280"
+          height="960"
+          fetchpriority="high"
+        />
+      </figure>
     </div>
   </section>
 
@@ -64,6 +73,19 @@ const featured = projects.slice(0, 4);
     margin-bottom: var(--space-8);
   }
   .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0; }
+  .hero__figure {
+    margin: var(--space-12) 0 0;
+  }
+  .hero__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+  }
 
   /* Selected work — compact clickable tiles */
   .grid {

@@ -3,10 +3,10 @@ const { title, category, role, blurb, href, status } = Astro.props;
 ---
 <article class="card">
   <p class="card__category">{category}</p>
-  <h3 class="card__title">
+  <h2 class="card__title">
     {href ? <a href={href} rel="noopener">{title}</a> : title}
     {status && <span class="card__status">{status}</span>}
-  </h3>
+  </h2>
   {role && <p class="card__role">{role}</p>}
   <p class="card__blurb">{blurb}</p>
 </article>
