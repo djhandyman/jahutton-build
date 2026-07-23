@@ -11,6 +11,7 @@
 export const projects = [
   {
     // TODO(jon): add the headline outcome to lead with (revenue held/grew, what the new owner got).
+    // TODO(jon): stack — name the source→target e-commerce platforms for the 20k-SKU migration, to weave in as evidence.
     title: 'Bello Modo',
     category: 'organizations',
     role: 'Operator',
@@ -21,6 +22,8 @@ export const projects = [
   },
   {
     // TODO(jon): one line on what it does for pilots, plus any usage/adoption to cite.
+    // TODO(jon): stack — confirm the build to weave in. Detected externally: Cloudflare-hosted, Vite-built SPA
+    //   (single hashed /assets/index-*.js module); framework not identifiable from outside. You know the truth.
     title: 'chelancomps.org',
     category: 'software · systems',
     role: 'Solo builder',
@@ -51,6 +54,7 @@ export const projects = [
   },
   {
     // TODO(jon): the mission in one line, and where it stands now (members / revenue / programs).
+    // TODO(jon): stack — name the CRM you integrated and the site platform, to weave in as evidence.
     title: 'Cloudbase Foundation',
     category: 'organizations',
     role: 'Board member / builder',
@@ -59,16 +63,9 @@ export const projects = [
     href: null,
     status: null,
   },
-  {
-    // TODO(jon): current status (concept / prototype / live), what exists today, and the change you want it to make.
-    title: 'Groundcrew',
-    category: 'software',
-    role: 'Founder / builder',
-    blurb:
-      'A civic platform I started to coordinate volunteers — matching people who want to help with the work that needs doing.',
-    href: null,
-    status: null,
-  },
+  // Groundcrew — parked/removed 2026-07-23 (no bandwidth to develop it further for now).
+  //   Preserved for easy restore in .temp/PLANNING.md → "Parked / someday". Drop the card
+  //   object back here (order-agnostic) if it becomes real.
   {
     // TODO(jon): confirm sign type (wayfinding / safety / interpretive) and whether it was installed.
     title: 'Chelan Falls Park Signage',
