@@ -76,6 +76,34 @@ export const projects = [
     link: { href: 'https://unflappable.press', label: 'Read more at unflappable.press' },
   },
   {
+    // Added 2026-07-23 (Jon's call). Framing chosen: "builder, taken literally" — the hands-on
+    // craft, sitting alongside the kitchen remodel, NOT the "infrastructure that unblocked the
+    // work" angle. Teaser-only for now (no slug) per the Chelan Falls precedent: thin content
+    // gets a card, not a detail page. Promote it by adding a slug once the TODOs below land —
+    // a server closet photographs well, and the detail page has a photo slot waiting.
+    //
+    // ⚠️ Everything in this blurb is from Jon verbatim: an Unraid build, the LAN, a server
+    // closet, and that it accelerated his ability to build. NOTHING else is claimed — no rack,
+    // no drive counts, no structured cabling, no cooling. Do not add specifics he hasn't given.
+    //
+    // TODO(jon): the hardware, in your own concrete register — drives + usable capacity, the
+    //   box itself, how the closet is actually wired (drops? patch panel? dedicated circuit?
+    //   cooling?). This card lives or dies on real numbers, the way "20,000+ SKUs" does.
+    // TODO(jon): what actually runs on it, named. Which services earn their keep?
+    // TODO(jon): what it replaced, and the speed difference — you said it "really accelerated"
+    //   your ability to build. What did going from idea to running thing cost you before vs now?
+    // TODO(jon): photos of the closet + the build in progress. Best argument on the whole page
+    //   that "builder" is literal — and they'd unlock the detail page.
+    title: 'LAN & Server Closet',
+    category: 'physical spaces · systems',
+    role: 'Design / build',
+    status: null,
+    teaser: null,
+    blurb:
+      'I built the server closet the rest of this work runs on — an Unraid box and the network around it, designed and put together myself. It is the least visible thing on this page and one of the most useful: somewhere to run and keep my own infrastructure instead of renting all of it, which is a good part of why shipping solo is practical at all.',
+    link: null,
+  },
+  {
     // TODO(jon): scope/budget line + before-and-after photos. Photos slot into the detail page.
     slug: 'kitchen-bath-remodel',
     title: 'Kitchen & Bathroom Remodel',
