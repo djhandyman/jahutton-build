@@ -11,11 +11,25 @@ import { site } from '../data/site.js';
     <div class="container prose">
       <h1>About</h1>
 
+      <figure class="headshot">
+        <picture>
+          <source srcset="/images/headshot.webp" type="image/webp" />
+          <img
+            src="/images/headshot.jpg"
+            width="640"
+            height="640"
+            alt="Jonathan A. Hutton"
+            loading="lazy"
+          />
+        </picture>
+      </figure>
+
       <!-- DRAFT bio — reframed to the "systems-level change agent" through-line.
            Grounded in real facts; Jonathan to review/approve wording. -->
       <p>
-        I'm a builder, and the through-line across everything I make is
-        <strong>change</strong>. I take organizational ambiguity and turn it into
+        I'm a builder, and the through-line across everything I make is <strong
+          >change</strong
+        >. I take organizational ambiguity and turn it into
         elegant, working structure — software, systems, teams, physical spaces,
         organizations, and the written word. I'm at my best from a blank sheet,
         standing up something that didn't exist before, and I care most about the
@@ -68,5 +82,19 @@ import { site } from '../data/site.js';
 
 <style>
   .prose p { font-size: var(--text-lg); }
-  .prose h2 { margin-top: var(--space-12); }
+  .prose h2 { margin-top: var(--space-12); clear: both; }
+
+  .headshot { margin: 0 0 var(--space-6); max-width: 260px; }
+  .headshot img {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+  }
+  @media (min-width: 48rem) {
+    .headshot {
+      float: right;
+      width: 240px;
+      margin: var(--space-1) 0 var(--space-6) var(--space-8);
+    }
+  }
 </style>

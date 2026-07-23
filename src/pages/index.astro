@@ -7,23 +7,30 @@ const featured = projects.slice(0, 4);
 ---
 <BaseLayout description="Jonathan A. Hutton designs, builds, and ships — software, strategy, and structure for solo operators, small businesses, and nonprofits.">
   <section class="section hero">
-    <div class="container">
-      <p class="hero__kicker">Jonathan A. Hutton</p>
-      <h1 class="hero__headline">{site.headline}</h1>
-      <p class="hero__lead">{site.positioning}</p>
-      <p class="cta-row">
-        <a class="btn" href="/contact">Let’s build something</a>
-        <a class="btn btn--ghost" href="/work">See the work →</a>
-      </p>
-      <figure class="hero__figure">
+    {/* Merge resolution (Jon, 2026-07-23): main's two-column hero__grid layout,
+        carrying docs-refresh's paragliding image instead of the portrait.
+        The portrait (/images/hero.*) is still in public/ but is now unused.
+        JSX-style comment so it stays out of the shipped HTML. */}
+    <div class="container hero__grid">
+      <div class="hero__content">
+        <p class="hero__kicker">Jonathan A. Hutton</p>
+        <h1 class="hero__headline">{site.headline}</h1>
+        <p class="hero__lead">{site.positioning}</p>
+        <p class="cta-row">
+          <a class="btn" href="/contact">Let’s build something</a>
+          <a class="btn btn--ghost" href="/work">See the work →</a>
+        </p>
+      </div>
+      <div class="hero__media">
         <img
+          class="hero__img"
           src="/images/paragliding/coastal-flight.webp"
-          alt="Three paragliders soaring over the sea along a steep coastal bluff under a bright, cloud-scattered sky."
           width="1280"
           height="960"
+          alt="Three paragliders soaring over the sea along a steep coastal bluff under a bright, cloud-scattered sky."
           fetchpriority="high"
         />
-      </figure>
+      </div>
     </div>
   </section>
 
@@ -47,7 +54,24 @@ const featured = projects.slice(0, 4);
 
 <style>
   /* Hero — the calling card. Editorial display scale, generous air. */
-  .hero { padding-block: var(--space-24) var(--space-16); }
+  .hero { padding-block: var(--space-16); }
+  .hero__grid { display: grid; gap: var(--space-12); align-items: center; }
+  @media (min-width: 60rem) {
+    .hero { padding-block: var(--space-24) var(--space-16); }
+    .hero__grid { grid-template-columns: 1.05fr 0.95fr; gap: var(--space-16); }
+  }
+  /* Sized for the landscape paragliding shot (1280x960 = 4:3). The portrait-era
+     rules that lived here — a 4/5 desktop crop and object-position 50% 22% to
+     favor a face — would squeeze this image into a tall column, so both are gone.
+     Restore them if the hero ever goes back to the portrait. */
+  .hero__img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+  }
   .hero__kicker {
     font-family: var(--font-sans);
     text-transform: uppercase;
@@ -73,19 +97,6 @@ const featured = projects.slice(0, 4);
     margin-bottom: var(--space-8);
   }
   .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: 0; }
-  .hero__figure {
-    margin: var(--space-12) 0 0;
-  }
-  .hero__figure img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow);
-  }
 
   /* Selected work — compact clickable tiles */
   .grid {
