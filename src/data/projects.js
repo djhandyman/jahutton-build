@@ -10,21 +10,24 @@
 
 export const projects = [
   {
-    // TODO(jon): stack — name the source→target e-commerce platforms for the 20k-SKU migration, to weave in as evidence.
-    // Outcome drafted from Jon's facts (2026-07-23): modernized mobile-forward site; cut costs +
-    // grew profitability; simpler inventory; freed the new owner to focus on service/purchasing/
-    // fulfillment. Deliberately NOT claiming revenue growth (net grew, gross didn't — ad-spend/market).
+    // Outcome + stack (2026-07-23): platform journey WooCommerce → BigCommerce → Shopify. Custom
+    // bulk-lot catalog app verified from the private repo (djhandyman/bellomodo-catalog): an
+    // Eleventy/Nunjucks static, searchable (Pagefind) product catalog built from Shopify data,
+    // images on Cloudflare R2. Cut costs + grew profitability; simpler inventory. NOT claiming
+    // revenue growth (net grew, gross didn't — ad-spend/market).
+    // TODO(jon): both repos are private — make bellomodo-catalog public if you ever want to link it.
     title: 'Bello Modo',
     category: 'organizations',
     role: 'Operator',
     blurb:
-      'When this specialty e-commerce business changed hands, I stepped in at the operator level — not just advising — to steady it through the transition and re-platform its 20,000-plus SKUs onto a modern, mobile-forward store, delivered on schedule. Costs came down, profitability went up, and inventory management got dramatically simpler — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
+      'When this specialty e-commerce business changed hands, I stepped in at the operator level — not just advising — to steady it through the transition and re-platform its 20,000-plus SKUs, migrating the store from WooCommerce to BigCommerce and ultimately Shopify, delivered on schedule. Costs came down, profitability went up, and inventory got dramatically simpler — helped by a custom, searchable catalog I built from the Shopify data to handle the bulk-lot inventory details — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
     href: null,
     status: null,
   },
   {
-    // TODO(jon): stack — confirm the build to weave in. Detected externally: Cloudflare-hosted, Vite-built SPA
-    //   (single hashed /assets/index-*.js module); framework not identifiable from outside. You know the truth.
+    // Stack verified from the private repo (Cloudbase-Foundation/chelan-comps, 2026-07-23):
+    //   React 19 + TypeScript (Vite), Supabase/Postgres backend, Tailwind + Radix UI, RHF + Zod;
+    //   Cloudflare-hosted. Woven into the blurb as a light evidence tag.
     // Outcome drafted from Jon's facts (2026-07-23): reframed from vague "flying community platform"
     // to its real job — volunteer/logistics coordination for the comps; cut >80% of email back-and-forth;
     // recruit proven volunteers, vet new applicants, reusable data repository. "80%" is Jon's figure.
@@ -32,7 +35,7 @@ export const projects = [
     category: 'software · systems',
     role: 'Solo builder',
     blurb:
-      'Volunteer coordination for the Chelan paragliding competitions used to run on scattered email — applications, logistics, guidelines, all handled by hand. I designed and shipped a live platform for it, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut that back-and-forth by more than 80%, lets organizers recruit proven volunteers from past events and vet new applicants quickly, and keeps every event’s data in a reusable repository that carries forward to the next comp.',
+      'Volunteer coordination for the Chelan paragliding competitions used to run on scattered email — applications, logistics, guidelines, all handled by hand. I designed and shipped a live platform for it, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut that back-and-forth by more than 80%, lets organizers recruit proven volunteers from past events and vet new applicants quickly, and keeps every event’s data in a reusable repository that carries forward to the next comp. Built with React and TypeScript on a Supabase backend, hosted on Cloudflare.',
     href: 'https://chelancomps.org',
     status: 'Live',
   },
