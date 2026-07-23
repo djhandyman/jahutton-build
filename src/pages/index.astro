@@ -33,7 +33,7 @@ const featured = projects.slice(0, 4);
       <ul class="grid">
         {featured.map((p) => (
           <li>
-            <a class="mini" href="/work">
+            <a class="mini" href={p.slug ? `/work/${p.slug}` : '/work'}>
               <span class="mini__cat">{p.category}</span>
               <span class="mini__title">{p.title}</span>
             </a>

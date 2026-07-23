@@ -1,18 +1,25 @@
 ---
-const { title, category, role, blurb, href, status } = Astro.props;
+const { title, category, role, status, teaser, blurb, slug } = Astro.props;
+// Slugged projects link to their detail page and show the short teaser + "Read more".
+// Teaser-only projects render the full blurb inline with no link.
+const href = slug ? `/work/${slug}` : null;
+const body = href ? teaser : blurb;
 ---
 <article class="card">
   <p class="card__category">{category}</p>
   <h2 class="card__title">
-    {href ? <a href={href} rel="noopener">{title}</a> : title}
+    {href ? <a href={href}>{title}</a> : title}
     {status && <span class="card__status">{status}</span>}
   </h2>
   {role && <p class="card__role">{role}</p>}
-  <p class="card__blurb">{blurb}</p>
+  <p class="card__blurb">{body}</p>
+  {href && <p class="card__more"><a href={href}>Read more →</a></p>}
 </article>
 
 <style>
   .card {
+    display: flex;
+    flex-direction: column;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
@@ -45,4 +52,13 @@ const { title, category, role, blurb, href, status } = Astro.props;
   }
   .card__role { color: var(--color-text-muted); margin-bottom: var(--space-3); font-weight: 600; }
   .card__blurb { margin: 0; max-width: none; }
+  /* Push the read-more affordance to the bottom so mixed-length cards align. */
+  .card__more { margin: var(--space-4) 0 0; }
+  .card__more a {
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+  }
+  .card__more a:hover { text-decoration: underline; }
 </style>

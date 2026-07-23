@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { projects } from '../../data/projects.js';
+
+// Prerender one detail page per project that has a slug (the flagships).
+export function getStaticPaths() {
+  return projects
+    .filter((p) => p.slug)
+    .map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+// Per-page SEO: lead with the teaser, fall back to a trimmed blurb.
+const description = project.teaser || `${project.blurb.slice(0, 152)}…`;
+---
+<BaseLayout title={`${project.title} — Work — Jonathan A. Hutton`} description={description}>
+  <section class="section">
+    <div class="container prose project">
+      <p class="project__back"><a href="/work">← Back to work</a></p>
+      <p class="project__cat">{project.category}</p>
+      <h1>{project.title}</h1>
+      <p class="project__meta">
+        {project.role}{project.status && <span class="project__status"> · {project.status}</span>}
+      </p>
+
+      <p class="project__body">{project.blurb}</p>
+
+      {project.link && (
+        <p class="project__cta">
+          <a class="btn" href={project.link.href} rel="noopener">{project.link.label} →</a>
+        </p>
+      )}
+
+      {/* TODO(jon): photo gallery + a tech-stack list slot in here as content lands. */}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .project__back { font-size: var(--text-sm); margin-bottom: var(--space-6); }
+  .project__cat {
+    text-transform: uppercase; letter-spacing: 0.06em;
+    font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2);
+  }
+  .project__meta { color: var(--color-text-muted); font-weight: 600; margin-bottom: var(--space-8); }
+  .project__status { font-weight: 400; }
+  .project__body { font-size: var(--text-lg); max-width: var(--measure); }
+  .project__cta { margin-top: var(--space-8); }
+</style>
