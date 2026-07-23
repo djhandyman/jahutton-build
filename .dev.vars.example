@@ -8,3 +8,15 @@ RESEND_API_KEY=your_resend_api_key_here
 # CONTACT_TO=jahutton@gmail.com
 # After verifying jahutton.build in Resend, switch the sender to your own domain:
 # CONTACT_FROM="jahutton.build <forms@jahutton.build>"
+
+# --- Feedback widget (functions/api/feedback.js) ---
+# Claude API key — used server-side to tag feedback + occasionally generate a follow-up.
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+# Supabase project the feedback table lives in.
+SUPABASE_URL=https://your-project-ref.supabase.co
+# Service-role key — bypasses RLS, SERVER ONLY. Never expose this in the browser.
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+
+# Optional feedback overrides (the function has sensible defaults):
+# FEEDBACK_MODEL=claude-sonnet-4-6
+# FEEDBACK_FOLLOWUP_RATE=0.3

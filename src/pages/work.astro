@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { projects, writing } from '../data/projects.js';
+import { projects } from '../data/projects.js';
 ---
 <BaseLayout
   title="Work — Jonathan A. Hutton"
@@ -29,22 +29,6 @@ import { projects, writing } from '../data/projects.js';
             />
           </li>
         ))}
-
-        <!-- Writing card -->
-        <li>
-          <article class="card writing">
-            <p class="card__category">{writing.category}</p>
-            <h2 class="card__title">{writing.title}</h2>
-            <ul class="writing__list">
-              {writing.items.map((w) => (
-                <li>
-                  <a href={w.href} rel="noopener">{w.label}</a>
-                  <span class="writing__note">{w.note}</span>
-                </li>
-              ))}
-            </ul>
-          </article>
-        </li>
       </ul>
     </div>
   </section>
@@ -57,16 +41,5 @@ import { projects, writing } from '../data/projects.js';
     display: grid; gap: var(--space-6);
     grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
   }
-  .card {
-    background: var(--color-surface); border: 1px solid var(--color-border);
-    border-radius: var(--radius); padding: var(--space-6); height: 100%;
-  }
-  .card__category { text-transform: uppercase; letter-spacing: 0.06em;
-    font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
-  .card__title { font-size: var(--text-xl); line-height: 1.2; margin-bottom: var(--space-3); }
-  .writing__list { list-style: none; margin: 0; padding: 0; }
-  .writing__list li { margin-bottom: var(--space-4); }
-  .writing__list a { font-weight: 600; text-decoration: none; color: inherit; }
-  .writing__list a:hover { color: var(--color-accent); text-decoration: underline; }
-  .writing__note { display: block; color: var(--color-text-muted); font-size: var(--text-sm); margin-top: var(--space-1); }
+  /* Card styling lives in ProjectCard.astro — every card on this page is that component. */
 </style>

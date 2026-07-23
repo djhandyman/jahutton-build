@@ -54,6 +54,28 @@ export const projects = [
     link: { href: 'https://chelancomps.org', label: 'Visit the live site' },
   },
   {
+    // Facts sourced from Jon's own LinkedIn draft (.temp/linkedin-refresh.md) + Jon direct
+    // (2026-07-23): wrote and self-published the memoir; planned and ran a THREE-city book tour
+    // (the LinkedIn draft says "four-city" — Jon corrected it to three; fix that draft too).
+    // Imprint/site is Unflappable Press. Nothing beyond that is claimed here.
+    // Distribution confirmed by Jon (2026-07-23): Amazon KDP + IngramSpark.
+    // TODO(jon): the remaining production specifics you want to claim — editor, cover designer,
+    //   typesetting, ISBN. Name only the parts you actually did yourself.
+    // TODO(jon): which three cities, and audience/turnout if you want a number. Copies sold too,
+    //   if you want it public — leave it out entirely if you'd rather not.
+    // TODO(jon): launch date, so the detail page can carry a "published <month year>" line.
+    slug: 'unflappable',
+    title: 'Unflappable: Soaring Beyond a Diagnosis',
+    category: 'written work',
+    role: 'Author / self-publisher',
+    status: 'Published',
+    teaser:
+      'Wrote a memoir, published it myself, and took it on a three-city tour — the whole thing, end to end.',
+    blurb:
+      "A memoir about rare disease, paragliding, and finding healing when a cure isn't on the table. I wrote it, and then I published it — which turned out to be its own build. Getting a book out yourself means running every piece of it: the manuscript through editing and production, the cover and interior, distribution through Amazon KDP and IngramSpark, the launch, and then the part most writers skip, which is actually selling it. I planned and ran a three-city tour to do that. It's the same instinct as the rest of the work here — start from a blank sheet, and don't stop at the draft.",
+    link: { href: 'https://unflappable.press', label: 'Read more at unflappable.press' },
+  },
+  {
     // TODO(jon): scope/budget line + before-and-after photos. Photos slot into the detail page.
     slug: 'kitchen-bath-remodel',
     title: 'Kitchen & Bathroom Remodel',
@@ -123,25 +145,8 @@ export const projects = [
   },
 ];
 
-// Writing is its own card on the Work page.
-export const writing = {
-  title: 'Writing',
-  category: 'written work',
-  items: [
-    {
-      label: 'Unflappable: Soaring Beyond a Diagnosis',
-      note: 'Rare-disease memoir (ITAC; paragliding).',
-      href: 'https://unflappable.press',
-    },
-    {
-      label: 'Second book — in progress',
-      note: 'Patient & provider stories in head & neck reconstructive surgery.',
-      href: 'https://unflappable.press',
-    },
-    {
-      label: 'Substack',
-      note: 'Essays & thought leadership.',
-      href: 'https://substack.com/@jahutton',
-    },
-  ],
-};
+// The separate "Writing" card was removed 2026-07-23 (Jon): it and the Unflappable project card
+// both led with the book, which read as duplication. The book now stands as a full project above
+// (slug: 'unflappable'); Substack keeps its own placement — the footer subscribe block on every
+// page, plus the embed on /about. Nothing was lost, so there's no `writing` export anymore.
+// (Also dropped with it: the "second book — in progress" entry — an idea, not a project.)

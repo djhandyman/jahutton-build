@@ -31,8 +31,9 @@ unflappable.press.
   Microsoft Copilot Studio, institutional knowledge architecture (systems)
 - **WAHBE org development** — agile assessment, BSA/PM progression & maturity
   matrix, team development (teams)
-- **Writing** card → *Unflappable* (book, → unflappable.press) + second book
-  (in progress) + Substack.
+- **Unflappable** — the memoir as a full project: writing, self-publishing (KDP +
+  IngramSpark), and a three-city tour (written work)
+- **Writing** card → *Unflappable* (→ its own detail page) + Substack.
 
 ## Key decisions
 - **Stack:** Astro, near-zero JS, static output, Cloudflare Pages. See root README.
@@ -42,8 +43,8 @@ unflappable.press.
 - **Writing/Substack:** no dedicated page — Substack embed in footer/About +
   outbound subscribe link (chosen).
 - **Credibility signal:** UW Medicine / Dr. Barber grand-rounds interview in About.
-- **Cross-link:** Work + About link to unflappable.press (the book) and the
-  in-progress second book.
+- **Cross-link:** Work + About link to unflappable.press (the book). No second book
+  is mentioned anywhere — it's an idea, not a project (Jon, 2026-07-23).
 - **Content/style separation:** structure in components/layouts; copy in Markdown
   or data; styling deferred to the design session via `tokens.css` + one stylesheet.
 

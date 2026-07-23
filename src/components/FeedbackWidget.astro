@@ -1,0 +1,267 @@
+---
+// Site-wide feedback widget — a collapsed tab pinned bottom-right that expands into a
+// small form. Posts to the /api/feedback Cloudflare Pages Function, which saves to Supabase
+// and (server-side) tags the feedback + occasionally returns a short follow-up question.
+//
+// JS-only by nature (a floating, expanding panel). The current page URL is captured
+// automatically at submit time — the visitor never types it. Styling uses existing design
+// tokens only; no new visual language.
+---
+<div class="fw" data-feedback-widget>
+  <button class="fw__tab btn" type="button" aria-expanded="false" aria-controls="fw-panel" data-fw-toggle>
+    <span aria-hidden="true">✎</span> Feedback
+  </button>
+
+  <div class="fw__panel" id="fw-panel" role="dialog" aria-label="Send feedback" hidden data-fw-panel>
+    <button class="fw__close" type="button" aria-label="Close feedback" data-fw-close>&times;</button>
+
+    <!-- View: the form -->
+    <form class="fw__form" data-fw-form>
+      <p class="fw__lead">What's working, what's confusing, what's missing?</p>
+      <label class="visually-hidden" for="fw-text">Your feedback</label>
+      <textarea id="fw-text" name="raw_text" rows="4" required
+        placeholder="Tell me anything…"></textarea>
+
+      <div class="fw__row">
+        <div class="fw__field">
+          <label for="fw-name">Name <span class="fw__opt">(optional)</span></label>
+          <input id="fw-name" name="name" type="text" autocomplete="name" />
+        </div>
+        <div class="fw__field">
+          <label for="fw-email">Email <span class="fw__opt">(optional)</span></label>
+          <input id="fw-email" name="email" type="email" autocomplete="email" />
+        </div>
+      </div>
+
+      <!-- Honeypot -->
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+
+      <button class="btn fw__submit" type="submit">Send feedback</button>
+      <p class="fw__status" role="status" aria-live="polite"></p>
+    </form>
+
+    <!-- View: optional follow-up question (shown ~30% of the time) -->
+    <form class="fw__followup" data-fw-followup hidden>
+      <p class="fw__lead">Thanks — one quick thing, if you have a moment:</p>
+      <p class="fw__question" data-fw-question></p>
+      <label class="visually-hidden" for="fw-answer">Your answer</label>
+      <textarea id="fw-answer" name="follow_up_answer" rows="3" placeholder="Optional…"></textarea>
+      <div class="fw__followup-actions">
+        <button class="btn btn--ghost fw__skip" type="button" data-fw-skip>Skip</button>
+        <button class="btn fw__submit" type="submit">Send</button>
+      </div>
+    </form>
+
+    <!-- View: done -->
+    <div class="fw__done" data-fw-done hidden>
+      <p class="fw__lead">Thank you — that's genuinely useful.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector('[data-feedback-widget]');
+  if (root) {
+    const toggle = root.querySelector('[data-fw-toggle]');
+    const panel = root.querySelector('[data-fw-panel]');
+    const closeBtn = root.querySelector('[data-fw-close]');
+    const form = root.querySelector('[data-fw-form]');
+    const followup = root.querySelector('[data-fw-followup]');
+    const followupQ = root.querySelector('[data-fw-question]');
+    const done = root.querySelector('[data-fw-done]');
+    const status = form.querySelector('.fw__status');
+    const submit = form.querySelector('button[type="submit"]');
+    const textarea = form.querySelector('#fw-text');
+    let savedId = null;
+
+    const show = (el) => el.removeAttribute('hidden');
+    const hide = (el) => el.setAttribute('hidden', '');
+
+    function open() {
+      show(panel);
+      toggle.setAttribute('aria-expanded', 'true');
+      textarea && textarea.focus();
+    }
+    function close() {
+      hide(panel);
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
+    }
+
+    toggle.addEventListener('click', () => {
+      panel.hasAttribute('hidden') ? open() : close();
+    });
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hasAttribute('hidden')) close();
+    });
+    document.addEventListener('click', (e) => {
+      if (!panel.hasAttribute('hidden') && !root.contains(e.target)) close();
+    });
+
+    async function post(payload) {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      return { ok: res.ok && data.ok, data };
+    }
+
+    // Step 1 — initial submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = '';
+      status.classList.remove('is-error');
+      const label = submit.textContent;
+      submit.disabled = true;
+      submit.textContent = 'Sending…';
+      const fd = new FormData(form);
+      const { ok, data } = await post({
+        raw_text: fd.get('raw_text'),
+        name: fd.get('name'),
+        email: fd.get('email'),
+        _gotcha: fd.get('_gotcha'),
+        page_url: window.location.href,
+      });
+      submit.disabled = false;
+      submit.textContent = label;
+
+      if (!ok) {
+        status.textContent = data.error || 'Couldn’t send just now — please try again.';
+        status.classList.add('is-error');
+        return;
+      }
+      savedId = data.id || null;
+      if (data.followUpQuestion && savedId) {
+        followupQ.textContent = data.followUpQuestion;
+        hide(form);
+        show(followup);
+        followup.querySelector('#fw-answer').focus();
+      } else {
+        finish();
+      }
+    });
+
+    // Step 2 — optional follow-up answer
+    followup.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = followup.querySelector('button[type="submit"]');
+      const answer = followup.querySelector('#fw-answer').value.trim();
+      if (!answer) { finish(); return; }
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      await post({ id: savedId, follow_up_answer: answer }); // best-effort; never block
+      finish();
+    });
+    root.querySelector('[data-fw-skip]').addEventListener('click', finish);
+
+    function finish() {
+      hide(form);
+      hide(followup);
+      show(done);
+      setTimeout(() => { if (!panel.hasAttribute('hidden')) close(); }, 2200);
+    }
+  }
+</script>
+
+<style>
+  .fw {
+    position: fixed;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    z-index: 50;
+    font-family: var(--font-body);
+  }
+
+  /* Collapsed tab */
+  .fw__tab {
+    box-shadow: var(--shadow);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+  }
+  .fw__tab span { margin-right: 0.25em; }
+
+  /* Expanded panel */
+  .fw__panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + var(--space-3));
+    width: min(21rem, calc(100vw - 2 * var(--space-4)));
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: var(--space-6);
+  }
+  .fw__close {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-3);
+    background: none;
+    border: 0;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .fw__close:hover { color: var(--color-text); }
+
+  .fw__lead {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    line-height: 1.3;
+    margin: 0 0 var(--space-3);
+    max-width: none;
+  }
+  .fw__question {
+    font-style: italic;
+    color: var(--color-secondary);
+    margin: 0 0 var(--space-3);
+    max-width: none;
+  }
+
+  .fw__panel textarea,
+  .fw__panel input {
+    width: 100%;
+    padding: var(--space-3);
+    font: inherit;
+    color: inherit;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .fw__panel textarea { resize: vertical; }
+
+  .fw__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  .fw__field label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+  }
+  .fw__opt { font-weight: 400; color: var(--color-text-muted); }
+
+  .fw__submit { margin-top: var(--space-4); width: 100%; }
+  .fw__followup-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+  .fw__followup-actions .fw__submit { margin-top: 0; }
+  .fw__skip { flex: 0 0 auto; }
+
+  .fw__status { margin: var(--space-3) 0 0; font-size: var(--text-sm); }
+  .fw__status:empty { margin: 0; }
+  .fw__status.is-error { color: var(--rust, #b3402a); }
+
+  @media (max-width: 30rem) {
+    .fw__row { grid-template-columns: 1fr; }
+  }
+</style>
