@@ -6,11 +6,12 @@ export const site = {
   // Quiet footer line — the through-line, understated (the ".build" pun lives in the domain).
   tagline: 'Finished things, from a blank sheet.',
   // Hero headline — the sharpest, most distinctive line, promoted from body to top.
-  // See ~/.claude/plans/misty-dreaming-hinton.md (positioning LOCKED).
-  headline: 'I turn ambiguous problems into finished things.',
-  // Hero lead — supports the headline without repeating it.
+  // See ~/.claude/plans/misty-dreaming-hinton.md (positioning updated 2026-07-23:
+  // pivoted from enterprise/"regulated, high-stakes" to an audience-named engagement front door).
+  headline: 'I design, build, and ship.',
+  // Hero lead — names the audience the headline leaves implicit ("for whom").
   positioning:
-    'Software, strategy, structure — and a book. A career of zero-to-one work inside regulated, high-stakes environments where change is hard-won — and the result is always something you can use, read, or stand on.',
+    'For solo operators, small businesses, and nonprofits — software, strategy, and structure, turned from ambiguity into something finished you can actually use.',
   bookUrl: 'https://unflappable.press',
   // Contact form posts here — a Cloudflare Pages Function (functions/api/contact.js) that
   // emails submissions via Resend. No third-party form service, no per-seat fee.
