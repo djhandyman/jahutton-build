@@ -1,0 +1,432 @@
+---
+// Build Assessment intake — a multi-step wizard, progressively enhanced.
+//
+// Pattern ported from the chelancomps volunteer application (see src/data/intake.js header),
+// reimplemented in vanilla JS on this site's own building blocks — no React/Tailwind/RHF/Zod.
+//
+// Progressive enhancement is load-bearing here:
+//   • Every step renders VISIBLE in one native <form>. With JS off, the whole form shows as one
+//     scrollable page and the single Send button does a native POST → the Function's flat-form
+//     branch → 303 /thanks/.
+//   • The script hides all but the current step, reveals the progress bar + Next/Back, and hides
+//     Send until the review step — turning the same markup into a wizard with a fetch submit.
+// `novalidate` lets the script own validation, so required fields on hidden steps never block the
+// JS submit; the Function re-validates server-side as the backstop (and for the no-JS path).
+import { intake } from '../data/intake.js';
+const steps = intake.steps;
+const totalSteps = steps.length + 1; // +1 for the review step
+---
+<form class="intake" action="/api/assessment-intake" method="POST" data-intake novalidate>
+  <!-- Progress (hidden until JS; meaningless without the wizard) -->
+  <div class="intake__progress" data-intake-progress hidden>
+    <div class="intake__progress-meta">
+      <span data-intake-stepnum></span>
+      <span data-intake-percent></span>
+    </div>
+    <div class="intake__bar"><span class="intake__bar-fill" data-intake-fill></span></div>
+  </div>
+
+  {steps.map((step, i) => (
+    <fieldset class="intake__step" data-intake-step={i}>
+      <legend class="intake__legend" data-intake-legend tabindex="-1">{step.legend}</legend>
+      {step.fields.map((f) => (
+        <div class="intake__field" data-label={f.label}>
+          {f.type === 'radio' ? (
+            <span class="intake__field-label">{f.label}</span>
+          ) : (
+            <label for={f.name}>
+              {f.label}
+              {f.required && <span class="intake__req" aria-hidden="true"> *</span>}
+            </label>
+          )}
+
+          {f.type === 'textarea' && (
+            <textarea
+              id={f.name}
+              name={f.name}
+              rows={f.rows || 4}
+              placeholder={f.placeholder}
+              data-intake-input
+              required={f.required || undefined}
+            />
+          )}
+
+          {f.type === 'select' && (
+            <select id={f.name} name={f.name} data-intake-input required={f.required || undefined}>
+              <option value="">—</option>
+              {f.options.map((o) => <option value={o}>{o}</option>)}
+            </select>
+          )}
+
+          {f.type === 'radio' && (
+            <div class="intake__radios" role="radiogroup" aria-label={f.label}>
+              {f.options.map((o) => (
+                <label class="intake__radio">
+                  <input type="radio" name={f.name} value={o} data-intake-input />
+                  <span>{o}</span>
+                </label>
+              ))}
+            </div>
+          )}
+
+          {(f.type === 'text' || f.type === 'email') && (
+            <input
+              id={f.name}
+              name={f.name}
+              type={f.type}
+              placeholder={f.placeholder}
+              autocomplete={f.autocomplete}
+              data-intake-input
+              required={f.required || undefined}
+            />
+          )}
+
+          <p class="intake__error" data-intake-error hidden role="alert"></p>
+        </div>
+      ))}
+    </fieldset>
+  ))}
+
+  <!-- Review step: populated by JS from current values. Static note covers the no-JS case. -->
+  <fieldset class="intake__step" data-intake-step={steps.length}>
+    <legend class="intake__legend" data-intake-legend tabindex="-1">{intake.reviewTitle}</legend>
+    <dl class="intake__review" data-intake-review></dl>
+    <p class="intake__review-note">{intake.reviewNote}</p>
+  </fieldset>
+
+  <!-- Honeypot -->
+  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+
+  <div class="intake__nav">
+    <button type="button" class="btn btn--ghost" data-intake-back hidden>Back</button>
+    <button type="button" class="btn" data-intake-next hidden>Next</button>
+    <button type="submit" class="btn" data-intake-submit>{intake.submitLabel}</button>
+  </div>
+  <p class="intake__status" role="status" aria-live="polite" data-intake-status></p>
+</form>
+
+<!-- Confirmation view (JS success path) -->
+<div class="intake__done" data-intake-done hidden>
+  <h2 tabindex="-1" data-intake-done-heading>{intake.confirm.heading}</h2>
+  <p>{intake.confirm.body}</p>
+</div>
+
+<script>
+  const form = document.querySelector('[data-intake]');
+  if (form) {
+    const steps = [...form.querySelectorAll('[data-intake-step]')];
+    const total = steps.length; // content steps + review
+    const progress = form.querySelector('[data-intake-progress]');
+    const fill = form.querySelector('[data-intake-fill]');
+    const stepNum = form.querySelector('[data-intake-stepnum]');
+    const percentEl = form.querySelector('[data-intake-percent]');
+    const backBtn = form.querySelector('[data-intake-back]');
+    const nextBtn = form.querySelector('[data-intake-next]');
+    const submitBtn = form.querySelector('[data-intake-submit]');
+    const status = form.querySelector('[data-intake-status]');
+    const reviewEl = form.querySelector('[data-intake-review]');
+    const doneEl = document.querySelector('[data-intake-done]');
+    const DRAFT_KEY = 'assessment-intake-draft-v1';
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let current = 0;
+
+    // --- Progressive enhancement: reveal the wizard chrome. ---
+    progress.hidden = false;
+    nextBtn.hidden = false;
+
+    const inputs = (i) => [...steps[i].querySelectorAll('[data-intake-input]')];
+
+    function markError(input, msg) {
+      const field = input.closest('.intake__field');
+      const err = field && field.querySelector('[data-intake-error]');
+      if (err) {
+        err.textContent = msg;
+        err.hidden = false;
+      }
+    }
+    function clearErrors(i) {
+      steps[i].querySelectorAll('[data-intake-error]').forEach((e) => {
+        e.hidden = true;
+        e.textContent = '';
+      });
+    }
+
+    function validateStep(i) {
+      clearErrors(i);
+      let firstBad = null;
+      inputs(i).forEach((input) => {
+        if (!input.hasAttribute('required')) return;
+        const val = (input.value || '').trim();
+        if (!val) {
+          markError(input, 'This one’s needed.');
+          firstBad = firstBad || input;
+        } else if (input.type === 'email' && !EMAIL_RE.test(val)) {
+          markError(input, 'That email looks off — mind checking it?');
+          firstBad = firstBad || input;
+        }
+      });
+      if (firstBad) firstBad.focus();
+      return !firstBad;
+    }
+
+    function fieldValue(field) {
+      const radios = field.querySelectorAll('input[type="radio"]');
+      if (radios.length) {
+        const checked = [...radios].find((r) => r.checked);
+        return checked ? checked.value : '';
+      }
+      const input = field.querySelector('[data-intake-input]');
+      return input ? (input.value || '').trim() : '';
+    }
+
+    function renderReview() {
+      reviewEl.innerHTML = '';
+      for (let i = 0; i < total - 1; i++) {
+        steps[i].querySelectorAll('.intake__field').forEach((field) => {
+          const dt = document.createElement('dt');
+          dt.textContent = field.dataset.label;
+          const dd = document.createElement('dd');
+          const val = fieldValue(field);
+          dd.textContent = val || '—';
+          if (!val) dd.classList.add('intake__review-empty');
+          reviewEl.append(dt, dd);
+        });
+      }
+    }
+
+    function showStep(i) {
+      // Clamp so a stray/double Next click can never land past the review step
+      // (which showed as "Step 6 of 5" at 120%).
+      i = Math.max(0, Math.min(i, total - 1));
+      current = i;
+      const isReview = i === total - 1;
+      steps.forEach((s, idx) => (s.hidden = idx !== i));
+      backBtn.hidden = i === 0;
+      // Next and Send both stay visible the whole way; they swap enabled state at review,
+      // so on the last step Next greys out and only Send is clickable. (No-JS never shows
+      // Next — it's hidden in the markup — and keeps Send enabled as the sole submit.)
+      nextBtn.disabled = isReview;
+      submitBtn.disabled = !isReview;
+      const human = i + 1;
+      const pct = Math.round((human / total) * 100);
+      stepNum.textContent = `Step ${human} of ${total}`;
+      percentEl.textContent = `${pct}%`;
+      fill.style.width = `${pct}%`;
+      if (isReview) renderReview();
+      const legend = steps[i].querySelector('[data-intake-legend]');
+      legend && legend.focus();
+      status.textContent = '';
+      status.classList.remove('is-error');
+    }
+
+    // --- Draft persistence ---
+    function collect() {
+      const data = {};
+      form.querySelectorAll('[data-intake-input]').forEach((input) => {
+        if (input.type === 'radio') {
+          if (input.checked) data[input.name] = input.value;
+        } else {
+          data[input.name] = input.value;
+        }
+      });
+      return data;
+    }
+    function saveDraft() {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(collect()));
+      } catch {}
+    }
+    function restoreDraft() {
+      let raw;
+      try {
+        raw = localStorage.getItem(DRAFT_KEY);
+      } catch {
+        return;
+      }
+      if (!raw) return;
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        return;
+      }
+      Object.entries(data).forEach(([k, v]) => {
+        form.querySelectorAll(`[name="${CSS.escape(k)}"]`).forEach((el) => {
+          if (el.type === 'radio') el.checked = el.value === v;
+          else el.value = v;
+        });
+      });
+    }
+
+    // --- Wiring ---
+    nextBtn.addEventListener('click', () => {
+      if (current >= total - 1) return; // already at review; nothing past it
+      if (validateStep(current)) {
+        saveDraft();
+        showStep(current + 1);
+        window.scrollTo({ top: form.offsetTop - 24, behavior: 'smooth' });
+      }
+    });
+    backBtn.addEventListener('click', () => {
+      saveDraft();
+      showStep(current - 1);
+    });
+    form.addEventListener('input', saveDraft);
+    form.addEventListener('change', saveDraft);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      // Backstop: validate every content step; jump to the first that fails.
+      for (let i = 0; i < total - 1; i++) {
+        if (!validateStep(i)) {
+          showStep(i);
+          return;
+        }
+      }
+      status.textContent = '';
+      status.classList.remove('is-error');
+      const label = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      const payload = collect();
+      payload._gotcha = form.querySelector('[name="_gotcha"]').value;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          try {
+            localStorage.removeItem(DRAFT_KEY);
+          } catch {}
+          form.hidden = true;
+          doneEl.hidden = false;
+          const h = doneEl.querySelector('[data-intake-done-heading]');
+          h && h.focus();
+          window.scrollTo({ top: form.offsetTop - 24, behavior: 'smooth' });
+        } else {
+          status.textContent = data.error || 'Something went wrong. Please try again in a moment.';
+          status.classList.add('is-error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = label;
+        }
+      } catch {
+        status.textContent = 'Couldn’t send just now. Please try again, or use the contact page.';
+        status.classList.add('is-error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = label;
+      }
+    });
+
+    restoreDraft();
+    showStep(0);
+  }
+</script>
+
+<style>
+  .intake { max-width: var(--measure); }
+
+  /* Progress */
+  .intake__progress { margin-bottom: var(--space-8); }
+  .intake__progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+  .intake__bar {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+  .intake__bar-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--color-accent);
+    transition: width 0.25s ease;
+  }
+
+  /* Steps */
+  .intake__step { border: 0; margin: 0; padding: 0; min-inline-size: 0; }
+  .intake__step + .intake__step { margin-top: var(--space-8); } /* spacing in the no-JS long form */
+  .intake__legend {
+    font-family: var(--font-heading, inherit);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: var(--space-4);
+  }
+  .intake__legend:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 4px; }
+
+  /* Fields (mirrors the ContactForm field styling — no new visual language) */
+  .intake__field { margin-bottom: var(--space-4); }
+  .intake__field > label,
+  .intake__field-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+  .intake__req { color: var(--color-accent); }
+  .intake input,
+  .intake textarea,
+  .intake select {
+    width: 100%;
+    padding: var(--space-3);
+    font: inherit;
+    color: inherit;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .intake textarea { resize: vertical; }
+
+  /* Radios */
+  .intake__radios { display: grid; gap: var(--space-2); }
+  .intake__radio {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: 400;
+    margin: 0;
+    cursor: pointer;
+  }
+  .intake__radio input { width: auto; }
+
+  .intake__error { margin: var(--space-2) 0 0; font-size: var(--text-sm); color: var(--rust-ink, #823a17); }
+
+  /* Review */
+  .intake__review { margin: 0; }
+  .intake__review dt {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-3);
+  }
+  .intake__review dd { margin: 0; white-space: pre-wrap; }
+  .intake__review-empty { color: var(--color-text-muted); }
+  .intake__review-note {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  /* Nav */
+  .intake__nav {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: space-between;
+    margin-top: var(--space-8);
+  }
+  .intake__nav [data-intake-back] { margin-right: auto; }
+  .intake__nav [data-intake-next],
+  .intake__nav [data-intake-submit] { margin-left: auto; }
+  .intake__status { margin: var(--space-4) 0 0; font-size: var(--text-base); }
+  .intake__status.is-error { color: var(--rust-ink, #823a17); }
+  .intake__status:empty { margin: 0; }
+
+  .intake__done h2 { margin-top: 0; }
+</style>

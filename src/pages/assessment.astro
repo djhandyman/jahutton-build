@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { assessment } from '../data/site.js';
+---
+<BaseLayout
+  title="Build Assessment — Jonathan A. Hutton"
+  description="A fixed-price Build Assessment: an hour of questions, then a short written plan of what to build and in what order. $1,000, credited toward the work if we build together."
+>
+  <section class="section">
+    <div class="container assessment">
+      <h1>{assessment.title}</h1>
+      <p class="assessment__lead">{assessment.lead}</p>
+      <p>{assessment.intro}</p>
+
+      <h2>{assessment.howHeading}</h2>
+      <p>{assessment.how}</p>
+      <ul class="assessment__deliverables">
+        {assessment.deliverables.map((d) => (
+          <li><strong>{d.label}</strong> {d.body}</li>
+        ))}
+      </ul>
+
+      <h2>{assessment.priceHeading}</h2>
+      <p>{assessment.price}</p>
+
+      <h2>{assessment.forHeading}</h2>
+      <p>{assessment.forWhom}</p>
+
+      <p class="assessment__cta">
+        <a class="btn" href="/assessment/intake/">{assessment.ctaLabel}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .assessment { max-width: var(--measure); }
+  .assessment__lead { font-size: var(--text-lg); }
+  .assessment h2 { margin-top: var(--space-12); }
+  .assessment__deliverables { list-style: none; margin: var(--space-4) 0 0; padding: 0; }
+  .assessment__deliverables li {
+    position: relative;
+    padding-left: var(--space-6);
+    margin-bottom: var(--space-4);
+  }
+  .assessment__deliverables li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: var(--space-3);
+    height: 1px;
+    background: var(--color-accent);
+  }
+  .assessment__cta { margin-top: var(--space-12); }
+</style>

@@ -89,6 +89,8 @@ img { max-width: 100%; height: auto; display: block; }
   transition: filter 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 .btn:hover { filter: brightness(0.92); text-decoration: none; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:hover { filter: none; }
 /* White/paper fill with colored text + border (the alternate to the solid btn) */
 .btn--ghost {
   background: var(--color-bg);

@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AssessmentIntake from '../../components/AssessmentIntake.astro';
+import { intake } from '../../data/intake.js';
+---
+<BaseLayout
+  title="Build Assessment — Intake — Jonathan A. Hutton"
+  description="A few questions about what you're trying to build or fix, before we set up a Build Assessment call."
+>
+  <section class="section">
+    <div class="container intake-page">
+      <h1>Build Assessment</h1>
+      <p class="intake-page__lead">{intake.lead}</p>
+      <AssessmentIntake />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intake-page { max-width: var(--measure); }
+  .intake-page__lead { font-size: var(--text-lg); margin-bottom: var(--space-12); }
+</style>

@@ -28,7 +28,20 @@ async function readFields(request) {
     ? await request.json()
     : Object.fromEntries(await request.formData());
   const get = (k) => (src[k] == null ? '' : String(src[k]).trim());
-  return { name: get('name'), email: get('email'), message: get('message'), gotcha: get('_gotcha') };
+  return {
+    name: get('name'),
+    email: get('email'),
+    message: get('message'),
+    // Optional qualifier from the <select> on the form. Never required — a blank
+    // answer must not block a send. Not allow-listed against the option copy in
+    // src/data/site.js on purpose: that list is Jon's to reword freely, and a
+    // duplicated copy here would silently start rejecting valid submissions the
+    // moment the two drift. Sanitizing is enough — this value only ever lands in
+    // a plaintext email body, so collapse whitespace and cap the length so a
+    // hand-crafted POST can't stuff the email with junk.
+    timeline: get('timeline').replace(/\s+/g, ' ').slice(0, 80),
+    gotcha: get('_gotcha'),
+  };
 }
 
 export async function onRequestPost(context) {
@@ -70,8 +83,9 @@ export async function onRequestPost(context) {
   const text =
     `New message from jahutton.build\n\n` +
     `Name:  ${f.name}\n` +
-    `Email: ${f.email}\n\n` +
-    `${f.message}\n`;
+    `Email: ${f.email}\n` +
+    (f.timeline ? `Timeline: ${f.timeline}\n` : '') +
+    `\n${f.message}\n`;
 
   try {
     const r = await fetch('https://api.resend.com/emails', {

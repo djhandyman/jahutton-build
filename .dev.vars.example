@@ -20,3 +20,11 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
 # Optional feedback overrides (the function has sensible defaults):
 # FEEDBACK_MODEL=claude-sonnet-4-6
 # FEEDBACK_FOLLOWUP_RATE=0.3
+
+# --- Build Assessment intake (functions/api/assessment-intake.js) ---
+# Reuses the four secrets already above: RESEND_API_KEY (required — the email send),
+# ANTHROPIC_API_KEY (optional — Claude triages each intake), and SUPABASE_URL +
+# SUPABASE_SERVICE_ROLE_KEY (optional — saves each intake to the assessment_intake table).
+# The email always sends; Supabase + triage are best-effort so a paused project never loses a lead.
+# Optional override:
+# INTAKE_MODEL=claude-sonnet-4-6

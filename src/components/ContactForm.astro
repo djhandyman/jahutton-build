@@ -2,7 +2,7 @@
 // Contact form → posts to the /api/contact Cloudflare Pages Function, which emails via Resend.
 // Progressive enhancement: JS submits inline via fetch and shows a status message; with JS off,
 // the native POST still works and the function redirects to /thanks/.
-import { site } from '../data/site.js';
+import { site, contact } from '../data/site.js';
 ---
 <form class="contact-form" action={site.contactEndpoint} method="POST">
   <div class="contact-form__field">
@@ -16,6 +16,14 @@ import { site } from '../data/site.js';
   <div class="contact-form__field">
     <label for="message">Message</label>
     <textarea id="message" name="message" rows="6" required></textarea>
+  </div>
+  <div class="contact-form__field">
+    <label for="timeline">{contact.timelineLabel}</label>
+    <select id="timeline" name="timeline">
+      <option value="">—</option>
+      {contact.timelineOptions.map((o) => <option value={o}>{o}</option>)}
+    </select>
+    <p class="contact-form__hint">{contact.timelineHint}</p>
   </div>
   <!-- Honeypot for spam -->
   <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
@@ -44,6 +52,7 @@ import { site } from '../data/site.js';
             name: fd.get('name'),
             email: fd.get('email'),
             message: fd.get('message'),
+            timeline: fd.get('timeline'),
             _gotcha: fd.get('_gotcha'),
           }),
         });
@@ -76,7 +85,8 @@ import { site } from '../data/site.js';
     margin-bottom: var(--space-2);
   }
   .contact-form input,
-  .contact-form textarea {
+  .contact-form textarea,
+  .contact-form select {
     width: 100%;
     padding: var(--space-3);
     font: inherit;
@@ -86,6 +96,11 @@ import { site } from '../data/site.js';
     border-radius: var(--radius);
   }
   .contact-form textarea { resize: vertical; }
+  .contact-form__hint {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
   .contact-form__status { margin: var(--space-4) 0 0; font-size: var(--text-base); }
   .contact-form__status.is-ok { color: var(--color-accent); }
   .contact-form__status.is-error { color: var(--rust, #b3402a); }
