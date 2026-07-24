@@ -6,6 +6,7 @@
 // JS-only by nature (a floating, expanding panel). The current page URL is captured
 // automatically at submit time — the visitor never types it. Styling uses existing design
 // tokens only; no new visual language.
+import { site } from '../data/site.js';
 ---
 <div class="fw" data-feedback-widget>
   <button class="fw__tab btn" type="button" aria-expanded="false" aria-controls="fw-panel" data-fw-toggle>
@@ -34,7 +35,12 @@
       </div>
 
       <!-- Honeypot -->
-      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+      <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+
+      <!-- Cloudflare Turnstile — explicitly rendered when the panel first opens (implicit render
+           misbehaves inside a hidden panel). The Function REQUIRES a valid token on the initial
+           submit, which triggers a Claude enrichment call. -->
+      <div class="fw__turnstile" data-fw-turnstile data-sitekey={site.turnstileSiteKey}></div>
 
       <button class="btn fw__submit" type="submit">Send feedback</button>
       <p class="fw__status" role="status" aria-live="polite"></p>
@@ -59,6 +65,9 @@
   </div>
 </div>
 
+<!-- Turnstile loader (explicit render). is:inline so Astro ships it verbatim; async so it never blocks. -->
+<script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+
 <script>
   const root = document.querySelector('[data-feedback-widget]');
   if (root) {
@@ -72,14 +81,26 @@
     const status = form.querySelector('.fw__status');
     const submit = form.querySelector('button[type="submit"]');
     const textarea = form.querySelector('#fw-text');
+    const tsEl = form.querySelector('[data-fw-turnstile]');
     let savedId = null;
+    let tsId = null;
 
     const show = (el) => el.removeAttribute('hidden');
     const hide = (el) => el.setAttribute('hidden', '');
 
+    // Render the Turnstile widget once, the first time the panel opens. If the library hasn't
+    // finished loading yet, retry shortly — the user just opened a floating panel, so there's
+    // ample time before they submit.
+    function renderTurnstile() {
+      if (tsId !== null || !tsEl) return;
+      if (!window.turnstile) { setTimeout(renderTurnstile, 200); return; }
+      tsId = window.turnstile.render(tsEl, { sitekey: tsEl.dataset.sitekey });
+    }
+
     function open() {
       show(panel);
       toggle.setAttribute('aria-expanded', 'true');
+      renderTurnstile();
       textarea && textarea.focus();
     }
     function close() {
@@ -118,15 +139,19 @@
       submit.disabled = true;
       submit.textContent = 'Sending…';
       const fd = new FormData(form);
+      const token = window.turnstile && tsId !== null ? window.turnstile.getResponse(tsId) : '';
       const { ok, data } = await post({
         raw_text: fd.get('raw_text'),
         name: fd.get('name'),
         email: fd.get('email'),
-        _gotcha: fd.get('_gotcha'),
+        website: fd.get('website'),
+        turnstile: token,
         page_url: window.location.href,
       });
       submit.disabled = false;
       submit.textContent = label;
+      // Turnstile tokens are single-use — reset so any retry (or a second note) gets a fresh one.
+      if (window.turnstile && tsId !== null) window.turnstile.reset(tsId);
 
       if (!ok) {
         status.textContent = data.error || 'Couldn’t send just now — please try again.';
@@ -248,6 +273,7 @@
   }
   .fw__opt { font-weight: 400; color: var(--color-text-muted); }
 
+  .fw__turnstile { margin-top: var(--space-4); }
   .fw__submit { margin-top: var(--space-4); width: 100%; }
   .fw__followup-actions {
     display: flex;

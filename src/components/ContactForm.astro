@@ -25,11 +25,17 @@ import { site, contact } from '../data/site.js';
     </select>
     <p class="contact-form__hint">{contact.timelineHint}</p>
   </div>
-  <!-- Honeypot for spam -->
-  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+  <!-- Honeypot for spam (a bot that fills this hidden field is silently dropped) -->
+  <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+  <!-- Cloudflare Turnstile: renders only with JS. The Function verifies the token when present,
+       and falls back to the honeypot for no-JS submits (contact form is near-zero cost per send). -->
+  <div class="cf-turnstile contact-form__turnstile" data-sitekey={site.turnstileSiteKey}></div>
   <button class="btn" type="submit">Send</button>
   <p class="contact-form__status" role="status" aria-live="polite"></p>
 </form>
+
+<!-- Turnstile loader — is:inline so Astro ships it verbatim, async so it never blocks the form. -->
+<script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 
 <script>
   const form = document.querySelector('.contact-form');
@@ -53,7 +59,8 @@ import { site, contact } from '../data/site.js';
             email: fd.get('email'),
             message: fd.get('message'),
             timeline: fd.get('timeline'),
-            _gotcha: fd.get('_gotcha'),
+            website: fd.get('website'),
+            turnstile: fd.get('cf-turnstile-response'),
           }),
         });
         const data = await res.json().catch(() => ({}));
@@ -96,6 +103,7 @@ import { site, contact } from '../data/site.js';
     border-radius: var(--radius);
   }
   .contact-form textarea { resize: vertical; }
+  .contact-form__turnstile { margin-bottom: var(--space-4); }
   .contact-form__hint {
     margin: var(--space-2) 0 0;
     font-size: var(--text-sm);

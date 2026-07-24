@@ -16,6 +16,15 @@ export const site = {
   // Contact form posts here — a Cloudflare Pages Function (functions/api/contact.js) that
   // emails submissions via Resend. No third-party form service, no per-seat fee.
   contactEndpoint: '/api/contact',
+  // Cloudflare Turnstile site key (PUBLIC — safe to ship in the browser). Drives the anti-spam
+  // widget on the contact and assessment-intake forms; the Functions verify the resulting token
+  // server-side with the matching secret (TURNSTILE_SECRET_KEY). Set PUBLIC_TURNSTILE_SITE_KEY as
+  // a Pages build env var for production. The fallback is Cloudflare's "always passes" TEST key —
+  // it renders and issues a valid token but provides NO real protection, so replace it before
+  // launch. The public key and the server secret must be swapped together (a real key with a test
+  // secret, or vice-versa, blocks every submit).
+  turnstileSiteKey:
+    import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA',
 };
 
 // Contact page copy. The `prompts` list is the CTA's real work: it lets a visitor

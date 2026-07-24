@@ -6,12 +6,14 @@
 // never in the browser; the client only ever talks to this function.
 //
 // Two request shapes (both POST /api/feedback, JSON):
-//   1. Initial submit  → { raw_text, name?, email?, page_url, _gotcha? }
-//        Inserts the row FIRST (durable), then tries to tag + maybe generate a follow-up.
-//        Returns { ok: true, id, followUpQuestion? }. LLM failure is swallowed — the row
-//        is already saved, so the visitor never sees an error from a tagging hiccup.
+//   1. Initial submit  → { raw_text, name?, email?, page_url, website? (honeypot), turnstile }
+//        Requires a valid Turnstile token (this path calls Claude). Inserts the row FIRST
+//        (durable), then tries to tag + maybe generate a follow-up. Returns { ok: true, id,
+//        followUpQuestion? }. LLM failure is swallowed — the row is already saved, so the
+//        visitor never sees an error from a tagging hiccup.
 //   2. Follow-up answer → { id, follow_up_answer }
-//        Updates just that row's follow_up_answer. Never blocks the initial submission.
+//        Updates just that row's follow_up_answer. No LLM work and needs a prior id, so it is
+//        not Turnstile-gated. Never blocks the initial submission.
 //
 // Required env (Cloudflare Pages → Settings → Environment variables, and .dev.vars locally):
 //   ANTHROPIC_API_KEY          — Claude API key (for tagging / follow-up)
@@ -20,6 +22,8 @@
 // Optional:
 //   FEEDBACK_MODEL             — default 'claude-sonnet-4-6'
 //   FEEDBACK_FOLLOWUP_RATE     — 0..1, default '0.3'
+//   TURNSTILE_SECRET_KEY       — if set, the initial submit requires a valid Turnstile token
+//                                (verification is skipped when unset). See .dev.vars.example.
 
 const DEFAULT_MODEL = 'claude-sonnet-4-6';
 const DEFAULT_FOLLOWUP_RATE = 0.3;
@@ -34,6 +38,27 @@ const json = (ok, status, extra = {}) =>
 
 function str(v) {
   return v == null ? '' : String(v).trim();
+}
+
+// Cloudflare Turnstile server-side verification. Returns true when the token checks out.
+// If TURNSTILE_SECRET_KEY isn't set, verification is SKIPPED (returns true) so an unconfigured
+// deploy still works — set the secret in production to actually enforce it. The public site key
+// (src/data/site.js) and this secret must be swapped from test → real together.
+async function turnstileOk(env, token, ip) {
+  if (!env.TURNSTILE_SECRET_KEY) return true; // not configured — don't block submissions
+  if (!token) return false;
+  const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET_KEY, response: token });
+  if (ip) body.set('remoteip', ip);
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body,
+    });
+    const data = await r.json();
+    return data.success === true;
+  } catch {
+    return false; // verifier unreachable — fail closed
+  }
 }
 
 // --- Supabase (PostgREST) helpers — service-role key, server-side only ---
@@ -169,7 +194,7 @@ export async function onRequestPost(context) {
 
   // --- Shape 1: initial submit ---
   // Honeypot: a bot filled the hidden field. Pretend success, save nothing.
-  if (str(body._gotcha)) return json(true, 200);
+  if (str(body.website)) return json(true, 200);
 
   const rawText = str(body.raw_text);
   const name = str(body.name);
@@ -180,6 +205,18 @@ export async function onRequestPost(context) {
   if (email && !EMAIL_RE.test(email)) {
     return json(false, 422, { error: 'That email looks off — mind checking it?' });
   }
+
+  // Turnstile — STRICT, and BEFORE the Supabase insert + Claude enrichment: the initial submit is
+  // the billable path. The widget is JS-only, so there's no no-JS path to preserve. (The follow-up
+  // answer shape above needs a prior id and does no LLM work, so it isn't gated.) turnstileOk()
+  // no-ops when TURNSTILE_SECRET_KEY is unset, so local/unconfigured runs still work.
+  const turnstile = str(body.turnstile) || str(body['cf-turnstile-response']);
+  if (!(await turnstileOk(env, turnstile, request.headers.get('cf-connecting-ip')))) {
+    return json(false, 403, {
+      error: 'That spam check didn’t pass — please reload the page and try again.',
+    });
+  }
+
   if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
     return json(false, 500, { error: 'The feedback form isn’t configured yet.' });
   }

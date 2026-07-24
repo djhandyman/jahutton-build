@@ -13,6 +13,7 @@
 // `novalidate` lets the script own validation, so required fields on hidden steps never block the
 // JS submit; the Function re-validates server-side as the backstop (and for the no-JS path).
 import { intake } from '../data/intake.js';
+import { site } from '../data/site.js';
 const steps = intake.steps;
 const totalSteps = steps.length + 1; // +1 for the review step
 ---
@@ -95,7 +96,12 @@ const totalSteps = steps.length + 1; // +1 for the review step
   </fieldset>
 
   <!-- Honeypot -->
-  <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+  <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
+
+  <!-- Cloudflare Turnstile. Sits outside the step fieldsets so it's always rendered (steps get
+       [hidden] as the wizard advances). The Function REQUIRES a valid token here — the assessment
+       intake costs a Claude call + a Supabase row per submit, so a token-less (no-JS) POST is rejected. -->
+  <div class="cf-turnstile intake__turnstile" data-sitekey={site.turnstileSiteKey}></div>
 
   <div class="intake__nav">
     <button type="button" class="btn btn--ghost" data-intake-back hidden>Back</button>
@@ -110,6 +116,9 @@ const totalSteps = steps.length + 1; // +1 for the review step
   <h2 tabindex="-1" data-intake-done-heading>{intake.confirm.heading}</h2>
   <p>{intake.confirm.body}</p>
 </div>
+
+<!-- Turnstile loader — is:inline so Astro ships it verbatim, async so it never blocks the wizard. -->
+<script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 
 <script>
   const form = document.querySelector('[data-intake]');
@@ -289,7 +298,9 @@ const totalSteps = steps.length + 1; // +1 for the review step
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
       const payload = collect();
-      payload._gotcha = form.querySelector('[name="_gotcha"]').value;
+      payload.website = form.querySelector('[name="website"]').value;
+      const tsField = form.querySelector('[name="cf-turnstile-response"]');
+      payload.turnstile = tsField ? tsField.value : '';
       try {
         const res = await fetch(form.action, {
           method: 'POST',
@@ -384,6 +395,7 @@ const totalSteps = steps.length + 1; // +1 for the review step
     border-radius: var(--radius);
   }
   .intake textarea { resize: vertical; }
+  .intake__turnstile { margin-top: var(--space-8); }
 
   /* Radios */
   .intake__radios { display: grid; gap: var(--space-2); }

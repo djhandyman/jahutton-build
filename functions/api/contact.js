@@ -16,6 +16,27 @@ const DEFAULT_TO = 'jahutton@gmail.com';
 const DEFAULT_FROM = 'jahutton.build <onboarding@resend.dev>';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Cloudflare Turnstile server-side verification. Returns true when the token checks out.
+// If TURNSTILE_SECRET_KEY isn't set, verification is SKIPPED (returns true) so an unconfigured
+// deploy still works — set the secret in production to actually enforce it. The public site key
+// (src/data/site.js) and this secret must be swapped from test → real together.
+async function turnstileOk(env, token, ip) {
+  if (!env.TURNSTILE_SECRET_KEY) return true; // not configured — don't block submissions
+  if (!token) return false;
+  const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET_KEY, response: token });
+  if (ip) body.set('remoteip', ip);
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body,
+    });
+    const data = await r.json();
+    return data.success === true;
+  } catch {
+    return false; // verifier unreachable — fail closed
+  }
+}
+
 function wantsJson(request) {
   const accept = request.headers.get('accept') || '';
   const ctype = request.headers.get('content-type') || '';
@@ -40,7 +61,11 @@ async function readFields(request) {
     // a plaintext email body, so collapse whitespace and cap the length so a
     // hand-crafted POST can't stuff the email with junk.
     timeline: get('timeline').replace(/\s+/g, ' ').slice(0, 80),
-    gotcha: get('_gotcha'),
+    // Honeypot — a real user never fills this hidden field; a bot that does is silently dropped.
+    website: get('website'),
+    // Turnstile token: 'turnstile' from the fetch (JSON) path, 'cf-turnstile-response' from a
+    // native form POST. Absent on a no-JS submit — see the lenient policy in onRequestPost.
+    turnstile: get('turnstile') || get('cf-turnstile-response'),
   };
 }
 
@@ -68,7 +93,19 @@ export async function onRequestPost(context) {
   }
 
   // Honeypot: a bot filled the hidden field. Pretend success, send nothing.
-  if (f.gotcha) return respond(true, 200);
+  if (f.website) return respond(true, 200);
+
+  // Turnstile — LENIENT here: verify only when a token is present (the JS path). A no-JS submit
+  // carries no token and falls back to the honeypot above; the contact form is near-zero cost per
+  // send, so we keep that progressive-enhancement path. A present-but-invalid token is rejected.
+  if (f.turnstile) {
+    const ok = await turnstileOk(env, f.turnstile, request.headers.get('cf-connecting-ip'));
+    if (!ok) {
+      return respond(false, 403, {
+        error: 'That spam check didn’t pass — please reload the page and try again.',
+      });
+    }
+  }
 
   if (!f.name || !f.email || !f.message) {
     return respond(false, 422, { error: 'Please fill in your name, email, and a message.' });

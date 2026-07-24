@@ -26,6 +26,27 @@ const DEFAULT_MODEL = 'claude-sonnet-4-6';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const FITS = ['strong', 'possible', 'weak', 'out-of-scope'];
 
+// Cloudflare Turnstile server-side verification. Returns true when the token checks out.
+// If TURNSTILE_SECRET_KEY isn't set, verification is SKIPPED (returns true) so an unconfigured
+// deploy still works — set the secret in production to actually enforce it. The public site key
+// (src/data/site.js) and this secret must be swapped from test → real together.
+async function turnstileOk(env, token, ip) {
+  if (!env.TURNSTILE_SECRET_KEY) return true; // not configured — don't block submissions
+  if (!token) return false;
+  const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET_KEY, response: token });
+  if (ip) body.set('remoteip', ip);
+  try {
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body,
+    });
+    const data = await r.json();
+    return data.success === true;
+  } catch {
+    return false; // verifier unreachable — fail closed
+  }
+}
+
 function wantsJson(request) {
   const accept = request.headers.get('accept') || '';
   const ctype = request.headers.get('content-type') || '';
@@ -53,7 +74,11 @@ async function readFields(request) {
     email: clip(src.email, 200),
     org: clip(src.org, 160),
     referral: clip(src.referral, 200),
-    gotcha: clip(src._gotcha, 100),
+    // Honeypot — a real user never fills this hidden field; a bot that does is silently dropped.
+    website: clip(src.website, 100),
+    // Turnstile token: 'turnstile' from the fetch (JSON) path, 'cf-turnstile-response' from a
+    // native form POST. Required here — see the strict gate in onRequestPost.
+    turnstile: clip(src.turnstile, 4000) || clip(src['cf-turnstile-response'], 4000),
   };
 }
 
@@ -215,7 +240,7 @@ export async function onRequestPost(context) {
   }
 
   // Honeypot: a bot filled the hidden field. Pretend success, do nothing.
-  if (f.gotcha) return respond(true, 200);
+  if (f.website) return respond(true, 200);
 
   if (!f.name || !f.email || !f.description) {
     return respond(false, 422, { error: 'Please include your name, email, and a description.' });
@@ -223,6 +248,17 @@ export async function onRequestPost(context) {
   if (!EMAIL_RE.test(f.email)) {
     return respond(false, 422, { error: 'That email address looks off — mind checking it?' });
   }
+
+  // Turnstile — STRICT here, and BEFORE any billable work: this intake costs a Claude call + a
+  // Supabase row + an email per submit, so a missing/invalid token is rejected outright (a no-JS
+  // POST has no token and is dropped). turnstileOk() no-ops when TURNSTILE_SECRET_KEY is unset, so
+  // local/unconfigured runs still work. This gate is the whole point of the split-by-cost policy.
+  if (!(await turnstileOk(env, f.turnstile, request.headers.get('cf-connecting-ip')))) {
+    return respond(false, 403, {
+      error: 'That spam check didn’t pass — please reload the page and try again.',
+    });
+  }
+
   if (!env.RESEND_API_KEY) {
     return respond(false, 500, { error: 'The intake form isn’t configured yet.' });
   }
