@@ -31,7 +31,34 @@ const description = project.teaser || `${project.blurb.slice(0, 152)}…`;
         </p>
       )}
 
-      {/* TODO(jon): photo gallery + a tech-stack list slot in here as content lands. */}
+      {project.gallery?.map((pair) => (
+        <figure class="ba">
+          <div class="ba__pair">
+            {[
+              { label: 'Before', img: pair.before },
+              { label: 'After', img: pair.after },
+            ].map(({ label, img }) => (
+              <div class="ba__side">
+                <p class="ba__label">{label}</p>
+                <picture>
+                  <source srcset={`${img.src}.webp`} type="image/webp" />
+                  <img
+                    src={`${img.src}.jpg`}
+                    width={img.width}
+                    height={img.height}
+                    alt={img.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
+            ))}
+          </div>
+          {pair.caption && <figcaption class="ba__caption">{pair.caption}</figcaption>}
+        </figure>
+      ))}
+
+      {/* TODO(jon): a tech-stack list slots in here as content lands. */}
     </div>
   </section>
 </BaseLayout>
@@ -46,4 +73,32 @@ const description = project.teaser || `${project.blurb.slice(0, 152)}…`;
   .project__status { font-weight: 400; }
   .project__body { font-size: var(--text-lg); max-width: var(--measure); }
   .project__cta { margin-top: var(--space-8); }
+
+  /* Before/after gallery. Wider than --measure (the body text) but still short of the
+     full container, so the pair reads as an inset exhibit rather than a banner. */
+  .ba { margin: var(--space-12) 0 0; max-width: 52rem; }
+  .ba__pair {
+    display: grid;
+    gap: var(--space-4);
+    align-items: start; /* natural aspect ratios — tops line up, bottoms may not */
+  }
+  @media (min-width: 40rem) {
+    .ba__pair { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  }
+  .ba__label {
+    text-transform: uppercase; letter-spacing: 0.06em;
+    font-size: var(--text-sm); color: var(--color-text-muted);
+    margin: 0 0 var(--space-3);
+  }
+  .ba__side img {
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface); /* fills the box while the image decodes */
+  }
+  .ba__caption {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
 </style>

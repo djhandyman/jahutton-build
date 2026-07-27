@@ -16,6 +16,12 @@
 //   teaser — short card hook (slugged projects only)
 //   blurb  — the full paragraph (detail-page body; or the card body when teaser-only)
 //   link   — optional external CTA shown on the detail page, { href, label }
+//   gallery — optional photos on the detail page (slugged projects only).
+//     An array of before/after pairs: { caption, before: <img>, after: <img> }, where
+//     <img> is { src, width, height, alt } and `src` is the EXTENSIONLESS public path —
+//     the page appends .webp for the <source> and .jpg for the <img>, matching the
+//     headshot/hero convention. width/height are the real pixel dims (they reserve
+//     layout space so the page doesn't jump). Assets live in public/images/work/<slug>/.
 
 export const projects = [
   {
@@ -104,7 +110,11 @@ export const projects = [
     link: null,
   },
   {
-    // TODO(jon): scope/budget line + before-and-after photos. Photos slot into the detail page.
+    // Bathroom before/after landed 2026-07-27 (gallery below).
+    // TODO(jon): scope/budget line.
+    // TODO(jon): kitchen before/after — .temp/photo-import/ has two kitchen BEFORE shots
+    //   (kitchen-before1/2.jpeg) but no after, so the kitchen pair is held back until you
+    //   supply one. Half a before/after is worse than none.
     slug: 'kitchen-bath-remodel',
     title: 'Kitchen & Bathroom Remodel',
     category: 'physical spaces',
@@ -115,6 +125,23 @@ export const projects = [
     blurb:
       'Full-scope design, planning, and project management of a kitchen and bathroom remodel — from SketchUp design through materials, sequencing, and hands-on execution. Proof that "builder" is literal, not a metaphor.',
     link: null,
+    gallery: [
+      {
+        caption: 'The bathroom, before and after.',
+        before: {
+          src: '/images/work/kitchen-bath-remodel/bathroom-before',
+          width: 324,
+          height: 242,
+          alt: 'The bathroom before the remodel: a laminate-top vanity with a drop-in sink, wall cabinet over the toilet, and a cluttered counter.',
+        },
+        after: {
+          src: '/images/work/kitchen-bath-remodel/bathroom-after',
+          width: 886,
+          height: 886,
+          alt: 'The bathroom after the remodel: a live-edge wood vanity top with a vessel sink and wall-mounted faucet, a tiled glass shower, and new flooring.',
+        },
+      },
+    ],
   },
   {
     // Outcome drafted from Jon's facts (2026-07-23): 4 promotions along the progression
@@ -148,27 +175,62 @@ export const projects = [
     link: null,
   },
   {
-    // Teaser-only (no slug): thin content for now — no detail page until there's more to show.
-    // TODO(jon): confirm sign type (wayfinding / safety / interpretive) and whether it was installed.
+    // Promoted to a detail page 2026-07-27: the before/after photos are the "more to show"
+    // this card was waiting on. The photos also settle the old open question — it's a combined
+    // safety/interpretive panel (spectator rules + pilot site rules + landing-area map), and
+    // the new one is installed in the park.
+    // TODO(jon): approve the teaser below — it's new copy, written to match the photos.
+    // TODO(jon): year the replacement went in, if you want it in the blurb.
+    slug: 'chelan-falls-signage',
     title: 'Chelan Falls Park Signage',
     category: 'physical spaces · design',
     role: 'Designer',
     status: null,
-    teaser: null,
+    teaser:
+      'Redesigned a sun-bleached, unreadable park sign — now installed at the Chelan Falls landing zone.',
     blurb:
       'Print-ready signage designed in Illustrator for a paragliding and hang-gliding site managed by Chelan County PUD — bringing order and clarity to a launch used by the flying community.',
     link: null,
+    gallery: [
+      {
+        caption: 'The old panel and its replacement, in place at the park.',
+        before: {
+          src: '/images/work/chelan-falls-signage/sign-before',
+          width: 1024,
+          height: 768,
+          alt: 'The original "Soaring at Chelan" panel, sun-bleached to the point that most of the text and photographs have faded out.',
+        },
+        after: {
+          src: '/images/work/chelan-falls-signage/sign-after',
+          width: 1182,
+          height: 665,
+          alt: 'The replacement panel installed at the park: a dark teal layout with spectator safety rules, a pilot site overview, an aerial map with the landing area marked, and QR codes for full site info.',
+        },
+      },
+    ],
   },
   {
-    // Teaser-only (no slug): "in progress", no hard outcome yet — no detail page until there is.
-    // TODO(jon): keep only what you personally drove; name specific tools (e.g. Copilot Studio, MCP) ONLY where you want to claim them.
-    title: 'WAHBE — AI Enablement',
-    category: 'systems',
-    role: 'AI enablement (contributor)',
-    status: 'In progress',
+    // Added 2026-07-24 (Jon): swapped in for the old "WAHBE — AI Enablement" card. Facts sourced
+    // from Jon's LinkedIn (.temp/linkedin-refresh.md:136): "IT Consultant (2021–2022) — stood up
+    // branding, web presence, and SaaS systems/integrations end to end for a start-up medical
+    // practice." Blurb writes ONLY around that; nothing beyond it is claimed. Teaser-only for now
+    // (thin facts), per the Chelan Falls / LAN-closet precedent — promote to a detail page by adding
+    // a `slug` once the TODOs below land.
+    //
+    // TODO(jon): the actual stack, in concrete nouns — practice-management/EHR, scheduling, patient
+    //   intake, billing, telehealth, the site platform — and the key integrations (what talks to
+    //   what). This is the meat the card lives on, the way "20,000+ SKUs" carries Bello Modo.
+    // TODO(jon): the healthcare-compliance angle, if it's real — was HIPAA a constraint you designed
+    //   around? That's the distinctive part of this one; name it if you can stand behind it.
+    // TODO(jon): outcome — did the practice open/operate on what you built? Anything citable at all.
+    //   The moment there's a real outcome + the stack above, add a slug and this becomes a detail page.
+    title: 'Ascension Medicines',
+    category: 'software · systems',
+    role: 'Consultant / builder',
+    status: null,
     teaser: null,
     blurb:
-      "I've been making the case — and doing the design thinking — for putting developer-grade AI coding tools in the hands of business systems analysts, so non-engineers can build. The thinking and the argument are mine; institutional adoption is a longer road through public-sector process.",
+      'A start-up medical practice needed everything a working clinic runs on stood up before it could see patients — and none of it existed yet. I stood it up end to end: the branding and web presence out front, and the SaaS systems and integrations behind them. From a blank sheet to the technology backbone a new practice needed to open and operate.',
     link: null,
   },
 ];
