@@ -28,8 +28,17 @@ import { site, contact } from '../data/site.js';
   <!-- Honeypot for spam (a bot that fills this hidden field is silently dropped) -->
   <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
   <!-- Cloudflare Turnstile: renders only with JS. The Function verifies the token when present,
-       and falls back to the honeypot for no-JS submits (contact form is near-zero cost per send). -->
-  <div class="cf-turnstile contact-form__turnstile" data-sitekey={site.turnstileSiteKey}></div>
+       and falls back to the honeypot for no-JS submits (contact form is near-zero cost per send).
+       appearance="interaction-only" keeps the widget out of sight for ordinary visitors — it
+       appears ONLY if Cloudflare decides this visitor has to solve something. Do not swap this
+       for `display: none`: a Managed widget that needs interaction would render where nobody can
+       reach it, no token would be issued, and the submit would fail with nothing the visitor
+       could do about it. -->
+  <div
+    class="cf-turnstile contact-form__turnstile"
+    data-sitekey={site.turnstileSiteKey}
+    data-appearance="interaction-only"
+  ></div>
   <button class="btn" type="submit">Send</button>
   <p class="contact-form__status" role="status" aria-live="polite"></p>
 </form>
@@ -103,7 +112,12 @@ import { site, contact } from '../data/site.js';
     border-radius: var(--radius);
   }
   .contact-form textarea { resize: vertical; }
-  .contact-form__turnstile { margin-bottom: var(--space-4); }
+  /* No margin on the Turnstile container itself. With appearance="interaction-only" it is a
+     zero-height box on almost every visit, and a margin there would leave a permanent phantom
+     gap above the button. Spacing lives on the button instead, so an invisible widget costs
+     nothing. On the rare visit where a challenge does render, it sits a little tight against
+     the field above — the right trade for a gap nobody sees the rest of the time. */
+  .contact-form__turnstile + .btn { margin-top: var(--space-4); }
   .contact-form__hint {
     margin: var(--space-2) 0 0;
     font-size: var(--text-sm);

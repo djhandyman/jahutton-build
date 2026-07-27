@@ -101,7 +101,13 @@ const totalSteps = steps.length + 1; // +1 for the review step
   <!-- Cloudflare Turnstile. Sits outside the step fieldsets so it's always rendered (steps get
        [hidden] as the wizard advances). The Function REQUIRES a valid token here — the assessment
        intake costs a Claude call + a Supabase row per submit, so a token-less (no-JS) POST is rejected. -->
-  <div class="cf-turnstile intake__turnstile" data-sitekey={site.turnstileSiteKey}></div>
+  <!-- appearance="interaction-only": invisible unless this visitor actually has to solve
+       something. The challenge still runs, and the token is still required server-side. -->
+  <div
+    class="cf-turnstile intake__turnstile"
+    data-sitekey={site.turnstileSiteKey}
+    data-appearance="interaction-only"
+  ></div>
 
   <div class="intake__nav">
     <button type="button" class="btn btn--ghost" data-intake-back hidden>Back</button>
@@ -395,7 +401,9 @@ const totalSteps = steps.length + 1; // +1 for the review step
     border-radius: var(--radius);
   }
   .intake textarea { resize: vertical; }
-  .intake__turnstile { margin-top: var(--space-8); }
+  /* No margin here — see ContactForm. With interaction-only the container is zero-height on
+     almost every visit, so the spacing moves onto the nav row that follows it. */
+  .intake__turnstile + .intake__nav { margin-top: var(--space-8); }
 
   /* Radios */
   .intake__radios { display: grid; gap: var(--space-2); }

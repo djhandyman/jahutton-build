@@ -94,7 +94,13 @@ import { site } from '../data/site.js';
     function renderTurnstile() {
       if (tsId !== null || !tsEl) return;
       if (!window.turnstile) { setTimeout(renderTurnstile, 200); return; }
-      tsId = window.turnstile.render(tsEl, { sitekey: tsEl.dataset.sitekey });
+      // appearance: 'interaction-only' — the widget stays invisible unless Cloudflare decides
+      // this visitor has to solve something. Matters most here: Turnstile's normal size is
+      // 300x65, and this panel is only 21rem wide.
+      tsId = window.turnstile.render(tsEl, {
+        sitekey: tsEl.dataset.sitekey,
+        appearance: 'interaction-only',
+      });
     }
 
     function open() {
@@ -273,7 +279,8 @@ import { site } from '../data/site.js';
   }
   .fw__opt { font-weight: 400; color: var(--color-text-muted); }
 
-  .fw__turnstile { margin-top: var(--space-4); }
+  /* No margin here — see ContactForm. With interaction-only the container is zero-height on
+     almost every visit, and .fw__submit below already carries the spacing. */
   .fw__submit { margin-top: var(--space-4); width: 100%; }
   .fw__followup-actions {
     display: flex;
