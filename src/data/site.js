@@ -4,14 +4,14 @@ export const site = {
   name: 'Jonathan A. Hutton',
   domain: 'jahutton.build',
   // Quiet footer line — the through-line, understated (the ".build" pun lives in the domain).
-  tagline: 'Finished things, from a blank sheet.',
+  tagline: 'Software, systems, wires, and walls.',
   // Hero headline — the sharpest, most distinctive line, promoted from body to top.
   // See ~/.claude/plans/misty-dreaming-hinton.md (positioning updated 2026-07-23:
   // pivoted from enterprise/"regulated, high-stakes" to an audience-named engagement front door).
   headline: 'I design, build, and ship.',
   // Hero lead — names the audience the headline leaves implicit ("for whom").
   positioning:
-    'For solo operators, small businesses, and nonprofits — software, strategy, and structure, turned from ambiguity into something finished you can actually use.',
+    'For solo operators, small businesses, and nonprofits — software, strategy, and structure, turning ambiguity into something finished you can actually use.',
   bookUrl: 'https://unflappable.press',
   // Contact form posts here — a Cloudflare Pages Function (functions/api/contact.js) that
   // emails submissions via Resend. No third-party form service, no per-seat fee.
@@ -32,34 +32,34 @@ export const site = {
 // "zero-to-one"). Each line is anchored to work that actually exists on /work —
 // keep it that way, and keep the list short enough to scan in one pass.
 export const contact = {
-  lead: "Tell me what you're stuck on. I'll tell you straight whether I'm the right person for it.",
+  lead: "Tell me what you're stuck on. I'll tell you whether I'm the right person to help.",
   promptsHeading: 'You might be here because:',
   prompts: [
-    'You’re on the wrong platform, and the migration is nobody’s job.',
-    'Your team is running something real out of email and spreadsheets, and it’s breaking.',
-    'You’ve got a mission and no working infrastructure behind it.',
-    'You’ve been told to “do something with AI” and want a straight answer about what’s worth doing.',
+    'Your business is running on a platform that no longer fits, and you need a new one.',
+    'You’ve had it with email and spreadsheets and want a process that actually works.',
+    'You have an idea, a mission, but no working infrastructure behind it.',
+    'You want to “do something with AI” and need a straight answer about what’s worth doing.',
     'Something’s half-built and needs someone to finish it.',
   ],
   promptsFooter:
-    'Or none of these, and you just want to talk it through. That works too.',
+    'Or none of these, and you just want to talk. That works too.',
   // Optional timeline picker on the form. It is a qualifier, not a data-collection
   // exercise: the answer separates "we have a decision to make" from "just looking"
   // before a call gets spent on it. Deliberately NOT a budget question — that reads
   // as presumptuous to the nonprofits and solo operators this page is aimed at.
   // Kept optional; a blank answer must never block a send.
   timelineLabel: 'Timeline',
-  timelineHint: 'Optional — helps me know whether to answer today or think on it.',
+  timelineHint: 'Optional',
   timelineOptions: [
-    'Just exploring, no timeline',
+    'Just exploring, no timeline yet',
     'Sometime in the next few months',
     'Weeks, not months',
-    'Already underway and stuck',
+    'Already underway, need help now',
   ],
   // Availability, kept quiet and out of the way — it used to open the page, which
   // gated the reader before inviting them.
   availability:
-    'I take on a small number of engagements at a time — solo operators, small businesses, and nonprofits.',
+    'I take on a small number of engagements — solo operators, small businesses, and nonprofits.',
 };
 
 // "Build Assessment" — the paid diagnostic (see .temp/PLANNING.md → Go-to-market → The diagnostic
@@ -71,7 +71,7 @@ export const assessment = {
   // Plainest register — a line Jon would say out loud.
   lead: "Before we build anything, I look at what you've got and tell you what I'd do about it — in writing.",
   intro:
-    "Most people who reach out aren't sure what they need yet. They know something isn't working — the wrong platform, a process held together by email, a mission with no machinery behind it — but what to actually build is the fog. The Build Assessment clears it.",
+    "Most people who reach out aren't sure what they need yet. They know something isn't working — the wrong platform, a process held together by email, a mission with no machinery behind it. The Build Assessment clears it.",
   howHeading: 'How it works',
   how: "We talk for an hour, maybe ninety minutes, and I ask a lot of questions. Then I go away and think. A week later you get a short written plan — three to five pages, no filler:",
   deliverables: [
@@ -81,7 +81,7 @@ export const assessment = {
     },
     {
       label: 'What I’d build, and in what order.',
-      body: 'The recommendation, sequenced. What’s first, what’s load-bearing, what can wait.',
+      body: 'The recommendation, sequenced. What’s first, what can wait.',
     },
     {
       label: 'What it costs and how long.',
