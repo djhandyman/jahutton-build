@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FlowDiagram from '../../components/FlowDiagram.astro';
 import { projects } from '../../data/projects.js';
 
 // Prerender one detail page per project that has a slug (the flagships).
@@ -30,6 +31,11 @@ const description = project.teaser || `${project.blurb.slice(0, 152)}…`;
           <a class="btn" href={project.link.href} rel="noopener">{project.link.label} →</a>
         </p>
       )}
+
+      {/* Opt-in per project: `diagram: true` renders the request-flow exhibit. Only the
+          site's own case study uses it — it's specific to this stack, not a reusable
+          "architecture" slot. Data lives in src/data/colophon.js. */}
+      {project.diagram && <FlowDiagram />}
 
       {project.gallery?.map((pair) => (
         <figure class="ba">

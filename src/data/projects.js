@@ -22,6 +22,9 @@
 //     the page appends .webp for the <source> and .jpg for the <img>, matching the
 //     headshot/hero convention. width/height are the real pixel dims (they reserve
 //     layout space so the page doesn't jump). Assets live in public/images/work/<slug>/.
+//   diagram — optional `true` on slugged projects: renders the request-flow exhibit
+//     (src/components/FlowDiagram.astro, data in src/data/colophon.js). Specific to this
+//     site's own case study — it is not a general "architecture diagram" slot.
 
 export const projects = [
   {
@@ -232,6 +235,35 @@ export const projects = [
     blurb:
       'A start-up medical practice needed everything a working clinic runs on stood up before it could see patients — and none of it existed yet. I stood it up end to end: the branding and web presence out front, and the SaaS systems and integrations behind them. From a blank sheet to the technology backbone a new practice needed to open and operate.',
     link: null,
+  },
+  {
+    // ⚠️ DRAFT — added 2026-07-27 so the flow diagram can be reviewed in its real context.
+    // NOT approved for launch. Delete this object to remove the card and its detail page.
+    //
+    // Copy below is Claude's "Frame 3" draft from .temp/CASE-STUDY-OPTIONS.md, placed here to
+    // be judged, not shipped. Per .temp/voice-and-style.md this is the one project where the
+    // writing IS the product — it should end up in Jon's words.
+    //
+    // Position: LAST on purpose. `index.astro` features projects.slice(0, 4), so it stays off
+    // the homepage until Jon decides the position-4 question (see CASE-STUDY-OPTIONS.md →
+    // "The homepage slot question"). Move it up to feature it.
+    //
+    // TODO(jon): pick the frame, then rewrite the blurb — options doc has all three.
+    // TODO(jon): the `link` below assumes the repo goes public. It 404s until it does —
+    //   set link to null if you launch this card before flipping the repo.
+    // TODO(jon): confirm the slug. 'this-site' reads plainly in the URL; 'colophon' is the
+    //   other candidate if you take the colophon framing.
+    slug: 'this-site',
+    title: 'This Website',
+    category: 'software · systems',
+    role: 'Designer / builder',
+    status: null,
+    teaser:
+      'One person, evening hours, and a working site with three live integrations behind it.',
+    blurb:
+      'I built this in the hours around a full-time job and a kitchen remodel. That’s the point. It isn’t a demo — there are three live integrations behind it, real spam protection, and a database. Four dependencies, no framework, no CSS library, no CMS. The speed comes from knowing what to leave out and using AI where it actually helps.',
+    link: { href: 'https://github.com/djhandyman/jahutton-build', label: 'Read the source' },
+    diagram: true,
   },
 ];
 
