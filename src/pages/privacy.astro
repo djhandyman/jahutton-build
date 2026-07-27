@@ -1,0 +1,113 @@
+---
+// Privacy policy. Presentation only — all copy lives in src/data/privacy.js.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { privacy } from '../data/privacy.js';
+
+// Rendered as a plain date so the page doesn't depend on the visitor's locale.
+const updated = new Date(`${privacy.updated}T00:00:00Z`).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+---
+<BaseLayout
+  title={`${privacy.title} — Jonathan A. Hutton`}
+  description="What jahutton.build collects, who else touches it, and how to have it deleted. No analytics, no tracking, no advertising."
+>
+  <section class="section">
+    <div class="container privacy">
+      <h1>{privacy.title}</h1>
+      <p class="privacy__updated">Last updated {updated}</p>
+      <p class="privacy__lead">{privacy.lead}</p>
+
+      <div class="privacy__summary">
+        <h2>{privacy.summary.heading}</h2>
+        <ul>
+          {privacy.summary.points.map((point) => <li>{point}</li>)}
+        </ul>
+      </div>
+
+      {privacy.sections.map((section) => (
+        <section class="privacy__section">
+          <h2>{section.heading}</h2>
+          {section.body && <p>{section.body}</p>}
+
+          {section.groups?.map((group) => (
+            <div class="privacy__group">
+              <h3>{group.name}</h3>
+              <ul>
+                {group.items.map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          ))}
+
+          {section.links && (
+            <ul class="privacy__services">
+              {section.links.map((svc) => (
+                <li>
+                  <a href={svc.href} rel="noopener nofollow">{svc.name}</a>
+                  <span> — {svc.role}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
+
+      <section class="privacy__section">
+        <h2>{privacy.contact.heading}</h2>
+        <p>{privacy.contact.body}</p>
+        <p><a class="btn" href={privacy.contact.cta.href}>{privacy.contact.cta.label}</a></p>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .privacy { max-width: var(--measure); }
+  .privacy__updated {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    margin-top: calc(var(--space-2) * -1);
+  }
+  .privacy__lead { font-size: var(--text-lg); }
+
+  /* The summary carries the whole policy for most readers — give it the weight to match. */
+  .privacy__summary {
+    margin: var(--space-8) 0;
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+  .privacy__summary h2 { font-size: var(--text-lg); margin: 0 0 var(--space-3); }
+  .privacy__summary ul { margin: 0; padding-left: var(--space-6); }
+  .privacy__summary li { margin-bottom: var(--space-2); }
+  .privacy__summary li:last-child { margin-bottom: 0; }
+
+  .privacy__section { margin-top: var(--space-12); }
+  .privacy__section h2 { font-size: var(--text-xl); margin-bottom: var(--space-4); }
+
+  .privacy__group { margin-top: var(--space-6); }
+  .privacy__group h3 {
+    font-size: var(--text-base);
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+  .privacy__group ul { margin: 0; padding-left: var(--space-6); }
+  .privacy__group li { margin-bottom: var(--space-2); }
+
+  .privacy__services { list-style: none; margin: var(--space-6) 0 0; padding: 0; }
+  .privacy__services li {
+    margin-bottom: var(--space-4);
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--color-border);
+  }
+  .privacy__services a { font-weight: 600; }
+  .privacy__services span { color: var(--color-text-muted); }
+</style>
