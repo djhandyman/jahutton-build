@@ -83,7 +83,7 @@ is required for a real send.
 `src/data/projects.js` copy is drafted around the through-line "I turn organizational ambiguity into
 finished, working structure." When editing project copy:
 
-- **Write as Jon, per `docs/voice-and-style.md`.** That guide is the quality bar / anti-slop filter
+- **Write as Jon, per `.temp/voice-and-style.md`.** That guide is the quality bar / anti-slop filter
   for site microcopy and project blurbs: concrete over abstract, short sentences that land, em-dashes,
   no smarmy overwriting or decorative metaphor. Jon does *not* use AI for writing he cares about
   (the book, the essays) — don't draft those.

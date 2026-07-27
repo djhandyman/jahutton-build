@@ -90,7 +90,7 @@ export const contact = {
 
 // "Build Assessment" — the paid diagnostic (see .temp/PLANNING.md → Go-to-market → The diagnostic
 // offer). Fixed-scope, written deliverable, $1,000 credited toward the build. Copy written as Jon
-// per docs/voice-and-style.md. DRAFT: the /assessment page renders but is intentionally NOT in the
+// per .temp/voice-and-style.md. DRAFT: the /assessment page renders but is intentionally NOT in the
 // nav and not linked anywhere yet — pending Jon's sign-off on shape, price, and name.
 export const assessment = {
   title: 'Build Assessment',

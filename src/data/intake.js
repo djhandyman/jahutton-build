@@ -16,7 +16,7 @@
 import { contact } from './site.js';
 
 export const intake = {
-  // Short lead above the wizard (plainest register, per docs/voice-and-style.md).
+  // Short lead above the wizard (plainest register, per .temp/voice-and-style.md).
   lead:
     'A few questions before we talk. Takes a couple of minutes, and I read every one myself — it’s how I show up to the call already knowing your situation.',
 
