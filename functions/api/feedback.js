@@ -27,7 +27,25 @@
 
 const DEFAULT_MODEL = 'claude-sonnet-4-6';
 const DEFAULT_FOLLOWUP_RATE = 0.3;
-const CATEGORIES = ['clarity', 'tone', 'technical depth', 'visual design', 'missing content', 'other'];
+// The tag vocabulary Claude classifies into. `category_tags` is an unconstrained text[] in
+// Postgres (supabase/migrations/0001_feedback.sql), so this list is the only definition —
+// adding to it needs no migration. Tags added here are NOT backfilled onto existing rows.
+//
+// positioning / call to action / credibility were added 2026-07-27 for the content beta
+// (.temp/BETA-TEST-PLAN.md). Without them, "I can't tell what this guy does" collapsed into
+// `clarity` or `other` — which is precisely the signal the beta exists to measure. They're
+// general-purpose, not beta-scoped; leave them in afterwards.
+const CATEGORIES = [
+  'clarity',
+  'tone',
+  'positioning',      // what he does / who for — is it landing?
+  'call to action',   // the ask itself: contact, Build Assessment, next step
+  'credibility',      // do you believe he can do it — proof, evidence, trust
+  'technical depth',
+  'visual design',
+  'missing content',
+  'other',
+];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const json = (ok, status, extra = {}) =>
