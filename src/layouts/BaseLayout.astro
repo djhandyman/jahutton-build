@@ -2,6 +2,7 @@
 import '@fontsource-variable/fraunces';
 import '@fontsource-variable/inter';
 import '../styles/global.css';
+import Banner from '../components/Banner.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FeedbackWidget from '../components/FeedbackWidget.astro';
@@ -53,6 +54,7 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <Banner />
     <Header />
     <main id="main">
       <slot />

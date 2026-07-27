@@ -1,0 +1,133 @@
+---
+// Pre-launch beta banner — renders above the header on every page (BaseLayout).
+// Copy and the on/off switch live in src/data/site.js → `banner`; this file is
+// presentation only, per the "content is data, not markup" convention.
+//
+// Deep teal ground rather than rust: rust is the CTA/link accent everywhere else,
+// and a full-width rust strip would out-shout the actual calls to action.
+//
+// Progressive enhancement — with JS off the banner still renders and reads correctly;
+// only the dismiss button and the widget trigger are JS-dependent, and both remove
+// themselves when they can't work.
+import { banner } from '../data/site.js';
+---
+{banner.enabled && (
+  <aside class="beta" data-beta-banner aria-label={banner.label}>
+    <div class="container beta__inner">
+      <p class="beta__text">
+        <span class="beta__label">{banner.label}</span>
+        {banner.text}{' '}
+        {/* Opens the feedback widget directly. Hidden until the script confirms the
+            widget is actually on the page; the no-JS/no-widget path shows the plain
+            "…button in the corner" sentence instead. */}
+        <button class="beta__cta" type="button" data-beta-cta hidden>{banner.ctaLabel}</button>
+        <span class="beta__fallback" data-beta-fallback>{banner.textFallback}</span>{' '}
+        {banner.tail}
+      </p>
+      <button class="beta__dismiss" type="button" data-beta-dismiss hidden aria-label={banner.dismissLabel}>
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </aside>
+)}
+
+{banner.enabled && (
+  <script>
+    const banner = document.querySelector('[data-beta-banner]');
+    if (banner) {
+      const KEY = 'beta-banner-dismissed';
+      // sessionStorage, not localStorage: dismissing quiets it for this visit, but a
+      // tester who comes back later is reminded again that the site isn't public.
+      let dismissed = false;
+      try { dismissed = sessionStorage.getItem(KEY) === '1'; } catch {}
+      if (dismissed) {
+        banner.remove();
+      } else {
+        const dismiss = banner.querySelector('[data-beta-dismiss]');
+        dismiss.removeAttribute('hidden');
+        dismiss.addEventListener('click', () => {
+          banner.remove();
+          try { sessionStorage.setItem(KEY, '1'); } catch {}
+        });
+
+        // Swap the "button in the corner" sentence for a real button — but only if the
+        // feedback widget is present, so this never points at something that isn't there.
+        const widgetToggle = document.querySelector('[data-fw-toggle]');
+        if (widgetToggle) {
+          const cta = banner.querySelector('[data-beta-cta]');
+          banner.querySelector('[data-beta-fallback]').remove();
+          cta.removeAttribute('hidden');
+          cta.addEventListener('click', () => {
+            if (widgetToggle.getAttribute('aria-expanded') !== 'true') widgetToggle.click();
+            document.querySelector('#fw-text')?.focus();
+          });
+        }
+      }
+    }
+  </script>
+)}
+
+<style>
+  .beta {
+    background: var(--color-secondary);
+    color: var(--paper);
+    font-size: var(--text-sm);
+  }
+  .beta__inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+  }
+  .beta__text {
+    margin: 0;
+    max-width: none; /* global.css caps p at --measure; this is a full-width strip */
+    line-height: 1.5;
+  }
+  .beta__label {
+    display: inline-block;
+    margin-right: var(--space-2);
+    padding: 0.1em 0.5em;
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.16);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.8em;
+  }
+
+  /* Reads as a link, not a second button competing with the page's real CTAs. */
+  .beta__cta {
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+  .beta__cta:hover { text-decoration-thickness: 2px; }
+
+  .beta__dismiss {
+    flex: 0 0 auto;
+    align-self: center;
+    padding: 0 var(--space-1);
+    background: none;
+    border: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.7;
+    cursor: pointer;
+  }
+  .beta__dismiss:hover { opacity: 1; }
+
+  .beta__cta:focus-visible,
+  .beta__dismiss:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 2px;
+  }
+</style>

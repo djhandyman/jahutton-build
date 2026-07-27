@@ -27,6 +27,32 @@ export const site = {
     import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA',
 };
 
+// Pre-launch beta banner — a strip above the header on every page, aimed at the handful
+// of people looking the site over before it's announced. Two jobs: say plainly that this
+// isn't public yet, and point at the feedback widget.
+//
+// TOGGLE: flip `enabled` to false and redeploy — that's the whole switch. It can also be
+// forced off at build time without a code edit by setting PUBLIC_BETA_BANNER=false as a
+// Pages env var (any other value, or unset, leaves `enabled` in control).
+//
+// Deliberately NOT wired to robots/noindex (decision 2026-07-27, Jon): the site stays
+// crawlable through the beta so early indexing accumulates before launch.
+//
+// TODO(jon): approve this copy — it's drafted, not yours yet.
+export const banner = {
+  enabled: import.meta.env.PUBLIC_BETA_BANNER !== 'false',
+  label: 'Private beta',
+  // Kept to two sentences: the fact, then the ask. Any longer and it stops being a banner.
+  text: 'This site isn’t public yet — you’re seeing it early. Something confusing, broken, or plain wrong?',
+  // Label for the inline button that opens the feedback widget. If the widget isn't on the
+  // page for some reason, the button removes itself and `textFallback` runs instead.
+  ctaLabel: 'Tell me',
+  textFallback: 'Use the Feedback button in the corner.',
+  // Trailing line after the CTA. Short on purpose — it lands the whole thing.
+  tail: 'That’s what it’s for.',
+  dismissLabel: 'Dismiss',
+};
+
 // Contact page copy. The `prompts` list is the CTA's real work: it lets a visitor
 // recognize their own situation instead of decoding category language ("fractional",
 // "zero-to-one"). Each line is anchored to work that actually exists on /work —
