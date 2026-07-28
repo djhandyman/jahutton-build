@@ -118,70 +118,74 @@ export const contact = {
 // Structure is deliberate: the Build Assessment comes FIRST, because it is the front door to all
 // three shapes rather than a fourth product sitting beside them.
 //
-// TODO(jon): this whole export is DRAFT copy — approve or rewrite before launch. Two specific
-// calls to make: (1) whether to publish price ranges for the build/retainer shapes (the anchors
-// in .temp/PLANNING.md are explicitly un-pressure-tested, so nothing but the $1,000 assessment
-// price is stated here); (2) whether to name a real project under each shape — every project on
-// /work is real, but characterizing which shape each one was is your call, not mine.
+// REBUILT 2026-07-28 from Jon's own answers in .temp/services-copy-questions.md, after he read
+// the first draft and said it didn't sound like him. It didn't: it was lists, parallel triads,
+// and quotable aphorisms, and his writing is almost none of those.
+//
+// MOSTLY HIS SENTENCES NOW. `lead`, `price`, `notItems`, and `notTail` are near-verbatim; `intro`
+// is his answer to "what are they actually buying" turned from third person to second and
+// otherwise untouched. Before editing any of it, read his answers — the bar is his phrasing, not
+// smoother phrasing. Two things that look like slips and are his, on purpose:
+//   • "leverage modern technology" — the guide flags "leverage", but he wrote it. His word wins.
+//   • "go forth and build it" — the driest line on the page. Don't soften it.
+//
+// TODO(jon): still open — (1) the $1,000 below is unchanged pending your call, see
+// .temp/ASSESSMENT-PRICING.md; (2) the three shapes are the one part with no source in your
+// answers ("those are fine for now"), so the bodies are still mine — rewrite if they're off.
 export const services = {
   title: 'How I work',
-  lead:
-    'Most of the people who write to me know something isn’t working. What they don’t have is a plan — nobody has sat down and written out what to do about it. That’s usually where I start.',
+  // His answer to "someone at a party asks what you do" — verbatim, and it earns the top of
+  // the page for the same reason it worked at the party: no jargon, and it covers wires and
+  // walls as well as software.
+  lead: 'I build things and solve problems in digital and physical spaces.',
+  intro:
+    'What you get is partnership — the same energy that went into writing a book and building the production-grade apps I’ve built, someone who knows which questions to ask, and someone who can save you money by avoiding pricey platforms and building the thing yourself.',
 
   startHeading: 'Start here',
   start:
-    'The Build Assessment is the first step for almost everyone. An hour of questions, then a short written plan: what’s actually going on, what I’d build and in what order, what it costs, and which parts you could handle without me. $1,000, and it comes off the price of the work if we build together.',
+    'Most people start with a Build Assessment. We talk for an hour, and a week later you get a short written plan: what’s going on, what I’d build and in what order, what it costs, and which parts you could handle without me. $1,000, credited toward the work if we build together.',
   startCtaLabel: 'About the Build Assessment',
   startHref: '/assessment/',
 
-  shapesHeading: 'Then one of three shapes',
+  shapesHeading: 'Three shapes the work takes',
   shapes: [
     {
       name: 'Zero-to-one',
       when: 'Nothing exists yet.',
-      body: 'An idea, a mission, a mandate — and no machinery behind it. I design it, build it, and hand you something that runs. Software, the systems around it, and the documentation that keeps it running when I’m gone.',
+      body: 'An idea or a mission with nothing underneath it. I design it, build it, and hand you something that runs.',
     },
     {
       name: 'Build-with-you',
-      when: 'Something’s half-built.',
-      body: 'A project that stalled, a platform that no longer fits, a process held together by email and spreadsheets. I come in, finish it, and leave it in a state your team can actually maintain.',
+      when: 'Something stalled.',
+      body: 'A project that stopped moving, or a platform that no longer fits. I come in and finish it, and leave it somewhere your team can keep it running.',
     },
     {
       name: 'Fractional',
-      when: 'You need the thinking, ongoing.',
-      body: 'Roughly a day a week, for a fixed monthly number. Architecture, systems, org structure, and straight answers about what’s worth building with AI and what isn’t. For organizations that need the judgment but not a full-time hire.',
+      when: 'Ongoing, roughly a day a week.',
+      body: 'Architecture, systems, and straight answers about what’s worth building with AI — for organizations that need the judgment but not a full-time hire.',
     },
   ],
 
   priceHeading: 'How I price',
-  priceIntro: 'Two rules, and I hold both of them.',
-  priceRules: [
-    {
-      label: 'Fixed price per scoped outcome.',
-      body: 'Never hourly. You shouldn’t pay more because I worked slowly, and I shouldn’t earn less because I worked fast. We agree on the thing being built and what it costs, in writing, before money moves.',
-    },
-    {
-      label: 'The first step is paid.',
-      body: 'The assessment is where the thinking happens, so that’s the part I charge for. If you hire me for the build, it’s credited — so it costs you nothing in the end.',
-    },
-  ],
+  // Verbatim. It replaced a manufactured aphorism about working slowly vs. fast, and it says
+  // the same thing better by tying the pricing to the writing.
+  price:
+    'I like to be as clear in my pricing as I am in my writing, and a fixed model works better for that than an hourly rate.',
+  priceDetail:
+    'We agree on what’s being built and what it costs before any money moves. The assessment is the one thing paid up front, and it comes off the price of the build.',
 
-  notHeading: 'What I don’t do',
-  notItems: [
-    'Bill by the hour.',
-    'Pretend to be an agency. It’s me. If the job needs a crew, I’ll say so and help you find one.',
-    'Sell you something you could do yourself. I’d rather tell you than bill you for it.',
-  ],
+  notHeading: 'What I’m not the right person for',
+  notItems:
+    'I’m probably not interested in projects involving fintech, crypto, multi-level or affiliate marketing, gaming, or lifestyle brands. My career is grounded in public service, small business, and nonprofits — I’ve done some work for a bootstrapped startup, but I don’t come from that world. What I do have is a strong grasp on how to leverage modern technology to build tools and apps that make life easier for people.',
+  notTail:
+    'And if you’re looking for free advice, or you already have the confidence to turn your ideas into reality — go forth and build it.',
 
   // The closing question is Jon's own, lifted verbatim from the portfolio-site entry in
   // .temp/project-copy.md — it is how he actually ends a piece of writing aimed at a reader
   // he wants to hear from. Don't replace it with a manufactured CTA.
-  // TODO(jon): the Unflappable entry in that same file ends "And now we are going to direct
-  // that same energy into your problems, projects, and ideas." That line would work here too,
-  // above the buttons — but it's yours and it's craft, so it's your call whether to move it.
   ctaHeading: 'Where to start',
   ctaLead:
-    'If you already know what you want built, skip the assessment and just tell me. If you don’t — and most people don’t, or they wouldn’t be writing — that’s exactly what it’s for. What would you like to start building together?',
+    'If you already know what you want built, skip the assessment and just tell me. What would you like to start building together?',
   ctaPrimaryLabel: 'Start a Build Assessment',
   ctaPrimaryHref: '/assessment/',
   ctaSecondaryLabel: 'Just talk first →',

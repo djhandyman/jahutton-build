@@ -10,6 +10,7 @@ import { services } from '../data/site.js';
     <div class="container services">
       <h1>{services.title}</h1>
       <p class="services__lead">{services.lead}</p>
+      <p class="services__intro">{services.intro}</p>
 
       {/* The assessment leads the page on purpose — it is the front door to all three
           shapes below, not a fourth option sitting beside them. */}
@@ -31,17 +32,12 @@ import { services } from '../data/site.js';
       </ul>
 
       <h2>{services.priceHeading}</h2>
-      <p>{services.priceIntro}</p>
-      <ul class="services__rules">
-        {services.priceRules.map((r) => (
-          <li><strong>{r.label}</strong> {r.body}</li>
-        ))}
-      </ul>
+      <p class="services__price">{services.price}</p>
+      <p>{services.priceDetail}</p>
 
       <h2>{services.notHeading}</h2>
-      <ul class="services__not">
-        {services.notItems.map((n) => <li>{n}</li>)}
-      </ul>
+      <p>{services.notItems}</p>
+      <p>{services.notTail}</p>
 
       <div class="services__cta">
         <h2>{services.ctaHeading}</h2>
@@ -57,7 +53,15 @@ import { services } from '../data/site.js';
 
 <style>
   .services { max-width: var(--measure); }
-  .services__lead { font-size: var(--text-lg); }
+  /* The party-line answer opens at display size — it's one short sentence and it should land
+     before anything else on the page does. */
+  .services__lead {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    line-height: 1.25;
+    margin-bottom: var(--space-6);
+  }
+  .services__intro { font-size: var(--text-lg); }
   .services h2 { margin-top: var(--space-12); }
 
   /* The assessment block is the one thing on this page that gets a container.
@@ -88,11 +92,9 @@ import { services } from '../data/site.js';
   }
   .shape__body { margin-bottom: 0; }
 
-  .services__rules { list-style: none; margin: var(--space-4) 0 0; padding: 0; }
-  .services__rules li { margin-bottom: var(--space-4); }
-
-  .services__not { margin: var(--space-4) 0 0; padding-left: var(--space-6); }
-  .services__not li { margin-bottom: var(--space-2); }
+  /* Jon's own sentence about pricing being as clear as his writing — it carries the section,
+     so it gets the size and the rest of the paragraph sits under it at body weight. */
+  .services__price { font-size: var(--text-lg); }
 
   .services__cta { margin-top: var(--space-12); }
   .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-6) 0 0; }
