@@ -43,13 +43,13 @@ export const banner = {
   enabled: import.meta.env.PUBLIC_BETA_BANNER !== 'false',
   label: 'Private beta',
   // Kept to two sentences: the fact, then the ask. Any longer and it stops being a banner.
-  text: 'This site isn’t public yet — thanks for agreeing to test it out for me. Please use the feedback widget to provide any inputs you have on what I can improve.',
+  text: 'This site isn’t public yet — thanks for agreeing to test it out. Please use the feedback widget below to provide any inputs you have.',
   // Label for the inline button that opens the feedback widget. If the widget isn't on the
   // page for some reason, the button removes itself and `textFallback` runs instead.
-  ctaLabel: 'Tell me',
+  // ctaLabel: 'Tell me',
   textFallback: 'Use the Feedback button in the corner.',
   // Trailing line after the CTA. Short on purpose — it lands the whole thing.
-  tail: 'That’s what it’s for.',
+  // tail: 'That’s what it’s for.',
   dismissLabel: 'Dismiss',
 };
 

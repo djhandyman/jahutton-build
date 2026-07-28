@@ -17,12 +17,20 @@ import { banner } from '../data/site.js';
       <p class="beta__text">
         <span class="beta__label">{banner.label}</span>
         {banner.text}{' '}
+        {/* Everything after `text` is OPTIONAL — comment a field out in site.js and its
+            markup disappears with it. Without these guards an absent `ctaLabel` still
+            rendered the button, and the script below then unhid an empty, focusable,
+            underlined control where the fallback sentence used to be. */}
         {/* Opens the feedback widget directly. Hidden until the script confirms the
             widget is actually on the page; the no-JS/no-widget path shows the plain
             "…button in the corner" sentence instead. */}
-        <button class="beta__cta" type="button" data-beta-cta hidden>{banner.ctaLabel}</button>
-        <span class="beta__fallback" data-beta-fallback>{banner.textFallback}</span>{' '}
-        {banner.tail}
+        {banner.ctaLabel && (
+          <button class="beta__cta" type="button" data-beta-cta hidden>{banner.ctaLabel}</button>
+        )}
+        {banner.textFallback && (
+          <span class="beta__fallback" data-beta-fallback>{banner.textFallback}</span>
+        )}
+        {banner.tail && <> {banner.tail}</>}
       </p>
       <button class="beta__dismiss" type="button" data-beta-dismiss hidden aria-label={banner.dismissLabel}>
         <span aria-hidden="true">&times;</span>
@@ -52,10 +60,12 @@ import { banner } from '../data/site.js';
 
         // Swap the "button in the corner" sentence for a real button — but only if the
         // feedback widget is present, so this never points at something that isn't there.
+        // `cta` is null whenever banner.ctaLabel is unset; in that case leave the fallback
+        // sentence alone, since it's then the only thing pointing at the widget.
         const widgetToggle = document.querySelector('[data-fw-toggle]');
-        if (widgetToggle) {
-          const cta = banner.querySelector('[data-beta-cta]');
-          banner.querySelector('[data-beta-fallback]').remove();
+        const cta = banner.querySelector('[data-beta-cta]');
+        if (widgetToggle && cta) {
+          banner.querySelector('[data-beta-fallback]')?.remove();
           cta.removeAttribute('hidden');
           cta.addEventListener('click', () => {
             if (widgetToggle.getAttribute('aria-expanded') !== 'true') widgetToggle.click();
