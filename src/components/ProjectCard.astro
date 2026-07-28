@@ -3,7 +3,9 @@ const { title, category, role, status, teaser, blurb, slug } = Astro.props;
 // Slugged projects link to their detail page and show the short teaser + "Read more".
 // Teaser-only projects render the full blurb inline with no link.
 const href = slug ? `/work/${slug}` : null;
+// `blurb` may be a string or an array of paragraphs — normalize either way.
 const body = href ? teaser : blurb;
+const paragraphs = Array.isArray(body) ? body : [body];
 ---
 <article class="card">
   <p class="card__category">{category}</p>
@@ -12,7 +14,7 @@ const body = href ? teaser : blurb;
     {status && <span class="card__status">{status}</span>}
   </h2>
   {role && <p class="card__role">{role}</p>}
-  <p class="card__blurb">{body}</p>
+  {paragraphs.map((p) => <p class="card__blurb">{p}</p>)}
   {href && <p class="card__more"><a href={href}>Read more →</a></p>}
 </article>
 
@@ -52,6 +54,8 @@ const body = href ? teaser : blurb;
   }
   .card__role { color: var(--color-text-muted); margin-bottom: var(--space-3); font-weight: 600; }
   .card__blurb { margin: 0; max-width: none; }
+  /* Teaser-only cards can carry multi-paragraph copy; space the runs, not the last one. */
+  .card__blurb + .card__blurb { margin-top: var(--space-3); }
   /* Push the read-more affordance to the bottom so mixed-length cards align. */
   .card__more { margin: var(--space-4) 0 0; }
   .card__more a {

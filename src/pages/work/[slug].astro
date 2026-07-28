@@ -11,8 +11,10 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props;
-// Per-page SEO: lead with the teaser, fall back to a trimmed blurb.
-const description = project.teaser || `${project.blurb.slice(0, 152)}…`;
+// `blurb` is a string for single-paragraph copy, or an array of paragraphs.
+const paragraphs = Array.isArray(project.blurb) ? project.blurb : [project.blurb];
+// Per-page SEO: lead with the teaser, fall back to a trimmed first paragraph.
+const description = project.teaser || `${paragraphs[0].slice(0, 152)}…`;
 ---
 <BaseLayout title={`${project.title} — Work — Jonathan A. Hutton`} description={description}>
   <section class="section">
@@ -24,7 +26,7 @@ const description = project.teaser || `${project.blurb.slice(0, 152)}…`;
         {project.role}{project.status && <span class="project__status"> · {project.status}</span>}
       </p>
 
-      <p class="project__body">{project.blurb}</p>
+      {paragraphs.map((p) => <p class="project__body">{p}</p>)}
 
       {project.link && (
         <p class="project__cta">
@@ -78,6 +80,7 @@ const description = project.teaser || `${project.blurb.slice(0, 152)}…`;
   .project__meta { color: var(--color-text-muted); font-weight: 600; margin-bottom: var(--space-8); }
   .project__status { font-weight: 400; }
   .project__body { font-size: var(--text-lg); max-width: var(--measure); }
+  .project__body + .project__body { margin-top: var(--space-6); }
   .project__cta { margin-top: var(--space-8); }
 
   /* Before/after gallery. Wider than --measure (the body text) but still short of the

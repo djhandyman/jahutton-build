@@ -14,7 +14,10 @@
 // WITHOUT a slug is teaser-only: its card renders the `blurb` inline, no link.
 // Promote/demote a project between the two tiers by adding/removing its `slug`.
 //   teaser — short card hook (slugged projects only)
-//   blurb  — the full paragraph (detail-page body; or the card body when teaser-only)
+//   blurb  — the full body (detail page; or the card body when teaser-only). A string for
+//     a single paragraph, or an ARRAY OF STRINGS for multi-paragraph copy — both the card
+//     and the detail page normalize it and render one <p> per entry. Plain text only:
+//     it goes through Astro's escaping, so no markdown/HTML (use “quotes”, not _italics_).
 //   link   — optional external CTA shown on the detail page, { href, label }
 //   gallery — optional photos on the detail page (slugged projects only).
 //     An array of before/after pairs: { caption, before: <img>, after: <img> }, where
@@ -34,13 +37,15 @@ export const projects = [
     // images on Cloudflare R2. Cut costs + grew profitability; simpler inventory. NOT claiming
     // revenue growth (net grew, gross didn't — ad-spend/market).
     // TODO(jon): both repos are private — make bellomodo-catalog public if you ever want to link it.
+    // Teaser replaced 2026-07-28 with Jon's own copy (.temp/project-copy.md), verbatim. The blurb
+    // is the earlier draft, kept because it carries the specifics his line summarizes.
     slug: 'bello-modo',
     title: 'Bello Modo',
     category: 'organizations',
     role: 'Operator',
     status: null,
     teaser:
-      'Stepped in as operator through an ownership sale — re-platformed a 20,000-SKU store and grew profitability.',
+      'From acquisition, stabilization, and tech stack migration to increased profitability. I worked closely with a solo operator through complex challenges.',
     blurb:
       'When this specialty e-commerce business changed hands, I stepped in at the operator level — not just advising — to steady it through the transition and re-platform its 20,000-plus SKUs, migrating the store from WooCommerce to BigCommerce and ultimately Shopify, delivered on schedule. Costs came down, profitability went up, and inventory got dramatically simpler — helped by a custom, searchable catalog I built from the Shopify data to handle the bulk-lot inventory details — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
     link: null, // store + catalog repos are private; nothing public to link yet
@@ -51,15 +56,18 @@ export const projects = [
     //   Cloudflare-hosted. Woven into the blurb as a light evidence tag.
     // Outcome (2026-07-23): reframed from vague "flying community platform" to its real job —
     // volunteer/logistics coordination for the comps; cut >80% of email; reusable data repository.
+    // 2026-07-28: Jon's copy (.temp/project-copy.md) supplies the opening — his "every inquiry was
+    // an email / every application a spreadsheet line item" triad is the concrete version of the
+    // mess. It leads both the teaser and the blurb; the verified specifics follow it.
     slug: 'chelancomps',
     title: 'chelancomps.org',
     category: 'software · systems',
     role: 'Solo builder',
     status: 'Live',
     teaser:
-      'A solo-built platform that cut competition volunteer coordination’s email load by more than 80%.',
+      'Every inquiry was an email, every application a spreadsheet line item, and every year the team started from scratch. I fixed that.',
     blurb:
-      'Volunteer coordination for the Chelan paragliding competitions used to run on scattered email — applications, logistics, guidelines, all handled by hand. I designed and shipped a live platform for it, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut that back-and-forth by more than 80%, lets organizers recruit proven volunteers from past events and vet new applicants quickly, and keeps every event’s data in a reusable repository that carries forward to the next comp. Built with React and TypeScript on a Supabase backend, hosted on Cloudflare.',
+      'Every inquiry was an email, every application a spreadsheet line item, and every year the team started from scratch. I fixed that — designing and shipping a live platform for the Chelan paragliding competitions, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut the back-and-forth by more than 80% and gave the organizers better tools and process: recruit proven volunteers from past events, vet new applicants quickly, and keep every event’s data in a reusable repository that carries forward to the next comp. Less administration, more time on the work that actually matters. Built with React and TypeScript on a Supabase backend, hosted on Cloudflare.',
     link: { href: 'https://chelancomps.org', label: 'Visit the live site' },
   },
   {
@@ -68,10 +76,13 @@ export const projects = [
     // (the LinkedIn draft says "four-city" — Jon corrected it to three; fix that draft too).
     // Imprint/site is Unflappable Press. Nothing beyond that is claimed here.
     // Distribution confirmed by Jon (2026-07-23): Amazon KDP + IngramSpark.
-    // TODO(jon): the remaining production specifics you want to claim — editor, cover designer,
-    //   typesetting, ISBN. Name only the parts you actually did yourself.
-    // TODO(jon): which three cities, and audience/turnout if you want a number. Copies sold too,
-    //   if you want it public — leave it out entirely if you'd rather not.
+    // 2026-07-28: Jon's copy (.temp/project-copy.md) landed and answered two of the old TODOs —
+    // the three cities (Olympia, Seattle, Issaquah) and the timeline (10 months concept → on-sale).
+    // Second paragraph is his, verbatim; it's the only place on the site the work talks about what
+    // it cost him, so it stays in his words. Don't rewrite it.
+    // TODO(jon): the remaining production specifics you want to claim — cover designer, typesetting,
+    //   ISBN, and your editor's name if you want it here. Name only the parts you actually did.
+    // TODO(jon): turnout or copies sold, if you want a number public — fine to leave out entirely.
     // TODO(jon): launch date, so the detail page can carry a "published <month year>" line.
     slug: 'unflappable',
     title: 'Unflappable: Soaring Beyond a Diagnosis',
@@ -79,37 +90,38 @@ export const projects = [
     role: 'Author / self-publisher',
     status: 'Published',
     teaser:
-      'Wrote a memoir, published it myself, and took it on a three-city tour — the whole thing, end to end.',
-    blurb:
-      "A memoir about rare disease, paragliding, and finding healing when a cure isn't on the table. I wrote it, and then I published it — which turned out to be its own build. Getting a book out yourself means running every piece of it: the manuscript through editing and production, the cover and interior, distribution through Amazon KDP and IngramSpark, the launch, and then the part most writers skip, which is actually selling it. I planned and ran a three-city tour to do that. It's the same instinct as the rest of the work here — start from a blank sheet, and don't stop at the draft.",
+      'Ten months from concept to on-sale, then a book tour: Olympia, Seattle, Issaquah.',
+    blurb: [
+      "A memoir about rare disease, paragliding, and finding healing when a cure isn't on the table. Ten months from concept to on-sale. I wrote it, and then I published it, which turned out to be its own build: the manuscript through editing and production, working closely with an amazing editor and learning a lot along the way; the cover and the interior; distribution through Amazon KDP and IngramSpark; the launch; and then the part most writers skip, which is actually selling it. That part was a book tour — Olympia, Seattle, Issaquah.",
+      'The process of writing this book changed me—I proved to myself in a very personal and tangible way that I can build complex and durable things, that I thrive when a project is daunting, requiring more effort than you can conceptualize before the work begins. And now we are going to direct that same energy into your problems, projects, and ideas.',
+    ],
     link: { href: 'https://unflappable.press', label: 'Read more at unflappable.press' },
   },
   {
-    // Added 2026-07-23 (Jon's call). Framing chosen: "builder, taken literally" — the hands-on
-    // craft, sitting alongside the kitchen remodel, NOT the "infrastructure that unblocked the
-    // work" angle. Teaser-only for now (no slug) per the Chelan Falls precedent: thin content
-    // gets a card, not a detail page. Promote it by adding a slug once the TODOs below land —
-    // a server closet photographs well, and the detail page has a photo slot waiting.
+    // Added 2026-07-23 (Jon's call). Framing: "builder, taken literally" — the hands-on craft,
+    // sitting alongside the kitchen remodel.
     //
-    // ⚠️ Everything in this blurb is from Jon verbatim: an Unraid build, the LAN, a server
-    // closet, and that it accelerated his ability to build. NOTHING else is claimed — no rack,
-    // no drive counts, no structured cabling, no cooling. Do not add specifics he hasn't given.
+    // PROMOTED to a detail page 2026-07-28: Jon supplied three real paragraphs
+    // (.temp/project-copy.md), which answered the hardware/what-it-does TODOs this card was
+    // waiting on. Body is his copy, near-verbatim — only cleanup: the markdown emphasis on
+    // "the cloud" became quotes (blurbs render as plain text), and Unraid is named in the third
+    // paragraph, carried over from the previous draft.
     //
-    // TODO(jon): the hardware, in your own concrete register — drives + usable capacity, the
-    //   box itself, how the closet is actually wired (drops? patch panel? dedicated circuit?
-    //   cooling?). This card lives or dies on real numbers, the way "20,000+ SKUs" does.
-    // TODO(jon): what actually runs on it, named. Which services earn their keep?
-    // TODO(jon): what it replaced, and the speed difference — you said it "really accelerated"
-    //   your ability to build. What did going from idea to running thing cost you before vs now?
+    // TODO(jon): the named services that earn their keep on the box, if you want them listed.
     // TODO(jon): photos of the closet + the build in progress. Best argument on the whole page
-    //   that "builder" is literal — and they'd unlock the detail page.
+    //   that "builder" is literal, and the detail page now has the gallery slot waiting.
+    slug: 'server-closet',
     title: 'LAN & Server Closet',
     category: 'physical spaces · systems',
     role: 'Design / build',
     status: null,
-    teaser: null,
-    blurb:
-      'I built the server closet the rest of this work runs on — an Unraid box and the network around it, designed and put together myself. It is the least visible thing on this page and one of the most useful: somewhere to run and keep my own infrastructure instead of renting all of it, which is a good part of why shipping solo is practical at all.',
+    teaser:
+      '8TB, an Intel i5, and a few hundred feet of ethernet — the box the rest of this work runs on.',
+    blurb: [
+      '8TB of storage. A mix of solid state and spinning drives, powered by an Intel i5 chip perfectly suited for this application. Deep research went into curating the components—I wanted to build this box once and not worry about upgrading it for a long time.',
+      'The closet also serves as the central hub for all the home networking equipment, which is now rack mounted, and the termination point for hundreds of feet of ethernet wire run throughout the home. It’s important to understand physical infrastructure, and the fact that so much of our digital lives is stored in the cloud abstracts this away most of the time. But really, “the cloud” is a box like this one, scaled to a degree that’s difficult to understand.',
+      'Functionally, having an on-premise server is great for development work. I’m not bogging down any of my daily driver machines, and I can control how the network traffic flows, adding additional safeguards. I can spin up VMs and containers on Unraid whenever I need and quickly build test environments and sandboxes. Having this machine wired into the network has been a big unlock for my workflow—if you want to build something similar, let’s talk.',
+    ],
     link: null,
   },
   {
@@ -237,31 +249,37 @@ export const projects = [
     link: null,
   },
   {
-    // ⚠️ DRAFT — added 2026-07-27 so the flow diagram can be reviewed in its real context.
-    // NOT approved for launch. Delete this object to remove the card and its detail page.
+    // Added 2026-07-27 so the flow diagram could be reviewed in its real context. Claude's
+    // "Frame 3" draft was REPLACED 2026-07-28 by Jon's own copy (.temp/project-copy.md) —
+    // this is the one project where the writing IS the product, so it's his words now.
+    // Cleanup only: typos (WSIWYG, "and AI helper", "inquires"), and the four-dependency
+    // count folded into his "small digital footprint" clause because it's the hardest
+    // evidence on the page. .temp/CASE-STUDY-OPTIONS.md is now history, not a live decision.
     //
-    // Copy below is Claude's "Frame 3" draft from .temp/CASE-STUDY-OPTIONS.md, placed here to
-    // be judged, not shipped. Per .temp/voice-and-style.md this is the one project where the
-    // writing IS the product — it should end up in Jon's words.
+    // ⚠️ ACCURACY FIX in paragraph two: Jon's draft said the AI helper summarizes and
+    // categorizes *contact form* submissions. It doesn't — `functions/api/contact.js` is
+    // email-only. Claude triage runs on the Build Assessment intake, and Claude tagging on
+    // the feedback widget. Reworded to "form submissions", which is true and doesn't name
+    // the assessment while it's still an unapproved private beta.
+    // TODO(jon): confirm that reword, or name the assessment outright once it launches.
     //
     // Position: LAST on purpose. `index.astro` features projects.slice(0, 4), so it stays off
-    // the homepage until Jon decides the position-4 question (see CASE-STUDY-OPTIONS.md →
-    // "The homepage slot question"). Move it up to feature it.
+    // the homepage until Jon decides the position-4 question. Move it up to feature it.
     //
-    // TODO(jon): pick the frame, then rewrite the blurb — options doc has all three.
     // TODO(jon): the `link` below assumes the repo goes public. It 404s until it does —
     //   set link to null if you launch this card before flipping the repo.
-    // TODO(jon): confirm the slug. 'this-site' reads plainly in the URL; 'colophon' is the
-    //   other candidate if you take the colophon framing.
     slug: 'this-site',
     title: 'This Website',
     category: 'software · systems',
     role: 'Designer / builder',
     status: null,
     teaser:
-      'One person, evening hours, and a working site with three live integrations behind it.',
-    blurb:
-      'I built this in the hours around a full-time job and a kitchen remodel. That’s the point. It isn’t a demo — there are three live integrations behind it, real spam protection, and a database. Four dependencies, no framework, no CSS library, no CMS. The speed comes from knowing what to leave out and using AI where it actually helps.',
+      'Open source tooling, free-tier platforms, and four dependencies — a pattern I’ve used repeatedly.',
+    blurb: [
+      'I’ve built a few of these before, back in the days when WYSIWYG editors were used to build websites. This time around I’ve zoomed in to showcase what I can build, covering primarily the span of the last three years. The site is well designed (imho), has a small digital footprint — four dependencies, no framework, no CSS library, no CMS — and costs almost nothing to host and run. jahutton.build represents a pattern I’ve used repeatedly: open source tooling plus free tier platforms plus thoughtful planning and design.',
+      'There are also some less obvious features that make life easier for me, which is another build principle: make something that works for you, that’s designed around the way you like to work, that’s enjoyable to use, that you can improve over time as your needs change. For this site, I’ve incorporated an AI helper in the background, invoked for a specific purpose—summarizing and categorizing form submissions—so I’m not sifting through dozens of emails, something I really dislike doing. Eventually, I might extend this functionality, adding triggers and automations that fire for certain types of inquiries.',
+      'There are infinite possibilities, but starting with a simple framework that you can extend over time is often the best way. What would you like to start building together?',
+    ],
     link: { href: 'https://github.com/djhandyman/jahutton-build', label: 'Read the source' },
     diagram: true,
   },
