@@ -86,7 +86,10 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   (first = solid pill, rest = ghost) and drops `rel="noopener"` for internal hrefs. The convention:
   a project whose blurb **ends by asking the reader for something** leads with a `/contact/` pill
   whose label echoes that closing line (Unflappable, server closet, this site); everything else
-  just links to the live thing. Don't give them all the same label.
+  just links to the live thing. Don't give them all the same label. An optional `testimonial`
+  ({ quote, name, role, org, photo, placeholder }) renders a quote block between the body and the
+  CTA — round photo, or an initials monogram when there's no headshot yet. **`placeholder: true`
+  prints a visible "not a real quote" flag; never strip it from invented copy.**
 
 - **`BaseLayout.astro`** wraps every page: imports fonts + global CSS, renders `Banner`/`Header`/
   `Footer`, sets `<title>`/description/canonical/OG tags (overridable via props), skip link.

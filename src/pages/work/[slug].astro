@@ -18,6 +18,18 @@ const description = project.teaser || `${paragraphs[0].slice(0, 152)}…`;
 // `link` is one CTA or several. The first is the primary pill; any others are ghosts —
 // which is how a project keeps its outbound link while the ask goes first.
 const ctas = project.link ? (Array.isArray(project.link) ? project.link : [project.link]) : [];
+// Testimonial. The avatar falls back to an initials monogram until a real photo exists,
+// so the block can go in before the headshot does.
+const quote = project.testimonial;
+const initials = quote
+  ? quote.name
+      .split(/\s+/)
+      .map((w) => w.replace(/[^a-zA-Z]/g, '').charAt(0))
+      .filter(Boolean)
+      .slice(0, 2)
+      .join('')
+      .toUpperCase()
+  : '';
 ---
 <BaseLayout title={`${project.title} — Work — Jonathan A. Hutton`} description={description}>
   <section class="section">
@@ -30,6 +42,42 @@ const ctas = project.link ? (Array.isArray(project.link) ? project.link : [proje
       </p>
 
       {paragraphs.map((p) => <p class="project__body">{p}</p>)}
+
+      {/* Proof sits between the story and the ask, so the CTA follows the evidence. */}
+      {quote && (
+        <figure class="quote">
+          <blockquote class="quote__text"><p>“{quote.quote}”</p></blockquote>
+          <figcaption class="quote__who">
+            {quote.photo ? (
+              <picture>
+                <source srcset={`${quote.photo.src}.webp`} type="image/webp" />
+                <img
+                  class="quote__avatar"
+                  src={`${quote.photo.src}.jpg`}
+                  width={quote.photo.width}
+                  height={quote.photo.height}
+                  alt={quote.photo.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            ) : (
+              <span class="quote__avatar quote__avatar--empty" aria-hidden="true">{initials}</span>
+            )}
+            <span class="quote__who-text">
+              <span class="quote__name">{quote.name}</span>
+              {(quote.role || quote.org) && (
+                <span class="quote__role">{[quote.role, quote.org].filter(Boolean).join(', ')}</span>
+              )}
+            </span>
+          </figcaption>
+          {/* Renders only while `placeholder: true`. Deleting that one flag is what makes a
+              testimonial live — nothing invented can reach the page looking real. */}
+          {quote.placeholder && (
+            <p class="quote__flag">Placeholder — not a real quote</p>
+          )}
+        </figure>
+      )}
 
       {ctas.length > 0 && (
         <p class="project__cta">
@@ -111,6 +159,58 @@ const ctas = project.link ? (Array.isArray(project.link) ? project.link : [proje
   .project__status { font-weight: 400; }
   .project__body { font-size: var(--text-lg); max-width: var(--measure); }
   .project__body + .project__body { margin-top: var(--space-6); }
+  /* Testimonial. Same measure as the body so it reads as part of the column, with a rust
+     edge and the surface tint to lift it off the page. */
+  .quote {
+    margin: var(--space-12) 0 0;
+    max-width: var(--measure);
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius);
+  }
+  .quote__text { margin: 0; }
+  .quote__text p {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+  .quote__who {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  .quote__avatar {
+    width: 56px;
+    height: 56px;
+    flex: none;
+    border-radius: 50%;
+    object-fit: cover; /* a non-square headshot crops to the circle instead of squashing */
+    background: var(--color-bg);
+  }
+  /* Stand-in until a real headshot lands — dashed, so it reads as "photo pending". */
+  .quote__avatar--empty {
+    display: grid;
+    place-items: center;
+    border: 1px dashed var(--color-border);
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+  }
+  .quote__who-text { display: flex; flex-direction: column; }
+  .quote__name { font-weight: 600; }
+  .quote__role { font-size: var(--text-sm); color: var(--color-text-muted); }
+  .quote__flag {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-sm);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
   /* Wraps to a stack on narrow screens rather than letting two pills collide. */
   .project__cta {
     margin-top: var(--space-8);

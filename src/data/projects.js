@@ -37,6 +37,14 @@
 //     the page appends .webp for the <source> and .jpg for the <img>, matching the
 //     headshot/hero convention. width/height are the real pixel dims (they reserve
 //     layout space so the page doesn't jump). Assets live in public/images/work/<slug>/.
+//   testimonial — optional client quote on the detail page, between the body and the CTA:
+//     { quote, name, role, org, photo, placeholder }. `photo` is the same extensionless
+//     { src, width, height, alt } shape as the gallery (rendered as a 56px circle, so supply
+//     a square-ish crop); omit it and the block shows an initials monogram instead, which is
+//     how a real quote can go live before its headshot does.
+//     ⚠️ `placeholder: true` prints a visible "not a real quote" flag under the block. NEVER
+//     remove that flag from invented copy — deleting it is the single step that says "a real
+//     person said this." A fabricated testimonial is the worst thing this site could ship.
 //   diagram — optional `true` on slugged projects: renders the request-flow exhibit
 //     (src/components/FlowDiagram.astro, data in src/data/colophon.js). Specific to this
 //     site's own case study — it is not a general "architecture diagram" slot.
@@ -81,6 +89,22 @@ export const projects = [
     blurb:
       'Every inquiry was an email, every application a spreadsheet line item, and every year the team started from scratch. I fixed that — designing and shipping a live platform for the Chelan paragliding competitions, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut the back-and-forth by more than 80% and gave the organizers better tools and process: recruit proven volunteers from past events, vet new applicants quickly, and keep every event’s data in a reusable repository that carries forward to the next comp. Less administration, more time on the work that actually matters. Built with React and TypeScript on a Supabase backend, hosted on Cloudflare.',
     link: { href: 'https://chelancomps.org', label: 'Visit the live site' },
+    // ⚠️ PLACEHOLDER, added 2026-07-28 to show the block's design. NOBODY SAID THIS. The name
+    // and role are bracketed and `placeholder: true` prints a visible flag, so it cannot be
+    // mistaken for real on the page. To make it live: replace every field with what the person
+    // actually said, add their `photo`, and delete the `placeholder` line.
+    // TODO(jon): ask a Chelan organizer for a real one. The concrete before/after is the ask —
+    //   what their week looked like running the comp on email vs. now. Get it in writing, and
+    //   confirm they're happy to be named with their photo on a public site.
+    testimonial: {
+      placeholder: true,
+      quote:
+        'Placeholder — a real quote goes here. Two or three sentences in their own words, concrete about what changed: what running the comp used to cost them, and what they do with that time now. Roughly this long reads well in the block.',
+      name: '[Name]',
+      role: '[Role]',
+      org: '[Organization]',
+      photo: null, // → /images/work/chelancomps/<name>.{webp,jpg}, square crop
+    },
   },
   {
     // Facts sourced from Jon's own LinkedIn draft (.temp/linkedin-refresh.md) + Jon direct
