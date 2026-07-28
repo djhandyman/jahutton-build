@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { services } from '../data/site.js';
+---
+<BaseLayout
+  title="Services — Jonathan A. Hutton"
+  description="How Jonathan A. Hutton works: a paid Build Assessment first, then zero-to-one, build-with-you, or fractional engagements. Fixed price per scoped outcome, never hourly."
+>
+  <section class="section">
+    <div class="container services">
+      <h1>{services.title}</h1>
+      <p class="services__lead">{services.lead}</p>
+
+      {/* The assessment leads the page on purpose — it is the front door to all three
+          shapes below, not a fourth option sitting beside them. */}
+      <div class="services__start">
+        <h2>{services.startHeading}</h2>
+        <p>{services.start}</p>
+        <p><a class="btn" href={services.startHref}>{services.startCtaLabel}</a></p>
+      </div>
+
+      <h2>{services.shapesHeading}</h2>
+      <ul class="services__shapes">
+        {services.shapes.map((s) => (
+          <li class="shape">
+            <h3 class="shape__name">{s.name}</h3>
+            <p class="shape__when">{s.when}</p>
+            <p class="shape__body">{s.body}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2>{services.priceHeading}</h2>
+      <p>{services.priceIntro}</p>
+      <ul class="services__rules">
+        {services.priceRules.map((r) => (
+          <li><strong>{r.label}</strong> {r.body}</li>
+        ))}
+      </ul>
+
+      <h2>{services.notHeading}</h2>
+      <ul class="services__not">
+        {services.notItems.map((n) => <li>{n}</li>)}
+      </ul>
+
+      <div class="services__cta">
+        <h2>{services.ctaHeading}</h2>
+        <p>{services.ctaLead}</p>
+        <p class="cta-row">
+          <a class="btn" href={services.ctaPrimaryHref}>{services.ctaPrimaryLabel}</a>
+          <a class="btn btn--ghost" href={services.ctaSecondaryHref}>{services.ctaSecondaryLabel}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .services { max-width: var(--measure); }
+  .services__lead { font-size: var(--text-lg); }
+  .services h2 { margin-top: var(--space-12); }
+
+  /* The assessment block is the one thing on this page that gets a container.
+     Everything else is prose; this is the offer. */
+  .services__start {
+    margin-top: var(--space-12);
+    padding: var(--space-8);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius);
+  }
+  .services__start h2 { margin-top: 0; }
+  .services__start p:last-child { margin-bottom: 0; }
+
+  .services__shapes { list-style: none; margin: var(--space-6) 0 0; padding: 0; }
+  .shape { margin-bottom: var(--space-8); }
+  .shape__name {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-1);
+  }
+  /* The "when" line is the one a reader scans for — it is how they find themselves
+     on this page. Accent it and let the body copy stay quiet underneath. */
+  .shape__when {
+    color: var(--color-accent);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+  .shape__body { margin-bottom: 0; }
+
+  .services__rules { list-style: none; margin: var(--space-4) 0 0; padding: 0; }
+  .services__rules li { margin-bottom: var(--space-4); }
+
+  .services__not { margin: var(--space-4) 0 0; padding-left: var(--space-6); }
+  .services__not li { margin-bottom: var(--space-2); }
+
+  .services__cta { margin-top: var(--space-12); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-6) 0 0; }
+</style>

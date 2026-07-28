@@ -87,7 +87,7 @@ protecting is different. Which one you protect is a design decision, not a defau
 |---|---|
 | A framework | Astro components and plain HTML |
 | Tailwind / a CSS library | Two hand-written CSS files on a token system |
-| A component library | Nine components, all in this repo |
+| A component library | Ten components, all in this repo |
 | A CMS | Copy lives in `src/data/*.js` |
 | A form service | Three Pages Functions |
 | Analytics | Nothing. No pixels, no cookies, no tracking. |
@@ -142,11 +142,13 @@ Wrangler reads secrets from `.dev.vars` — copy `.dev.vars.example` and fill in
 
 ```
 src/
-  pages/        index · work · work/[slug] · about · now · contact · thanks
-                assessment · assessment/intake · privacy · 404
+  pages/        index · work · work/[slug] · services · about · now · contact
+                thanks · thanks/build-assessment · assessment · assessment/intake
+                privacy · 404
   layouts/      BaseLayout — head, meta, header/footer, skip link
   components/   Header · Footer · Banner · ProjectCard · ContactForm
                 FeedbackWidget · AssessmentIntake · FlowDiagram · SubstackEmbed
+                NextStepCard
   data/         site · projects · intake · privacy · colophon   ← all copy lives here
   styles/       tokens.css (the design system) · global.css
 functions/api/  contact · assessment-intake · feedback

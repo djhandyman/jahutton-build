@@ -18,6 +18,13 @@ import { socials, contact } from '../data/site.js';
           {contact.prompts.map((p) => <li>{p}</li>)}
         </ul>
         <p class="contact__soft">{contact.promptsFooter}</p>
+        {/* Sits after promptsFooter on purpose: the free door ("you just want to talk")
+            is the one the reader meets first. This is a signpost, not a pitch. */}
+        <p class="contact__soft contact__assessment">
+          {contact.assessmentNudge.text}{' '}
+          <a href={contact.assessmentNudge.href}>{contact.assessmentNudge.linkLabel}</a>{' '}
+          {contact.assessmentNudge.tail}
+        </p>
 
         <ContactForm />
       </div>
@@ -38,6 +45,7 @@ import { socials, contact } from '../data/site.js';
 <style>
   .contact { display: grid; gap: var(--space-12); grid-template-columns: 1fr; }
   .contact__soft { color: var(--color-text-muted); }
+  .contact__assessment { margin-top: calc(var(--space-3) * -1); }
   @media (min-width: 48rem) { .contact { grid-template-columns: 2fr 1fr; } }
   .contact__links { list-style: none; margin: 0; padding: 0; }
   .contact__links li { margin-bottom: var(--space-2); }

@@ -1,12 +1,16 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+// The default no-JS form redirect target (functions/api/contact.js 303s here on success).
+// Its sibling, ./build-assessment.astro, is this page plus the Build Assessment offer, used
+// when the submitter's timeline answer says they're actually moving.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { thanks } from '../../data/site.js';
 ---
 <BaseLayout title="Thanks — Jonathan A. Hutton">
   <section class="section">
     <div class="container thanks">
-      <h1>Thanks</h1>
-      <p>Your message is on its way — I’ll get back to you soon.</p>
-      <p><a class="btn btn--ghost" href="/">← Back home</a></p>
+      <h1>{thanks.title}</h1>
+      <p>{thanks.body}</p>
+      <p><a class="btn btn--ghost" href="/">{thanks.backLabel}</a></p>
     </div>
   </section>
 </BaseLayout>

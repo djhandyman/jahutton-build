@@ -1,0 +1,31 @@
+---
+// Second confirmation page: identical to ./index.astro, plus the Build Assessment offer.
+//
+// WHY A SEPARATE PAGE instead of /thanks/?next=assessment. This is a static build, so a
+// query string can only be read by client-side JS — and the visitors who land here are
+// exactly the ones without it. A no-JS submit is the only thing the Function ever redirects;
+// a JS submit never leaves the contact page, and gets the same offer inline from
+// ContactForm.astro. One prerendered page per outcome is what actually works in both modes.
+//
+// Reached only via a 303 from functions/api/contact.js when the timeline answer qualifies
+// (QUALIFIED_TIMELINES). Excluded from the sitemap along with the rest of /thanks.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NextStepCard from '../../components/NextStepCard.astro';
+import { thanks } from '../../data/site.js';
+---
+<BaseLayout title="Thanks — Jonathan A. Hutton">
+  <section class="section">
+    <div class="container thanks">
+      <h1>{thanks.title}</h1>
+      <p>{thanks.body}</p>
+      <p><a class="btn btn--ghost" href="/">{thanks.backLabel}</a></p>
+
+      <NextStepCard />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .thanks { max-width: var(--measure); }
+  .thanks p { font-size: var(--text-lg); margin-bottom: var(--space-6); }
+</style>

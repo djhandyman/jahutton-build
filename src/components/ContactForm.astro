@@ -2,6 +2,7 @@
 // Contact form → posts to the /api/contact Cloudflare Pages Function, which emails via Resend.
 // Progressive enhancement: JS submits inline via fetch and shows a status message; with JS off,
 // the native POST still works and the function redirects to /thanks/.
+import NextStepCard from './NextStepCard.astro';
 import { site, contact } from '../data/site.js';
 ---
 <form class="contact-form" action={site.contactEndpoint} method="POST">
@@ -21,7 +22,12 @@ import { site, contact } from '../data/site.js';
     <label for="timeline">{contact.timelineLabel}</label>
     <select id="timeline" name="timeline">
       <option value="">—</option>
-      {contact.timelineOptions.map((o) => <option value={o}>{o}</option>)}
+      {/* value is `key|label` — the key is what the Function tests to decide whether to
+          offer the Build Assessment, the label is what prints in Jon's email. See the
+          note on timelineOptions in src/data/site.js. */}
+      {contact.timelineOptions.map((o) => (
+        <option value={`${o.value}|${o.label}`}>{o.label}</option>
+      ))}
     </select>
     <p class="contact-form__hint">{contact.timelineHint}</p>
   </div>
@@ -43,6 +49,11 @@ import { site, contact } from '../data/site.js';
   <p class="contact-form__status" role="status" aria-live="polite"></p>
 </form>
 
+<!-- The JS path never navigates, so the Build Assessment offer that a no-JS submitter would
+     meet on /thanks/build-assessment/ appears here instead — revealed only when the Function
+     answers `next: "assessment"`. Outside the <form> so form.reset() can't touch it. -->
+<NextStepCard hidden id="contact-next-step" />
+
 <!-- Turnstile loader — is:inline so Astro ships it verbatim, async so it never blocks the form. -->
 <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 
@@ -51,6 +62,7 @@ import { site, contact } from '../data/site.js';
   if (form) {
     const status = form.querySelector('.contact-form__status');
     const button = form.querySelector('button[type="submit"]');
+    const nextStep = document.getElementById('contact-next-step');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.textContent = '';
@@ -77,6 +89,10 @@ import { site, contact } from '../data/site.js';
           form.reset();
           status.textContent = 'Thanks — your message is on its way. I’ll get back to you.';
           status.classList.add('is-ok');
+          // The Function decides who sees this, not the browser — the same timeline rule that
+          // picks the redirect target for a no-JS submit. Reveal only, never re-hide: a second
+          // send that doesn't qualify shouldn't yank away something already on screen.
+          if (data.next === 'assessment' && nextStep) nextStep.hidden = false;
         } else {
           status.textContent = data.error || 'Something went wrong. Please try again in a moment.';
           status.classList.add('is-error');
