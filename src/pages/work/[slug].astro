@@ -15,6 +15,9 @@ const { project } = Astro.props;
 const paragraphs = Array.isArray(project.blurb) ? project.blurb : [project.blurb];
 // Per-page SEO: lead with the teaser, fall back to a trimmed first paragraph.
 const description = project.teaser || `${paragraphs[0].slice(0, 152)}…`;
+// `link` is one CTA or several. The first is the primary pill; any others are ghosts —
+// which is how a project keeps its outbound link while the ask goes first.
+const ctas = project.link ? (Array.isArray(project.link) ? project.link : [project.link]) : [];
 ---
 <BaseLayout title={`${project.title} — Work — Jonathan A. Hutton`} description={description}>
   <section class="section">
@@ -28,9 +31,17 @@ const description = project.teaser || `${paragraphs[0].slice(0, 152)}…`;
 
       {paragraphs.map((p) => <p class="project__body">{p}</p>)}
 
-      {project.link && (
+      {ctas.length > 0 && (
         <p class="project__cta">
-          <a class="btn" href={project.link.href} rel="noopener">{project.link.label} →</a>
+          {/* `rel` only where it means something — a CTA is internal when it points at
+              /contact/ and external when it points at the live thing. */}
+          {ctas.map((cta, i) => (
+            <a
+              class={i === 0 ? 'btn' : 'btn btn--ghost'}
+              href={cta.href}
+              rel={cta.href.startsWith('/') ? undefined : 'noopener'}
+            >{cta.label} →</a>
+          ))}
         </p>
       )}
 
@@ -67,6 +78,23 @@ const description = project.teaser || `${paragraphs[0].slice(0, 152)}…`;
       ))}
 
       {/* TODO(jon): a tech-stack list slots in here as content lands. */}
+
+      {/* Last thing on the page: the repo, for the reader who wants to check the claims.
+          Octicon `mark-github` (Primer, MIT), inlined rather than made a component — it's
+          used exactly once, and shipping an <img> for 16px of icon would be silly. */}
+      {project.source && (
+        <p class="project__source">
+          <a href={project.source.href} rel="noopener">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+              />
+            </svg>
+            <span>{project.source.label}</span>
+          </a>
+        </p>
+      )}
     </div>
   </section>
 </BaseLayout>
@@ -81,7 +109,31 @@ const description = project.teaser || `${paragraphs[0].slice(0, 152)}…`;
   .project__status { font-weight: 400; }
   .project__body { font-size: var(--text-lg); max-width: var(--measure); }
   .project__body + .project__body { margin-top: var(--space-6); }
-  .project__cta { margin-top: var(--space-8); }
+  /* Wraps to a stack on narrow screens rather than letting two pills collide. */
+  .project__cta {
+    margin-top: var(--space-8);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* Source link — set off by a rule so it reads as a footer to the page, not another CTA. */
+  .project__source {
+    margin: var(--space-12) 0 0;
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+  .project__source a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+  .project__source a:hover { color: var(--color-accent); }
+  .project__source a:hover span { text-decoration: underline; }
+  .project__source svg { flex: none; }
 
   /* Before/after gallery. Wider than --measure (the body text) but still short of the
      full container, so the pair reads as an inset exhibit rather than a banner. */

@@ -80,7 +80,13 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   demote a project between tiers purely by adding/removing its `slug` — no page edits needed.
   `blurb` is either a string or an **array of paragraph strings**; both the card and the detail page
   normalize it and render one `<p>` per entry. It's plain text through Astro's escaping — no
-  markdown, no HTML (use curly quotes, not `_italics_`).
+  markdown, no HTML (use curly quotes, not `_italics_`). A detail page has two link slots and they
+  do different jobs: `link` is the CTA pill under the body, `source` is a muted GitHub icon link
+  pinned to the bottom — evidence, not a CTA. `link` is one `{ href, label }` or an array of them
+  (first = solid pill, rest = ghost) and drops `rel="noopener"` for internal hrefs. The convention:
+  a project whose blurb **ends by asking the reader for something** leads with a `/contact/` pill
+  whose label echoes that closing line (Unflappable, server closet, this site); everything else
+  just links to the live thing. Don't give them all the same label.
 
 - **`BaseLayout.astro`** wraps every page: imports fonts + global CSS, renders `Banner`/`Header`/
   `Footer`, sets `<title>`/description/canonical/OG tags (overridable via props), skip link.

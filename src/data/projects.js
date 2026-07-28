@@ -18,7 +18,17 @@
 //     a single paragraph, or an ARRAY OF STRINGS for multi-paragraph copy — both the card
 //     and the detail page normalize it and render one <p> per entry. Plain text only:
 //     it goes through Astro's escaping, so no markdown/HTML (use “quotes”, not _italics_).
-//   link   — optional external CTA shown on the detail page, { href, label }
+//   link   — optional CTA pill(s) on the detail page: one { href, label }, or an ARRAY of them
+//     (first renders as the solid pill, the rest as ghosts). Usually just the live thing
+//     (chelancomps.org). Where the blurb ENDS BY ASKING THE READER FOR SOMETHING — Unflappable,
+//     the server closet, this site — the first pill is `/contact/` instead.
+//     ⚠️ Label rule (Jon, 2026-07-28): a pill must NOT echo the sentence above it. Quoting his
+//     own closing line back at him reads as cheesy. Keep the labels plain, and keep them
+//     different from each other — three identical buttons read like a template.
+//     ⚠️ TODO(jon): approve the three contact-pill labels (2026-07-28) — they're new microcopy.
+//   source — optional repo link, { href, label }, rendered at the very bottom of the detail
+//     page as a small GitHub icon + label. Quiet on purpose: it's evidence for the reader who
+//     wants to check the claims, not a call to action competing with the pill.
 //   gallery — optional photos on the detail page (slugged projects only).
 //     An array of before/after pairs: { caption, before: <img>, after: <img> }, where
 //     <img> is { src, width, height, alt } and `src` is the EXTENSIONLESS public path —
@@ -95,7 +105,14 @@ export const projects = [
       "A memoir about rare disease, paragliding, and finding healing when a cure isn't on the table. Ten months from concept to on-sale. I wrote it, and then I published it, which turned out to be its own build: the manuscript through editing and production, working closely with an amazing editor and learning a lot along the way; the cover and the interior; distribution through Amazon KDP and IngramSpark; the launch; and then the part most writers skip, which is actually selling it. That part was a book tour — Olympia, Seattle, Issaquah.",
       'The process of writing this book changed me—I proved to myself in a very personal and tangible way that I can build complex and durable things, that I thrive when a project is daunting, requiring more effort than you can conceptualize before the work begins. And now we are going to direct that same energy into your problems, projects, and ideas.',
     ],
-    link: { href: 'https://unflappable.press', label: 'Read more at unflappable.press' },
+    // Two pills. The contact one goes first because his last line turns to the reader
+    // ("direct that same energy into your problems, projects, and ideas"). The book
+    // cross-link stays as a ghost — CLAUDE.md: the two sites link to each other on purpose.
+    // Label picked by Jon 2026-07-28, replacing a draft that called back to the blurb.
+    link: [
+      { href: '/contact/', label: 'Work with me' },
+      { href: 'https://unflappable.press', label: 'Read more at unflappable.press' },
+    ],
   },
   {
     // Added 2026-07-23 (Jon's call). Framing: "builder, taken literally" — the hands-on craft,
@@ -122,7 +139,7 @@ export const projects = [
       'The closet also serves as the central hub for all the home networking equipment, which is now rack mounted, and the termination point for hundreds of feet of ethernet wire run throughout the home. It’s important to understand physical infrastructure, and the fact that so much of our digital lives is stored in the cloud abstracts this away most of the time. But really, “the cloud” is a box like this one, scaled to a degree that’s difficult to understand.',
       'Functionally, having an on-premise server is great for development work. I’m not bogging down any of my daily driver machines, and I can control how the network traffic flows, adding additional safeguards. I can spin up VMs and containers on Unraid whenever I need and quickly build test environments and sandboxes. Having this machine wired into the network has been a big unlock for my workflow—if you want to build something similar, let’s talk.',
     ],
-    link: null,
+    link: { href: '/contact/', label: 'Start building together' },
   },
   {
     // Bathroom before/after landed 2026-07-27 (gallery below).
@@ -266,8 +283,8 @@ export const projects = [
     // Position: LAST on purpose. `index.astro` features projects.slice(0, 4), so it stays off
     // the homepage until Jon decides the position-4 question. Move it up to feature it.
     //
-    // TODO(jon): the `link` below assumes the repo goes public. It 404s until it does —
-    //   set link to null if you launch this card before flipping the repo.
+    // TODO(jon): the `source` link below assumes the repo goes public. It 404s until it does —
+    //   set source to null if you launch this card before flipping the repo.
     slug: 'this-site',
     title: 'This Website',
     category: 'software · systems',
@@ -280,7 +297,9 @@ export const projects = [
       'There are also some less obvious features that make life easier for me, which is another build principle: make something that works for you, that’s designed around the way you like to work, that’s enjoyable to use, that you can improve over time as your needs change. For this site, I’ve incorporated an AI helper in the background, invoked for a specific purpose—summarizing and categorizing form submissions—so I’m not sifting through dozens of emails, something I really dislike doing. Eventually, I might extend this functionality, adding triggers and automations that fire for certain types of inquiries.',
       'There are infinite possibilities, but starting with a simple framework that you can extend over time is often the best way. What would you like to start building together?',
     ],
-    link: { href: 'https://github.com/djhandyman/jahutton-build', label: 'Read the source' },
+    // The repo moves to the bottom of the page as a quiet source link, so the pill is the ask.
+    link: { href: '/contact/', label: 'Let’s talk' },
+    source: { href: 'https://github.com/djhandyman/jahutton-build', label: 'View on GitHub' },
     diagram: true,
   },
 ];
