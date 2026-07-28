@@ -30,7 +30,9 @@
 //     page as a small GitHub icon + label. Quiet on purpose: it's evidence for the reader who
 //     wants to check the claims, not a call to action competing with the pill.
 //   gallery — optional photos on the detail page (slugged projects only).
-//     An array of before/after pairs: { caption, before: <img>, after: <img> }, where
+//     An array of paired shots: { caption, before: <img>, after: <img> }, plus an optional
+//     { labels: { before, after } } to override the default "Before"/"After" column headings
+//     when the pair isn't a before-and-after (the server closet's is a build progression), where
 //     <img> is { src, width, height, alt } and `src` is the EXTENSIONLESS public path —
 //     the page appends .webp for the <source> and .jpg for the <img>, matching the
 //     headshot/hero convention. width/height are the real pixel dims (they reserve
@@ -124,9 +126,9 @@ export const projects = [
     // "the cloud" became quotes (blurbs render as plain text), and Unraid is named in the third
     // paragraph, carried over from the previous draft.
     //
+    // Photos landed 2026-07-28 (gallery below) — the chassis mid-build and the finished rack.
+    // Not a before/after, so the pair overrides the column labels.
     // TODO(jon): the named services that earn their keep on the box, if you want them listed.
-    // TODO(jon): photos of the closet + the build in progress. Best argument on the whole page
-    //   that "builder" is literal, and the detail page now has the gallery slot waiting.
     slug: 'server-closet',
     title: 'LAN & Server Closet',
     category: 'physical spaces · systems',
@@ -140,6 +142,24 @@ export const projects = [
       'Functionally, having an on-premise server is great for development work. I’m not bogging down any of my daily driver machines, and I can control how the network traffic flows, adding additional safeguards. I can spin up VMs and containers on Unraid whenever I need and quickly build test environments and sandboxes. Having this machine wired into the network has been a big unlock for my workflow—if you want to build something similar, let’s talk.',
     ],
     link: { href: '/contact/', label: 'Start building together' },
+    gallery: [
+      {
+        caption: 'The chassis on the bench, and the rack it ended up in.',
+        labels: { before: 'Mid-build', after: 'Installed' },
+        before: {
+          src: '/images/work/server-closet/server-being-built',
+          width: 640,
+          height: 640,
+          alt: 'The server mid-build: an open 4U rackmount chassis on a wire shelf, showing the motherboard, a large tower CPU cooler, three case fans, the power supply, empty drive bays, and the PCIe slot covers.',
+        },
+        after: {
+          src: '/images/work/server-closet/complete-rack',
+          width: 480,
+          height: 640,
+          alt: 'The finished rack: a patch panel behind a cable manager at the top, a 24-port switch wired with purple patch cables, a firewall appliance, a rack PDU, a vented shelf, and the completed 4U server at the bottom.',
+        },
+      },
+    ],
   },
   {
     // Bathroom before/after landed 2026-07-27 (gallery below).

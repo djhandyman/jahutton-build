@@ -53,9 +53,11 @@ const ctas = project.link ? (Array.isArray(project.link) ? project.link : [proje
       {project.gallery?.map((pair) => (
         <figure class="ba">
           <div class="ba__pair">
+            {/* Labels default to Before/After but a pair can override them — the server
+                closet's two shots are a build progression, not a before-and-after. */}
             {[
-              { label: 'Before', img: pair.before },
-              { label: 'After', img: pair.after },
+              { label: pair.labels?.before ?? 'Before', img: pair.before },
+              { label: pair.labels?.after ?? 'After', img: pair.after },
             ].map(({ label, img }) => (
               <div class="ba__side">
                 <p class="ba__label">{label}</p>
