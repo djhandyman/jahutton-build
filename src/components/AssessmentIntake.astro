@@ -16,6 +16,18 @@ import { intake } from '../data/intake.js';
 import { site } from '../data/site.js';
 const steps = intake.steps;
 const totalSteps = steps.length + 1; // +1 for the review step
+
+// An option is either a plain string or a { value, label } pair. Most of intake.js uses strings,
+// but the timeline picker reuses `contact.timelineOptions`, which is the pair shape — and mapping
+// those straight into <option> printed a literal "[object Object]" for every choice, on the page
+// and in the submitted value.
+//
+// Both shapes render the human-readable label, and the LABEL is what submits. This is deliberately
+// NOT the contact form's `key|label` convention: there, the stable key drives QUALIFIED_TIMELINES.
+// Nothing server-side keys off timeline here — assessment-intake.js clips it to 80 chars, prints
+// it in Jon's email, hands it to Claude triage as prose, and stores it as text — so a key|label
+// value would just push "months|Sometime in the next few months" into all three.
+const optionLabel = (o) => (typeof o === 'string' ? o : o.label);
 ---
 <form class="intake" action="/api/assessment-intake" method="POST" data-intake novalidate>
   <!-- Progress (hidden until JS; meaningless without the wizard) -->
@@ -55,7 +67,7 @@ const totalSteps = steps.length + 1; // +1 for the review step
           {f.type === 'select' && (
             <select id={f.name} name={f.name} data-intake-input required={f.required || undefined}>
               <option value="">—</option>
-              {f.options.map((o) => <option value={o}>{o}</option>)}
+              {f.options.map((o) => <option value={optionLabel(o)}>{optionLabel(o)}</option>)}
             </select>
           )}
 
@@ -63,8 +75,8 @@ const totalSteps = steps.length + 1; // +1 for the review step
             <div class="intake__radios" role="radiogroup" aria-label={f.label}>
               {f.options.map((o) => (
                 <label class="intake__radio">
-                  <input type="radio" name={f.name} value={o} data-intake-input />
-                  <span>{o}</span>
+                  <input type="radio" name={f.name} value={optionLabel(o)} data-intake-input />
+                  <span>{optionLabel(o)}</span>
                 </label>
               ))}
             </div>
