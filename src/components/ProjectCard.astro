@@ -3,9 +3,9 @@ const { title, category, role, status, teaser, blurb, slug } = Astro.props;
 // Slugged projects link to their detail page and show the short teaser + "Read more".
 // Teaser-only projects render the full blurb inline with no link.
 const href = slug ? `/work/${slug}` : null;
-// `blurb` may be a string or an array of paragraphs — normalize either way.
+// `blurb` may be a string, or an array of paragraphs and list blocks — normalize either way.
 const body = href ? teaser : blurb;
-const paragraphs = Array.isArray(body) ? body : [body];
+const blocks = Array.isArray(body) ? body : [body];
 ---
 <article class="card">
   <p class="card__category">{category}</p>
@@ -14,7 +14,18 @@ const paragraphs = Array.isArray(body) ? body : [body];
     {status && <span class="card__status">{status}</span>}
   </h2>
   {role && <p class="card__role">{role}</p>}
-  {paragraphs.map((p) => <p class="card__blurb">{p}</p>)}
+  {/* A teaser-only card can carry list blocks too — render them rather than letting an
+      object stringify into the page. Slugged cards only ever show the teaser string. */}
+  {blocks.map((b) =>
+    typeof b === 'string' ? (
+      <p class="card__blurb">{b}</p>
+    ) : (
+      <div class="card__list">
+        <p class="card__blurb card__list-head">{b.heading}</p>
+        <ul>{b.items.map((item) => <li>{item}</li>)}</ul>
+      </div>
+    )
+  )}
   {href && <p class="card__more"><a href={href}>Read more →</a></p>}
 </article>
 
@@ -56,6 +67,9 @@ const paragraphs = Array.isArray(body) ? body : [body];
   .card__blurb { margin: 0; max-width: none; }
   /* Teaser-only cards can carry multi-paragraph copy; space the runs, not the last one. */
   .card__blurb + .card__blurb { margin-top: var(--space-3); }
+  .card__list { margin-top: var(--space-3); }
+  .card__list-head { font-weight: 600; margin-bottom: var(--space-2); }
+  .card__list ul { margin: 0; padding-left: 1.25em; }
   /* Push the read-more affordance to the bottom so mixed-length cards align. */
   .card__more { margin: var(--space-4) 0 0; }
   .card__more a {

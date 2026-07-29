@@ -11,10 +11,13 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props;
-// `blurb` is a string for single-paragraph copy, or an array of paragraphs.
-const paragraphs = Array.isArray(project.blurb) ? project.blurb : [project.blurb];
-// Per-page SEO: lead with the teaser, fall back to a trimmed first paragraph.
-const description = project.teaser || `${paragraphs[0].slice(0, 152)}…`;
+// `blurb` is a string for single-paragraph copy, or an array whose entries are either
+// paragraphs (strings) or list blocks ({ heading, items }).
+const blocks = Array.isArray(project.blurb) ? project.blurb : [project.blurb];
+// Per-page SEO: lead with the teaser, fall back to a trimmed first paragraph — skipping any
+// list block, which would stringify to nothing useful.
+const firstProse = blocks.find((b) => typeof b === 'string') ?? '';
+const description = project.teaser || `${firstProse.slice(0, 152)}…`;
 // `link` is one CTA or several. The first is the primary pill; any others are ghosts —
 // which is how a project keeps its outbound link while the ask goes first.
 const ctas = project.link ? (Array.isArray(project.link) ? project.link : [project.link]) : [];
@@ -41,7 +44,36 @@ const initials = quote
         {project.role}{project.status && <span class="project__status"> · {project.status}</span>}
       </p>
 
-      {paragraphs.map((p) => <p class="project__body">{p}</p>)}
+      {/* A block is a paragraph or a labelled list — see the shape notes in projects.js. */}
+      {blocks.map((b) =>
+        typeof b === 'string' ? (
+          <p class="project__body">{b}</p>
+        ) : (
+          <div class="project__list">
+            <p class="project__list-head">{b.heading}</p>
+            <ul>{b.items.map((item) => <li>{item}</li>)}</ul>
+          </div>
+        )
+      )}
+
+      {/* The brand mark sits with the body, not in the exhibit zone below the CTA: where a
+          project carries a logo, designing it was part of the job being described. */}
+      {project.logo && (
+        <figure class="mark">
+          <picture>
+            <source srcset={`${project.logo.src}.webp`} type="image/webp" />
+            <img
+              src={`${project.logo.src}.jpg`}
+              width={project.logo.width}
+              height={project.logo.height}
+              alt={project.logo.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          {project.logo.note && <figcaption class="mark__note">{project.logo.note}</figcaption>}
+        </figure>
+      )}
 
       {/* Proof sits between the story and the ask, so the CTA follows the evidence. */}
       {quote && (
@@ -159,6 +191,39 @@ const initials = quote
   .project__status { font-weight: 400; }
   .project__body { font-size: var(--text-lg); max-width: var(--measure); }
   .project__body + .project__body { margin-top: var(--space-6); }
+
+  /* Labelled inventory. Held to the body measure so it reads as part of the column rather
+     than a sidebar, and the heading is small — it labels a list, it doesn't open a section. */
+  .project__list { margin-top: var(--space-8); max-width: var(--measure); }
+  .project__list-head {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    margin: 0 0 var(--space-3);
+  }
+  .project__list ul { margin: 0; padding-left: 1.25em; }
+  .project__list li { font-size: var(--text-lg); }
+  .project__list li + li { margin-top: var(--space-2); }
+  /* The paragraph after a list needs the gap the +.project__body rule above can't give it. */
+  .project__list + .project__body { margin-top: var(--space-8); }
+
+  /* Brand mark. Small, and on a white ground: the marks carry transparent backgrounds and the
+     .jpg fallback is flattened onto white, so the card reads the same either way. */
+  .mark { margin: var(--space-10) 0 0; max-width: var(--measure); }
+  .mark img {
+    display: block;
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    padding: var(--space-4);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .mark__note {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
   /* Testimonial. Same measure as the body so it reads as part of the column, with a rust
      edge and the surface tint to lift it off the page. */
   .quote {

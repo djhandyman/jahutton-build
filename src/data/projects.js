@@ -15,9 +15,13 @@
 // Promote/demote a project between the two tiers by adding/removing its `slug`.
 //   teaser — short card hook (slugged projects only)
 //   blurb  — the full body (detail page; or the card body when teaser-only). A string for
-//     a single paragraph, or an ARRAY OF STRINGS for multi-paragraph copy — both the card
-//     and the detail page normalize it and render one <p> per entry. Plain text only:
-//     it goes through Astro's escaping, so no markdown/HTML (use “quotes”, not _italics_).
+//     a single paragraph, or an ARRAY for multi-paragraph copy — both the card and the
+//     detail page normalize it and render one <p> per entry. Plain text only: it goes
+//     through Astro's escaping, so no markdown/HTML (use “quotes”, not _italics_).
+//     An entry may also be a LIST BLOCK — { heading, items: [...] } — rendering as a small
+//     heading plus a <ul>. Added 2026-07-29 for WAHBE, where Jon's own copy is two labelled
+//     inventories ("I supported" / "I innovated by"); flattening those into prose would have
+//     been a rewrite, not an edit. Use it only where the copy is genuinely a list.
 //   link   — optional CTA pill(s) on the detail page: one { href, label }, or an ARRAY of them
 //     (first renders as the solid pill, the rest as ghosts). Usually just the live thing
 //     (chelancomps.org). Where the blurb ENDS BY ASKING THE READER FOR SOMETHING — Unflappable,
@@ -37,6 +41,12 @@
 //     the page appends .webp for the <source> and .jpg for the <img>, matching the
 //     headshot/hero convention. width/height are the real pixel dims (they reserve
 //     layout space so the page doesn't jump). Assets live in public/images/work/<slug>/.
+//   logo   — optional brand mark on the detail page (slugged projects only):
+//     { src, width, height, alt, note }, the same extensionless-src convention as the gallery.
+//     Renders small, on a white ground — the marks carry transparent backgrounds, and the .jpg
+//     fallback is flattened onto white to match — with `note` as the caption. It sits with the
+//     body rather than down in the exhibit zone: where a logo appears at all, the branding is
+//     part of the work being described, not supporting evidence for it.
 //   testimonial — optional client quote on the detail page, between the body and the CTA:
 //     { quote, name, role, org, photo, placeholder }. `photo` is the same extensionless
 //     { src, width, height, alt } shape as the gallery (rendered as a 56px circle, so supply
@@ -224,6 +234,15 @@ export const projects = [
     // (2 associate PM → PM, 2 BSA → BSA II); every product staffer now has a clear advancement
     // path — unique in the org. (Note: this card's "teams"/people-mgmt framing is a P3 post-pivot
     // decision — see .temp/CONTENT-TODO.md §6.)
+    //
+    // 2026-07-29: body replaced with Jon's own copy (.temp/project-copy.md) — his "supporting and
+    // innovating" framing and the two inventories under it, verbatim, using the list-block shape
+    // documented above. Twelve years is his claim to make and it reads better as a list than as
+    // the paragraph Claude had drafted.
+    // ⚠️ The closing paragraph is NOT his — it's the four-promotions outcome carried over from the
+    // previous blurb, kept because it's the only citable result on this project and his copy
+    // doesn't include it. It sits last so it lands as the payoff to the progression-framework
+    // bullet. Delete it if you'd rather the page be your words end to end.
     slug: 'wahbe-org-development',
     title: 'WAHBE — Org Development',
     category: 'teams',
@@ -231,8 +250,30 @@ export const projects = [
     status: null,
     teaser:
       'Built the progression and coaching that advanced four people and gave the team a real ladder.',
-    blurb:
-      'A growing team inside a public sector org was missing its scaffolding. I built it: an agile maturity assessment, a BSA-to-PM progression and competency matrix, and the coaching to go with it — turning vague "grow the team" pressure into a structure people could actually navigate. Four people have since advanced along it — two associate PMs to PM, two BSAs to BSA II — and for the first time every member of the product staff has a clear, concrete view of what advancement takes, which is still unique across the organization.',
+    blurb: [
+      'It’s difficult to distill 12 years at an organization down to a few paragraphs, but the work I’m most proud of follows two key themes: supporting and innovating.',
+      {
+        heading: 'I supported',
+        items: [
+          'A high performing scrum team as the Product Owner',
+          'An up-and-coming analyst in need of mentorship (who I helped train and promote into one of the best)',
+          'Various executives with reports, pitch decks, and business cases',
+          'A team of peers in the delivery management space',
+          'My team of 7 Business Analysts',
+        ],
+      },
+      {
+        heading: 'I innovated by',
+        items: [
+          'Bringing to life a comprehensive carrier data audit standard that didn’t exist before',
+          'Building a maturity matrix for product team roles',
+          'Authoring and collaborating on a career progression framework',
+          'Creating the authoritative system integration diagram',
+          'Experimenting with running a business architecture practice within the organization',
+        ],
+      },
+      'Four people have since advanced along that progression — two associate PMs to PM, two BSAs to BSA II — and for the first time every member of the product staff has a clear, concrete view of what advancement takes, which is still unique across the organization.',
+    ],
     link: null,
   },
   {
@@ -289,25 +330,48 @@ export const projects = [
     // Added 2026-07-24 (Jon): swapped in for the old "WAHBE — AI Enablement" card. Facts sourced
     // from Jon's LinkedIn (.temp/linkedin-refresh.md:136): "IT Consultant (2021–2022) — stood up
     // branding, web presence, and SaaS systems/integrations end to end for a start-up medical
-    // practice." Blurb writes ONLY around that; nothing beyond it is claimed. Teaser-only for now
-    // (thin facts), per the Chelan Falls / LAN-closet precedent — promote to a detail page by adding
-    // a `slug` once the TODOs below land.
+    // practice."
     //
-    // TODO(jon): the actual stack, in concrete nouns — practice-management/EHR, scheduling, patient
-    //   intake, billing, telehealth, the site platform — and the key integrations (what talks to
-    //   what). This is the meat the card lives on, the way "20,000+ SKUs" carries Bello Modo.
-    // TODO(jon): the healthcare-compliance angle, if it's real — was HIPAA a constraint you designed
-    //   around? That's the distinctive part of this one; name it if you can stand behind it.
-    // TODO(jon): outcome — did the practice open/operate on what you built? Anything citable at all.
-    //   The moment there's a real outcome + the stack above, add a slug and this becomes a detail page.
+    // PROMOTED to a detail page 2026-07-29: Jon's own copy (.temp/project-copy.md) landed and
+    // answered all three TODOs this card was held back on — what it was (in-home monoclonal
+    // antibody treatment during COVID), the compliance angle (HIPAA, real and his to claim), and
+    // the outcome (idea → operating business in under three months; wound down early 2022 when
+    // the variant shifted and the treatment stopped working). Body is his, near-verbatim.
+    // Cleanup only: "for helping building" → "for help building", his double hyphens → em-dashes
+    // kept CLOSED UP the way he types them (matching the book and server-closet paragraphs; the
+    // spaced-vs-closed question is still open in PLANNING.md), and the markdown emphasis on "fast"
+    // dropped rather than converted — blurbs are plain text, and quoting the word would read as
+    // sarcasm where he meant urgency.
+    // ⚠️ One word changed meaning: his draft said appointments were scheduled for "in-house"
+    // treatment; the paragraph above it describes the business as in-HOME treatment, so it reads
+    // as a typo and is set to "in-home".
+    // TODO(jon): confirm that in-home fix, and approve the teaser — it's new copy.
+    // TODO(jon): the SaaS tools by name, if you're willing to name them. "A complete set of
+    //   tightly integrated, HIPAA-compliant SaaS tools" is the last soft spot in an otherwise
+    //   concrete story — this is the one card where naming the stack would carry real weight.
+    slug: 'ascension-medicines',
     title: 'Ascension Medicines',
-    category: 'software · systems',
+    category: 'software · systems · design',
     role: 'Consultant / builder',
     status: null,
-    teaser: null,
-    blurb:
-      'A start-up medical practice needed everything a working clinic runs on stood up before it could see patients — and none of it existed yet. I stood it up end to end: the branding and web presence out front, and the SaaS systems and integrations behind them. From a blank sheet to the technology backbone a new practice needed to open and operate.',
-    link: null,
+    teaser:
+      'Two physicians, one idea, and a closing window — a HIPAA-compliant clinic stack built nights and weekends, live in under three months.',
+    blurb: [
+      'During the COVID-19 pandemic, two Atlanta physicians had an idea: offer in-home monoclonal antibody treatments to patients who would benefit from them. At the time, the meds were highly effective for the most common strain and no one else was offering this sort of service. They came to me for help building and operationalizing their entire tech stack, and it needed to be put together fast.',
+      'Over nights and weekends, I spun up a complete set of tightly integrated, HIPAA-compliant SaaS tools that enabled these doctors to connect with potential patients, screen them, and schedule appointments for in-home treatment. The entire business went from an idea in the founder’s mind to reality in less than three months.',
+      'Ultimately, when the variant changed shape in early 2022, the treatment was no longer effective and the business was shuttered—but it’s more than likely that several lives were saved, and the time invested into this venture benefitted everyone involved.',
+      'What’s your next big idea?',
+    ],
+    logo: {
+      src: '/images/work/ascension-medicines/ascension-logo',
+      width: 560,
+      height: 463,
+      alt: 'The Ascension Medicines logo: an oval badge with a blue outer ring carrying “Ascension” arced across the top and “Medicines” across the bottom in white capitals, around a white centre holding a stylised letter A drawn as a mountain peak.',
+      note: 'I designed the branding, this mark included. A practice that doesn’t exist yet still has to look like one.',
+    },
+    // His last line turns to the reader, so the pill is the ask. Label kept plain and distinct
+    // from the other three contact pills (Unflappable, server closet, this site) per the rule above.
+    link: { href: '/contact/', label: 'Get in touch' },
   },
   {
     // Added 2026-07-27 so the flow diagram could be reviewed in its real context. Claude's
