@@ -33,14 +33,25 @@
 //   source — optional repo link, { href, label }, rendered at the very bottom of the detail
 //     page as a small GitHub icon + label. Quiet on purpose: it's evidence for the reader who
 //     wants to check the claims, not a call to action competing with the pill.
-//   gallery — optional photos on the detail page (slugged projects only).
-//     An array of paired shots: { caption, before: <img>, after: <img> }, plus an optional
-//     { labels: { before, after } } to override the default "Before"/"After" column headings
-//     when the pair isn't a before-and-after (the server closet's is a build progression), where
-//     <img> is { src, width, height, alt } and `src` is the EXTENSIONLESS public path —
-//     the page appends .webp for the <source> and .jpg for the <img>, matching the
-//     headshot/hero convention. width/height are the real pixel dims (they reserve
-//     layout space so the page doesn't jump). Assets live in public/images/work/<slug>/.
+//   gallery — optional photo exhibits on the detail page (slugged projects only). An array of
+//     groups: { heading, caption, note, shots: [{ label, img }] }.
+//       shots   — ordered, and they render as columns in that order, each under its own `label`.
+//                 Two is the common case (Before/After); the bathroom runs three, because the
+//                 SketchUp model belongs BETWEEN the before and the after — that's the actual
+//                 sequence of the work. This replaced a fixed { before, after } pair plus a
+//                 `labels` override on 2026-07-29: an ordered list says the same thing without
+//                 the special case, and a third column had nowhere to go in the old shape.
+//       heading — optional. Omit it for a project with a single exhibit (the server closet, the
+//                 signage); set it where one page covers distinct subjects that shouldn't blur
+//                 together — the remodel is a Bathroom and a Kitchen, not one undifferentiated
+//                 pile of photos.
+//       note    — optional muted line INSTEAD of shots, for a group that's real work but has
+//                 nothing shippable to show yet. Say plainly that it's coming; don't dress up
+//                 an empty section with half a before/after.
+//     `img` is { src, width, height, alt } where `src` is the EXTENSIONLESS public path — the
+//     page appends .webp for the <source> and .jpg for the <img>, matching the headshot/hero
+//     convention. width/height are the real pixel dims (they reserve layout space so the page
+//     doesn't jump). Assets live in public/images/work/<slug>/.
 //   logo   — optional brand mark on the detail page (slugged projects only):
 //     { src, width, height, alt, note }, the same extensionless-src convention as the gallery.
 //     Renders small, on a white ground — the marks carry transparent backgrounds, and the .jpg
@@ -72,7 +83,7 @@ export const projects = [
     slug: 'bello-modo',
     title: 'Bello Modo',
     category: 'organizations',
-    role: 'Operator',
+    role: 'Consultant',
     status: null,
     teaser:
       'From acquisition, stabilization, and tech stack migration to increased profitability. I worked closely with a solo operator through complex challenges.',
@@ -179,28 +190,44 @@ export const projects = [
     gallery: [
       {
         caption: 'The chassis on the bench, and the rack it ended up in.',
-        labels: { before: 'Mid-build', after: 'Installed' },
-        before: {
-          src: '/images/work/server-closet/server-being-built',
-          width: 640,
-          height: 640,
-          alt: 'The server mid-build: an open 4U rackmount chassis on a wire shelf, showing the motherboard, a large tower CPU cooler, three case fans, the power supply, empty drive bays, and the PCIe slot covers.',
-        },
-        after: {
-          src: '/images/work/server-closet/complete-rack',
-          width: 480,
-          height: 640,
-          alt: 'The finished rack: a patch panel behind a cable manager at the top, a 24-port switch wired with purple patch cables, a firewall appliance, a rack PDU, a vented shelf, and the completed 4U server at the bottom.',
-        },
+        shots: [
+          {
+            label: 'Mid-build',
+            img: {
+              src: '/images/work/server-closet/server-being-built',
+              width: 640,
+              height: 640,
+              alt: 'The server mid-build: an open 4U rackmount chassis on a wire shelf, showing the motherboard, a large tower CPU cooler, three case fans, the power supply, empty drive bays, and the PCIe slot covers.',
+            },
+          },
+          {
+            label: 'Installed',
+            img: {
+              src: '/images/work/server-closet/complete-rack',
+              width: 480,
+              height: 640,
+              alt: 'The finished rack: a patch panel behind a cable manager at the top, a 24-port switch wired with purple patch cables, a firewall appliance, a rack PDU, a vented shelf, and the completed 4U server at the bottom.',
+            },
+          },
+        ],
       },
     ],
   },
   {
-    // Bathroom before/after landed 2026-07-27 (gallery below).
+    // Bathroom before/after landed 2026-07-27; the SketchUp render joined them 2026-07-29 and
+    // sits BETWEEN them (Jon's call), which is the honest order — it's the design the finished
+    // room was built from, and it's the only thing on this page that evidences the "from SketchUp
+    // design through" claim in the blurb.
+    //
+    // The gallery is split into headed groups the same day: this page covers two rooms, and one
+    // undifferentiated run of photos read as though the kitchen didn't exist. The Kitchen group
+    // is deliberately a `note`, not photos — see below.
     // TODO(jon): scope/budget line.
-    // TODO(jon): kitchen before/after — .temp/photo-import/ has two kitchen BEFORE shots
-    //   (kitchen-before1/2.jpeg) but no after, so the kitchen pair is held back until you
-    //   supply one. Half a before/after is worse than none.
+    // TODO(jon): the kitchen copy, which is the thing actually missing — the group is on the page
+    //   now saying "coming soon", so the placeholder is visible and honest rather than a silent gap.
+    //   .temp/photo-import/ still has two kitchen BEFORE shots (kitchen-before1/2.jpeg) and no
+    //   after; they stay out until there's an after to pair them with. Half a before/after is
+    //   worse than none, and that rule doesn't change just because the section now has a heading.
     slug: 'kitchen-bath-remodel',
     title: 'Kitchen & Bathroom Remodel',
     category: 'physical spaces',
@@ -213,19 +240,41 @@ export const projects = [
     link: null,
     gallery: [
       {
-        caption: 'The bathroom, before and after.',
-        before: {
-          src: '/images/work/kitchen-bath-remodel/bathroom-before',
-          width: 324,
-          height: 242,
-          alt: 'The bathroom before the remodel: a laminate-top vanity with a drop-in sink, wall cabinet over the toilet, and a cluttered counter.',
-        },
-        after: {
-          src: '/images/work/kitchen-bath-remodel/bathroom-after',
-          width: 886,
-          height: 886,
-          alt: 'The bathroom after the remodel: a live-edge wood vanity top with a vessel sink and wall-mounted faucet, a tiled glass shower, and new flooring.',
-        },
+        heading: 'Bathroom',
+        caption: 'The room I started with, the model I designed it from, and where it ended up.',
+        shots: [
+          {
+            label: 'Before',
+            img: {
+              src: '/images/work/kitchen-bath-remodel/bathroom-before',
+              width: 324,
+              height: 242,
+              alt: 'The bathroom before the remodel: a laminate-top vanity with a drop-in sink, wall cabinet over the toilet, and a cluttered counter.',
+            },
+          },
+          {
+            label: 'Design',
+            img: {
+              src: '/images/work/kitchen-bath-remodel/bathroom-3d',
+              width: 600,
+              height: 518,
+              alt: 'The SketchUp model of the bathroom: an untextured 3D massing view looking down into the room with the near walls cut away, showing the shower with its fixed and handheld heads, a glass divider, the vanity and sink against the far wall, and the toilet.',
+            },
+          },
+          {
+            label: 'After',
+            img: {
+              src: '/images/work/kitchen-bath-remodel/bathroom-after',
+              width: 886,
+              height: 886,
+              alt: 'The bathroom after the remodel: a live-edge wood vanity top with a vessel sink and wall-mounted faucet, a tiled glass shower, and new flooring.',
+            },
+          },
+        ],
+      },
+      {
+        heading: 'Kitchen',
+        note: 'Kitchen details coming soon.',
       },
     ],
   },
@@ -311,18 +360,26 @@ export const projects = [
     gallery: [
       {
         caption: 'The old panel and its replacement, in place at the park.',
-        before: {
-          src: '/images/work/chelan-falls-signage/sign-before',
-          width: 1024,
-          height: 768,
-          alt: 'The original "Soaring at Chelan" panel, sun-bleached to the point that most of the text and photographs have faded out.',
-        },
-        after: {
-          src: '/images/work/chelan-falls-signage/sign-after',
-          width: 1182,
-          height: 665,
-          alt: 'The replacement panel installed at the park: a dark teal layout with spectator safety rules, a pilot site overview, an aerial map with the landing area marked, and QR codes for full site info.',
-        },
+        shots: [
+          {
+            label: 'Before',
+            img: {
+              src: '/images/work/chelan-falls-signage/sign-before',
+              width: 1024,
+              height: 768,
+              alt: 'The original "Soaring at Chelan" panel, sun-bleached to the point that most of the text and photographs have faded out.',
+            },
+          },
+          {
+            label: 'After',
+            img: {
+              src: '/images/work/chelan-falls-signage/sign-after',
+              width: 1182,
+              height: 665,
+              alt: 'The replacement panel installed at the park: a dark teal layout with spectator safety rules, a pilot site overview, an aerial map with the landing area marked, and QR codes for full site info.',
+            },
+          },
+        ],
       },
     ],
   },

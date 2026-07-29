@@ -130,32 +130,35 @@ const initials = quote
           "architecture" slot. Data lives in src/data/colophon.js. */}
       {project.diagram && <FlowDiagram />}
 
-      {project.gallery?.map((pair) => (
+      {/* Exhibits. A group is an ordered run of shots under an optional heading — two for a
+          before/after, three where the design sits between them. A group with no shots carries
+          a `note` instead, which is how a section that's real work with nothing to show yet
+          says so out loud rather than silently missing from the page. */}
+      {project.gallery?.map((group) => (
         <figure class="ba">
-          <div class="ba__pair">
-            {/* Labels default to Before/After but a pair can override them — the server
-                closet's two shots are a build progression, not a before-and-after. */}
-            {[
-              { label: pair.labels?.before ?? 'Before', img: pair.before },
-              { label: pair.labels?.after ?? 'After', img: pair.after },
-            ].map(({ label, img }) => (
-              <div class="ba__side">
-                <p class="ba__label">{label}</p>
-                <picture>
-                  <source srcset={`${img.src}.webp`} type="image/webp" />
-                  <img
-                    src={`${img.src}.jpg`}
-                    width={img.width}
-                    height={img.height}
-                    alt={img.alt}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
-              </div>
-            ))}
-          </div>
-          {pair.caption && <figcaption class="ba__caption">{pair.caption}</figcaption>}
+          {group.heading && <h2 class="ba__heading">{group.heading}</h2>}
+          {group.shots && (
+            <div class="ba__pair" style={`--shots: ${group.shots.length}`}>
+              {group.shots.map(({ label, img }) => (
+                <div class="ba__side">
+                  <p class="ba__label">{label}</p>
+                  <picture>
+                    <source srcset={`${img.src}.webp`} type="image/webp" />
+                    <img
+                      src={`${img.src}.jpg`}
+                      width={img.width}
+                      height={img.height}
+                      alt={img.alt}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </picture>
+                </div>
+              ))}
+            </div>
+          )}
+          {group.note && <p class="ba__note">{group.note}</p>}
+          {group.caption && <figcaption class="ba__caption">{group.caption}</figcaption>}
         </figure>
       ))}
 
@@ -302,16 +305,40 @@ const initials = quote
   .project__source a:hover span { text-decoration: underline; }
   .project__source svg { flex: none; }
 
-  /* Before/after gallery. Wider than --measure (the body text) but still short of the
-     full container, so the pair reads as an inset exhibit rather than a banner. */
+  /* Photo exhibits. Wider than --measure (the body text) but still short of the full
+     container, so a group reads as an inset exhibit rather than a banner. */
   .ba { margin: var(--space-12) 0 0; max-width: 52rem; }
+  /* Only appears where one page covers distinct subjects — the remodel's two rooms. */
+  .ba__heading {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    margin: 0 0 var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
   .ba__pair {
     display: grid;
     gap: var(--space-4);
     align-items: start; /* natural aspect ratios — tops line up, bottoms may not */
   }
+  /* Stacked on a phone. Two across on a tablet — a three-shot group wraps to 2 + 1 there,
+     which still reads in sequence and beats three ~12rem columns. The full shot count only
+     kicks in once there's room for it to be worth looking at. */
   @media (min-width: 40rem) {
-    .ba__pair { grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+    .ba__pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+  }
+  @media (min-width: 52rem) {
+    .ba__pair { grid-template-columns: repeat(var(--shots, 2), minmax(0, 1fr)); }
+  }
+  /* A section with nothing to show yet. Dashed and muted on purpose — the same visual
+     language as the testimonial's empty avatar, so "pending" is legible at a glance. */
+  .ba__note {
+    margin: 0;
+    padding: var(--space-6);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
   }
   .ba__label {
     text-transform: uppercase; letter-spacing: 0.06em;
