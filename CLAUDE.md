@@ -60,6 +60,11 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 - **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
   `assessment`, `assessment/intake`, `privacy`, `thanks`, `thanks/build-assessment`, `404`. Each is
   a thin `.astro` file wrapping `BaseLayout` and rendering data.
+  **`/now` is currently hidden** (2026-07-29): still built and still resolving, but pulled from the
+  nav and the sitemap until its "Exploring next" section is rewritten — it's job-search copy, which
+  reads as role-shopping next to the engagement offer on `/services`. Two switches, and they must
+  move together: the commented-out nav entry in `src/data/site.js` and the `/now` exclusion in
+  `astro.config.mjs`. Both say so.
 
 - **The offer ladder.** `/services` is the "what I offer" page: the Build Assessment first (it's the
   front door, not a fourth product), then three engagement shapes — zero-to-one, build-with-you,
@@ -78,18 +83,34 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   short `teaser` + "Read more →" and the full `blurb` becomes the detail-page body. A project
   **without** a `slug` is teaser-only: its card renders the `blurb` inline with no link. Promote or
   demote a project between tiers purely by adding/removing its `slug` — no page edits needed.
-  `blurb` is either a string or an **array of paragraph strings**; both the card and the detail page
-  normalize it and render one `<p>` per entry. It's plain text through Astro's escaping — no
-  markdown, no HTML (use curly quotes, not `_italics_`). A detail page has two link slots and they
+  `blurb` is either a string or an **array**; both the card and the detail page normalize it and
+  render one `<p>` per entry. It's plain text through Astro's escaping — no markdown, no HTML (use
+  curly quotes, not `_italics_`). An array entry may also be a **list block** — `{ heading, items }`
+  — rendering as a small heading plus a `<ul>` (WAHBE's two inventories). Use it only where the copy
+  is genuinely a list; prose that's been bulleted for looks is worse than the paragraph it came from.
+  A detail page has two link slots and they
   do different jobs: `link` is the CTA pill under the body, `source` is a muted GitHub icon link
   pinned to the bottom — evidence, not a CTA. `link` is one `{ href, label }` or an array of them
   (first = solid pill, rest = ghost) and drops `rel="noopener"` for internal hrefs. The convention:
   a project whose blurb **ends by asking the reader for something** leads with a `/contact/` pill
-  whose label echoes that closing line (Unflappable, server closet, this site); everything else
-  just links to the live thing. Don't give them all the same label. An optional `testimonial`
+  (Unflappable, server closet, Ascension, this site); everything else just links to the live thing.
+  **The label must NOT echo the closing line it sits under** — Jon rejected exactly that on
+  2026-07-28 as cheesy; quoting his own sentence back at him reads as a template. Keep labels plain,
+  and keep them different from each other.
+  An optional `testimonial`
   ({ quote, name, role, org, photo, placeholder }) renders a quote block between the body and the
   CTA — round photo, or an initials monogram when there's no headshot yet. **`placeholder: true`
   prints a visible "not a real quote" flag; never strip it from invented copy.**
+  An optional `logo` ({ src, width, height, alt, note }) puts a brand mark **with the body**, not
+  down in the exhibit zone — where a project carries one, designing it was part of the job.
+  An optional `gallery` is an array of groups: `{ heading, caption, note, shots: [{ label, img }] }`.
+  `shots` is **ordered** and renders as columns in that order — two for a before/after, three where
+  the design belongs between them (the bathroom's SketchUp model). `heading` is for a page covering
+  distinct subjects (the remodel's two rooms) and omitted otherwise; `note` replaces shots for a
+  group that's real work with nothing shippable yet, and says so plainly. Image `src` is the
+  **extensionless** public path — the page appends `.webp` for the `<source>` and `.jpg` for the
+  `<img>` — and `width`/`height` are the true pixel dims, so the page doesn't jump while they load.
+  Half a before/after is worse than none: a group waits for its "after" rather than shipping alone.
 
 - **`BaseLayout.astro`** wraps every page: imports fonts + global CSS, renders `Banner`/`Header`/
   `Footer`, sets `<title>`/description/canonical/OG tags (overridable via props), skip link.
@@ -148,8 +169,12 @@ Shared conventions across all three:
   `PUBLIC_TURNSTILE_SITE_KEY` and `PUBLIC_BETA_BANNER` (set to `false` to kill the private-beta
   banner without a code edit; `banner.enabled` in `site.js` is the other switch).
 
-- **Sitemap exclusions** live in `astro.config.mjs`: `/thanks/` and everything under
-  `/assessment` are filtered out while the Build Assessment offer is unapproved. Revisit at launch.
+- **Sitemap exclusions** live in `astro.config.mjs`. Currently filtered: **`/thanks*`** (post-submit
+  redirect targets, nothing to crawl) and **`/now`** (hidden pending a rewrite — see Pages above).
+  **`/assessment*` is deliberately NOT excluded** as of 2026-07-28: it's linked from `/services` and
+  `/contact`, so hiding it from the sitemap while advertising it everywhere else would just be a
+  worse version of being indexed. Jon confirmed 2026-07-29 he's fine with it indexable. Don't
+  "restore" that exclusion — it was removed on purpose.
 
 - **Deployment.** There is no in-repo deploy config (no `wrangler.toml`, no deploy script). Production
   deploys are triggered by the Cloudflare Pages ↔ GitHub connection (repo `djhandyman/jahutton-build`),
