@@ -257,7 +257,14 @@ export const nav = [
   { label: 'Work', href: '/work' },
   { label: 'Services', href: '/services' },
   { label: 'About', href: '/about' },
-  { label: 'Now', href: '/now' },
+  // Pulled from the nav 2026-07-29 (Jon). The page still builds and still works at /now/ —
+  // it's unlinked and out of the sitemap, not deleted. Reason: its "Exploring next" section
+  // is job-search copy ("transformation and change-agent roles", "player-coach, senior
+  // individual-contributor-plus"), which reads as role-shopping now that /services sells a
+  // Build Assessment and three engagement shapes. Rather than rush a rewrite, it's hidden.
+  // Uncomment this line and drop the matching /now exclusion from astro.config.mjs to bring
+  // it back — do the rewrite first (agreed direction: name the problems, not the job titles).
+  // { label: 'Now', href: '/now' },
   { label: 'Contact', href: '/contact' },
 ];
 
