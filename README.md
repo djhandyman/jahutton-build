@@ -87,7 +87,7 @@ protecting is different. Which one you protect is a design decision, not a defau
 |---|---|
 | A framework | Astro components and plain HTML |
 | Tailwind / a CSS library | Two hand-written CSS files on a token system |
-| A component library | Ten components, all in this repo |
+| A component library | Eleven components, all in this repo |
 | A CMS | Copy lives in `src/data/*.js` |
 | A form service | Three Pages Functions |
 | Analytics | Nothing. No pixels, no cookies, no tracking. |
@@ -148,7 +148,7 @@ src/
   layouts/      BaseLayout — head, meta, header/footer, skip link
   components/   Header · Footer · Banner · ProjectCard · ContactForm
                 FeedbackWidget · AssessmentIntake · FlowDiagram · SubstackEmbed
-                NextStepCard
+                NextStepCard · ProjectMetrics
   data/         site · projects · intake · privacy · colophon   ← all copy lives here
   styles/       tokens.css (the design system) · global.css
 functions/api/  contact · assessment-intake · feedback

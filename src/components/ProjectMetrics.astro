@@ -1,0 +1,146 @@
+---
+// Outcome metrics for a project detail page — the numbers version of the story the blurb
+// tells. Sits above the CTA with the testimonial: the page's convention is proof first,
+// then the ask.
+//
+// Data lives in `metrics` on the project (src/data/projects.js): { icon, value, label }.
+// ⚠️ NEVER invent a number that lands here. Every value on this block is one Jonathan
+// supplied and is a public claim about a real client — the same bar as the testimonial.
+//
+// `value` is USUALLY a number, but doesn't have to be (extended 2026-07-30 for the server
+// closet, where "8TB" is a spec and the other two cards are capabilities, not measurements).
+// A short noun works — but only where it's a fact, not a boast: "Dev cloud" is a thing that
+// exists, "Enterprise-grade" is marketing. If a card can't be checked, it doesn't belong here.
+//
+// Icons are inlined 24px strokes, keyed by the `icon` field, stored as bare path data so
+// they render through Astro's normal escaping (no set:html). Add a key when a metric needs a
+// glyph that isn't here — a metric whose `icon` is missing or unknown simply renders without
+// one rather than breaking the row.
+const { metrics = [] } = Astro.props;
+
+const ICONS = {
+  // Stacked box — inventory, catalog, SKU counts.
+  box: ['M21 7.5 12 2.5 3 7.5v9l9 5 9-5v-9Z', 'm3 7.5 9 5 9-5', 'M12 12.5v9'],
+  // Rising line + arrowhead — a number that went up.
+  'trend-up': ['M3 16.5 9.5 10l4 4L21 6.5', 'M15 6.5h6v6'],
+  // The same line mirrored — a number that went down, which is the win for cost and overhead.
+  'trend-down': ['M3 7.5 9.5 14l4-4L21 17.5', 'M15 17.5h6v-6'],
+  // Clock — elapsed time, how long something took.
+  clock: ['M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0', 'M12 7v5l3.5 2'],
+  // Map pin — places, geography, anything counted in cities or sites.
+  pin: [
+    'M12 21.5c4.7-4.6 7-8.2 7-11a7 7 0 1 0-14 0c0 2.8 2.3 6.4 7 11Z',
+    'M9.6 10.5a2.4 2.4 0 1 0 4.8 0 2.4 2.4 0 1 0-4.8 0',
+  ],
+  // Medal — a milestone finished. ⚠️ Reads as an AWARD to most people; only pair it with a
+  // label that can't be mistaken for a ranking or a prize we didn't win.
+  medal: [
+    'M6.5 9a5.5 5.5 0 1 0 11 0 5.5 5.5 0 1 0-11 0',
+    'M9 13.6 7.5 21l4.5-2.6 4.5 2.6-1.5-7.4',
+  ],
+  // Drum stack — disks, capacity, anything measured in bytes.
+  drive: ['M4 6a8 3 0 1 0 16 0 8 3 0 1 0-16 0', 'M4 6v12a8 3 0 0 0 16 0V6', 'M4 12a8 3 0 0 0 16 0'],
+  // Stacked planes — VMs, containers, environments. Deliberately NOT a cloud puff on the
+  // server-closet page: that blurb's whole argument is that "the cloud" is a box like this one.
+  layers: ['M12 2.5 2.5 7.5 12 12.5 21.5 7.5 12 2.5Z', 'M2.5 12.5 12 17.5l9.5-5', 'M2.5 17 12 22l9.5-5'],
+  // Two figures — people, headcount, a board or a team.
+  users: [
+    'M7 8a3 3 0 1 0 6 0 3 3 0 1 0-6 0',
+    'M3.5 20v-1.6A4.4 4.4 0 0 1 7.9 14h4.2a4.4 4.4 0 0 1 4.4 4.4V20',
+    'M16.4 5.3a3 3 0 0 1 0 5.4',
+    'M18.2 14.2a4.4 4.4 0 0 1 2.3 3.9V20',
+  ],
+  // Angle brackets + slash — code, and by extension open source.
+  code: ['M9 8 5 12l4 4', 'M15 8l4 4-4 4', 'M13.6 6.5 10.4 17.5'],
+  // Compass — direction, mission, where an organization is pointed.
+  compass: ['M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0', 'm15.5 8.5-2.2 5.3-5.3 2.2 2.2-5.3z'],
+  // Struck-through eye — not being watched. For the absence of tracking, not for "security".
+  'eye-off': [
+    'M2.5 12C5 8 8.4 6 12 6s7 2 9.5 6c-2.5 4-5.9 6-9.5 6s-7-2-9.5-6Z',
+    'M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0',
+    'M3.5 20.5 20.5 3.5',
+  ],
+  // Box truck — shipping and fulfilment.
+  truck: [
+    'M2.5 6.5h11v9h-11z',
+    'M13.5 9.5h3.6l3.4 3.4v2.6h-7z',
+    'M5 17.3a1.8 1.8 0 1 0 3.6 0 1.8 1.8 0 1 0-3.6 0',
+    'M15.5 17.3a1.8 1.8 0 1 0 3.6 0 1.8 1.8 0 1 0-3.6 0',
+  ],
+};
+---
+{metrics.length > 0 && (
+  <ul class="metrics">
+    {metrics.map((m) => (
+      <li class="metric">
+        {ICONS[m.icon] && (
+          <svg
+            class="metric__icon"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            {ICONS[m.icon].map((d) => <path d={d} />)}
+          </svg>
+        )}
+        <p class="metric__value">{m.value}</p>
+        <p class="metric__label">{m.label}</p>
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  /* Held to the body measure so the row reads as part of the column, like the testimonial,
+     rather than a full-width banner. auto-fit means the same block works for two metrics or
+     four — and collapses to two-up, then one, on a narrow screen without a media query. */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: var(--space-4);
+    max-width: var(--measure);
+    margin: var(--space-12) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Outlined, not filled (Jon, 2026-07-30) — deliberately NOT --color-surface. These cards sit
+     directly above the testimonial, which IS filled; two tinted panels stacked read as one
+     undifferentiated slab. The separation here is object class, not color: outline vs. fill.
+     A side effect worth keeping — it leaves the quote as the heavier block, which is right,
+     since a named person on the record is harder proof than a number. */
+  .metric {
+    padding: var(--space-4);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  /* Rust, because the number is the point — the same accent the CTA and the testimonial
+     edge use, so the eye reads all three as the page's evidence. */
+  .metric__icon { display: block; color: var(--color-accent); }
+  .metric__value {
+    margin: var(--space-3) 0 var(--space-1);
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    line-height: 1.1;
+    /* Long values ("20,000+") shrink rather than overflow their card at narrow widths.
+       `anywhere` also stops a long value from blowing out its grid track's min-content width. */
+    overflow-wrap: anywhere;
+    /* Two-word values ("10 months", "3 cities") are common enough that a wrap is normal at three
+       metrics. Balance it so it splits evenly instead of stranding one word on its own line. */
+    text-wrap: balance;
+  }
+  .metric__label {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

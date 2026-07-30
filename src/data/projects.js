@@ -66,9 +66,21 @@
 //     ⚠️ `placeholder: true` prints a visible "not a real quote" flag under the block. NEVER
 //     remove that flag from invented copy — deleting it is the single step that says "a real
 //     person said this." A fabricated testimonial is the worst thing this site could ship.
+//   metrics — optional outcome numbers on the detail page (slugged projects only), rendered by
+//     src/components/ProjectMetrics.astro between the body and the CTA — the same evidence zone
+//     as the testimonial, because a number is proof and the ask comes after the proof. An array
+//     of { icon, value, label }: `value` is the number as it should read ("+30%", "20,000+"),
+//     `label` is what it measures, and `icon` keys the small inline glyph set in that component
+//     ('box', 'trend-up', 'truck' so far — add a key there when a metric needs a new one; an
+//     unknown or omitted icon just renders the number bare).
+//     ⚠️ These are public claims about a real client, held to the same bar as the testimonial:
+//     NEVER invent one, and never round a number up into a better story. Every value here comes
+//     from Jonathan directly — record the date he gave it, the way the blurbs do.
+//     Three reads best at the body measure; two or four also lay out.
 //   diagram — optional `true` on slugged projects: renders the request-flow exhibit
-//     (src/components/FlowDiagram.astro, data in src/data/colophon.js). Specific to this
-//     site's own case study — it is not a general "architecture diagram" slot.
+//     (src/components/FlowDiagram.astro, data in src/data/colophon.js) under an "Under the hood"
+//     heading below the CTA. The heading is what keeps it an appendix rather than the page's
+//     headline. Specific to this site's own case study — not a general "architecture" slot.
 
 export const projects = [
   {
@@ -89,6 +101,16 @@ export const projects = [
       'From acquisition, stabilization, and tech stack migration to increased profitability. I worked closely with a solo operator through complex challenges.',
     blurb:
       'When this specialty e-commerce business changed hands, I stepped in at the operator level — not just advising — to steady it through the transition and re-platform its 20,000-plus SKUs, migrating the store from WooCommerce to BigCommerce and ultimately Shopify, delivered on schedule. Costs came down, profitability went up, and inventory got dramatically simpler — helped by a custom, searchable catalog I built from the Shopify data to handle the bulk-lot inventory details — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
+    // Metrics supplied by Jon 2026-07-30, the first project to carry the block. The SKU count
+    // matches the blurb's "20,000-plus"; profitability is the INCREASE, not a margin (Jon
+    // confirmed 2026-07-30), which is also why it stays consistent with the note above about
+    // not claiming revenue growth. Don't restate these three in the blurb — they're the
+    // numbers version of the same story, not a second telling of it.
+    metrics: [
+      { icon: 'box', value: '20,000+', label: 'SKUs migrated' },
+      { icon: 'trend-up', value: '+30%', label: 'Profitability' },
+      { icon: 'truck', value: '98%', label: 'On-time shipping' },
+    ],
     link: null, // store + catalog repos are private; nothing public to link yet
   },
   {
@@ -109,6 +131,15 @@ export const projects = [
       'Every inquiry was an email, every application a spreadsheet line item, and every year the team started from scratch. I fixed that.',
     blurb:
       'Every inquiry was an email, every application a spreadsheet line item, and every year the team started from scratch. I fixed that — designing and shipping a live platform for the Chelan paragliding competitions, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut the back-and-forth by more than 80% and gave the organizers better tools and process: recruit proven volunteers from past events, vet new applicants quickly, and keep every event’s data in a reusable repository that carries forward to the next comp. Less administration, more time on the work that actually matters. Built with React and TypeScript on a Supabase backend, hosted on Cloudflare.',
+    // Metrics supplied by Jon 2026-07-30. The 80% is the same figure the blurb already carries
+    // ("cut the back-and-forth by more than 80%") — stated here as the conservative floor, so
+    // the two never drift apart; if one is ever revised, revise both. Two metrics on purpose:
+    // there is no third real number, and inventing one to balance the row is exactly the thing
+    // this block must never do.
+    metrics: [
+      { icon: 'trend-down', value: '−80%', label: 'Admin overhead' },
+      { icon: 'clock', value: '~3 weeks', label: 'Idea to production' },
+    ],
     link: { href: 'https://chelancomps.org', label: 'Visit the live site' },
     // ⚠️ PLACEHOLDER, added 2026-07-28 to show the block's design. NOBODY SAID THIS. The name
     // and role are bracketed and `placeholder: true` prints a visible flag, so it cannot be
@@ -152,6 +183,20 @@ export const projects = [
       "A memoir about rare disease, paragliding, and finding healing when a cure isn't on the table. Ten months from concept to on-sale. I wrote it, and then I published it, which turned out to be its own build: the manuscript through editing and production, working closely with an amazing editor and learning a lot along the way; the cover and the interior; distribution through Amazon KDP and IngramSpark; the launch; and then the part most writers skip, which is actually selling it. That part was a book tour — Olympia, Seattle, Issaquah.",
       'The process of writing this book changed me—I proved to myself in a very personal and tangible way that I can build complex and durable things, that I thrive when a project is daunting, requiring more effort than you can conceptualize before the work begins. And now we are going to direct that same energy into your problems, projects, and ideas.',
     ],
+    // Metrics supplied by Jon 2026-07-30. Order is his call and it is NOT the blurb's sequence:
+    // the milestone leads, because "first book" is what he wants read before the reader starts
+    // pricing the effort in months. The two duration/place numbers follow in narrative order.
+    // Both already appear in the copy ("Ten months from concept to on-sale", the three named
+    // cities), so revise them together.
+    // ⚠️ The medal glyph reads as an AWARD. "1st" alone next to it would look like a ranking or a
+    // prize — the label is doing the work of saying it's a milestone, a first book written and
+    // published. Don't shorten it to "First book" or swap in "#1". See the note in
+    // ProjectMetrics.astro. Flagged to Jon 2026-07-30; his call to keep the medal.
+    metrics: [
+      { icon: 'medal', value: '1st', label: 'Book, written and published' },
+      { icon: 'clock', value: '10 months', label: 'Idea to publication' },
+      { icon: 'pin', value: '3 cities', label: 'Book tour' },
+    ],
     // Two pills. The contact one goes first because his last line turns to the reader
     // ("direct that same energy into your problems, projects, and ideas"). The book
     // cross-link stays as a ghost — CLAUDE.md: the two sites link to each other on purpose.
@@ -185,6 +230,20 @@ export const projects = [
       '8TB of storage. A mix of solid state and spinning drives, powered by an Intel i5 chip perfectly suited for this application. Deep research went into curating the components—I wanted to build this box once and not worry about upgrading it for a long time.',
       'The closet also serves as the central hub for all the home networking equipment, which is now rack mounted, and the termination point for hundreds of feet of ethernet wire run throughout the home. It’s important to understand physical infrastructure, and the fact that so much of our digital lives is stored in the cloud abstracts this away most of the time. But really, “the cloud” is a box like this one, scaled to a degree that’s difficult to understand.',
       'Functionally, having an on-premise server is great for development work. I’m not bogging down any of my daily driver machines, and I can control how the network traffic flows, adding additional safeguards. I can spin up VMs and containers on Unraid whenever I need and quickly build test environments and sandboxes. Having this machine wired into the network has been a big unlock for my workflow—if you want to build something similar, let’s talk.',
+    ],
+    // Metrics supplied by Jon 2026-07-30 — and the first set where only ONE card is a number.
+    // "8TB" is a spec; the other two are capabilities. That's a deliberate extension of the
+    // block (see ProjectMetrics.astro): a short noun is allowed where it's a checkable fact,
+    // which "dev cloud" and "automation" are — both are described in the blurb below. The line
+    // that must not be crossed is a card that asserts quality rather than fact.
+    // TWO cards, not three (Jon, 2026-07-30). A third for home automation + network security was
+    // built and cut: every candidate value for it was either a quality claim ("Hardened") or a
+    // restatement of the card beside it ("Self-hosted" vs "Private, on-prem"). That story is
+    // already in the blurb's second and third paragraphs, told better and with room to breathe.
+    // Two cards also render wide, which suits values this long.
+    metrics: [
+      { icon: 'drive', value: '8TB', label: 'Storage' },
+      { icon: 'layers', value: 'Dev cloud', label: 'Private, on-prem' },
     ],
     link: { href: '/contact/', label: 'Start building together' },
     gallery: [
@@ -338,6 +397,20 @@ export const projects = [
       'Helped bring a dormant nonprofit back to life — new website, CRM, and board governance.',
     blurb:
       'Helped bring a dormant nonprofit back to life — standing up a new website, integrating a CRM, and rebuilding board governance so the organization could operate and grow again.',
+    // Metrics supplied by Jon 2026-07-30.
+    // "3 · NEW board members" — Jon confirmed 2026-07-30 these are people brought ONTO the board,
+    //   not the board's total size. The word "new" is load-bearing; dropping it silently converts
+    //   a recruiting number into a claim about how big the board is.
+    // ⚠️ The CRM card deliberately does NOT name the product: TODO(jon) above is still open on
+    //   which CRM it is. "Open source" is the part Jon confirmed, so that's the part that ships.
+    // The mission card is the weakest of the three — it's a deliverable, not a measurement, and
+    //   the blurb doesn't yet state what the mission IS (see the TODO). It earns its place once
+    //   that line lands; until then it's asking the reader to take an update on faith.
+    metrics: [
+      { icon: 'users', value: '3', label: 'New board members' },
+      { icon: 'code', value: 'Open source', label: 'CRM' },
+      { icon: 'compass', value: 'Mission', label: 'Updated' },
+    ],
     link: null,
   },
   {
@@ -461,6 +534,24 @@ export const projects = [
       'I’ve built a few of these before, back in the days when WYSIWYG editors were used to build websites. This time around I’ve zoomed in to showcase what I can build, covering primarily the span of the last three years. The site is well designed (imho), has a small digital footprint — four dependencies, no framework, no CSS library, no CMS — and costs almost nothing to host and run. jahutton.build represents a pattern I’ve used repeatedly: open source tooling plus free tier platforms plus thoughtful planning and design.',
       'There are also some less obvious features that make life easier for me, which is another build principle: make something that works for you, that’s designed around the way you like to work, that’s enjoyable to use, that you can improve over time as your needs change. For this site, I’ve incorporated an AI helper in the background, invoked for a specific purpose—summarizing and categorizing form submissions—so I’m not sifting through dozens of emails, something I really dislike doing. Eventually, I might extend this functionality, adding triggers and automations that fire for certain types of inquiries.',
       'There are infinite possibilities, but starting with a simple framework that you can extend over time is often the best way. What would you like to start building together?',
+    ],
+    // Metrics MEASURED from this repo 2026-07-30, not quoted from the README — and this is the
+    // one page where a skeptical reader can check every card against the source link at the
+    // bottom in about a minute. Re-measure them when the stack changes; a stale card here is
+    // worse than no card, because the evidence to disprove it ships alongside it.
+    //   4 — `dependencies` in package.json (also the README badge and this teaser's hook).
+    //   0 — trackers/cookies: the only grep hit across dist/ was /privacy/ using the word
+    //       "analytics" to say there isn't any.
+    //   0 — external .js in dist/. ⚠️ NOT "no JavaScript": the forms ship ~3KB of INLINE script
+    //       per page. "Bundles" is the exact and defensible word — do not shorten this label to
+    //       "JavaScript", which would be false and trivially disproven by View Source.
+    // Cost was considered and cut: Jon pays for Resend, spread across several projects, so it's
+    // near zero but not zero. "Almost nothing" in the blurb is the honest version; a "$0" card
+    // would not survive being asked about.
+    metrics: [
+      { icon: 'box', value: '4', label: 'Dependencies' },
+      { icon: 'eye-off', value: '0', label: 'Trackers or cookies' },
+      { icon: 'code', value: '0', label: 'JavaScript bundles' },
     ],
     // The repo moves to the bottom of the page as a quiet source link, so the pill is the ask.
     link: { href: '/contact/', label: 'Let’s talk' },

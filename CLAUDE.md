@@ -97,6 +97,16 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   **The label must NOT echo the closing line it sits under** — Jon rejected exactly that on
   2026-07-28 as cheesy; quoting his own sentence back at him reads as a template. Keep labels plain,
   and keep them different from each other.
+  An optional `diagram: true` renders the request-flow exhibit under an **"Under the hood"**
+  heading, below the CTA — the heading fences the technical material off as an appendix so the
+  diagram doesn't read as the page's headline. Specific to this site's own case study; it is
+  not a general "architecture diagram" slot.
+  An optional `metrics` array puts outcome numbers — `{ icon, value, label }` — in the same
+  evidence zone as the testimonial, above the CTA: proof, then the ask. `icon` keys a small
+  inline glyph set that lives in `src/components/ProjectMetrics.astro` (`box`, `trend-up`,
+  `truck`); an unknown or omitted key renders the number without a glyph rather than breaking.
+  **These are public claims about a real client — same bar as the testimonial. Never invent or
+  round one; every value comes from Jonathan, and the comment records the date he gave it.**
   An optional `testimonial`
   ({ quote, name, role, org, photo, placeholder }) renders a quote block between the body and the
   CTA — round photo, or an initials monogram when there's no headshot yet. **`placeholder: true`

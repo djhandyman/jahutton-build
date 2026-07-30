@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FlowDiagram from '../../components/FlowDiagram.astro';
+import ProjectMetrics from '../../components/ProjectMetrics.astro';
 import { projects } from '../../data/projects.js';
 
 // Prerender one detail page per project that has a slug (the flagships).
@@ -75,7 +76,10 @@ const initials = quote
         </figure>
       )}
 
-      {/* Proof sits between the story and the ask, so the CTA follows the evidence. */}
+      {/* Proof sits between the story and the ask, so the CTA follows the evidence — the
+          outcome numbers and the quote are both part of that zone. */}
+      {project.metrics && <ProjectMetrics metrics={project.metrics} />}
+
       {quote && (
         <figure class="quote">
           <blockquote class="quote__text"><p>“{quote.quote}”</p></blockquote>
@@ -128,7 +132,15 @@ const initials = quote
       {/* Opt-in per project: `diagram: true` renders the request-flow exhibit. Only the
           site's own case study uses it — it's specific to this stack, not a reusable
           "architecture" slot. Data lives in src/data/colophon.js. */}
-      {project.diagram && <FlowDiagram />}
+      {project.diagram && (
+        <>
+          {/* Frames everything below the CTA as an appendix (Jon, 2026-07-30). Without it the
+              diagram was the page's biggest visual object and therefore read as the headline,
+              which put "serverless functions" in front of a reader who came for the work. */}
+          <h2 class="hood">Under the hood</h2>
+          <FlowDiagram />
+        </>
+      )}
 
       {/* Exhibits. A group is an ordered run of shots under an optional heading — two for a
           before/after, three where the design sits between them. A group with no shots carries
@@ -140,7 +152,8 @@ const initials = quote
           {group.shots && (
             <div class="ba__pair" style={`--shots: ${group.shots.length}`}>
               {group.shots.map(({ label, img }) => (
-                <div class="ba__side">
+                /* --ar drives the justified row at the widest breakpoint — see .ba__side below. */
+                <div class="ba__side" style={`--ar: ${img.width / img.height}`}>
                   <p class="ba__label">{label}</p>
                   <picture>
                     <source srcset={`${img.src}.webp`} type="image/webp" />
@@ -305,6 +318,21 @@ const initials = quote
   .project__source a:hover span { text-decoration: underline; }
   .project__source svg { flex: none; }
 
+  /* Section marker for the appendix zone. Matches .ba__heading so an exhibit run reads the same
+     whether it opens with this or with a gallery group's own heading. The rule under it does the
+     work — it's the line that says "the pitch is over, this is the detail". */
+  .hood {
+    max-width: 56rem; /* the diagram's width, not the body measure, so the rule spans it */
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    margin: var(--space-16) 0 0;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  /* The diagram supplies its own --space-12 top margin, which would compound with the heading's
+     bottom rule into a gap that reads as a break rather than a caption. */
+  .hood + :global(.flow) { margin-top: var(--space-6); }
+
   /* Photo exhibits. Wider than --measure (the body text) but still short of the full
      container, so a group reads as an inset exhibit rather than a banner. */
   .ba { margin: var(--space-12) 0 0; max-width: 52rem; }
@@ -319,7 +347,7 @@ const initials = quote
   .ba__pair {
     display: grid;
     gap: var(--space-4);
-    align-items: start; /* natural aspect ratios — tops line up, bottoms may not */
+    align-items: start; /* stacked/2-up: natural aspect ratios, tops line up */
   }
   /* Stacked on a phone. Two across on a tablet — a three-shot group wraps to 2 + 1 there,
      which still reads in sequence and beats three ~12rem columns. The full shot count only
@@ -327,8 +355,18 @@ const initials = quote
   @media (min-width: 40rem) {
     .ba__pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
   }
+  /* Justified row (2026-07-30). Equal-width columns gave every group a ragged bottom edge —
+     shots don't share an aspect ratio, so at equal widths they render at different heights and
+     the caption gets stranded below the TALLEST one, floating in space under the shorter ones.
+     Fix: give each shot a flex-grow equal to its aspect ratio, with flex-basis 0. Widths then
+     come out proportional to aspect ratio, so every image resolves to the same height
+     (width ÷ ar is constant) and the bottoms line up exactly. The caption sits snug under all
+     of them. Nothing is cropped — the widths flex, not the pictures.
+     Only at the widest breakpoint, where all shots share one row; below this the grid above
+     still wraps 3 shots to 2 + 1, which flex-nowrap would squeeze. */
   @media (min-width: 52rem) {
-    .ba__pair { grid-template-columns: repeat(var(--shots, 2), minmax(0, 1fr)); }
+    .ba__pair { display: flex; }
+    .ba__side { flex: var(--ar, 1) 1 0; min-width: 0; }
   }
   /* A section with nothing to show yet. Dashed and muted on purpose — the same visual
      language as the testimonial's empty avatar, so "pending" is legible at a glance. */
