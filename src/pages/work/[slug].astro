@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import FlowDiagram from '../../components/FlowDiagram.astro';
+import StackDiagram from '../../components/StackDiagram.astro';
 import ProjectMetrics from '../../components/ProjectMetrics.astro';
 import { projects } from '../../data/projects.js';
 
@@ -129,16 +129,16 @@ const initials = quote
         </p>
       )}
 
-      {/* Opt-in per project: `diagram: true` renders the request-flow exhibit. Only the
-          site's own case study uses it — it's specific to this stack, not a reusable
-          "architecture" slot. Data lives in src/data/colophon.js. */}
+      {/* Opt-in per project: `diagram: true` renders the stack exhibit. Only the site's own
+          case study uses it — it's specific to this stack, not a reusable "architecture"
+          slot for other projects. Data lives in src/data/colophon.js. */}
       {project.diagram && (
         <>
           {/* Frames everything below the CTA as an appendix (Jon, 2026-07-30). Without it the
               diagram was the page's biggest visual object and therefore read as the headline,
               which put "serverless functions" in front of a reader who came for the work. */}
           <h2 class="hood">Under the hood</h2>
-          <FlowDiagram />
+          <StackDiagram />
         </>
       )}
 
@@ -331,7 +331,7 @@ const initials = quote
   }
   /* The diagram supplies its own --space-12 top margin, which would compound with the heading's
      bottom rule into a gap that reads as a break rather than a caption. */
-  .hood + :global(.flow) { margin-top: var(--space-6); }
+  .hood + :global(.stack) { margin-top: var(--space-6); }
 
   /* Photo exhibits. Wider than --measure (the body text) but still short of the full
      container, so a group reads as an inset exhibit rather than a banner. */

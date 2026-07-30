@@ -53,8 +53,8 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   (name, headline/positioning, nav, socials, contact + services + assessment copy, beta banner,
   Turnstile site key), `projects.js` (project cards + writing list), `intake.js` (the
   multi-step Build Assessment form's questions/options), `privacy.js`, `colophon.js` (the
-  request-flow diagram data). Pages and components map over these; components are
-  presentation-only. To change wording or add a project, edit the data file — never hard-code
+  stack-diagram data for the `/work/this-site` exhibit). Pages and components map over these;
+  components are presentation-only. To change wording or add a project, edit the data file — never hard-code
   copy into `.astro` files.
 
 - **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
@@ -97,14 +97,23 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   **The label must NOT echo the closing line it sits under** — Jon rejected exactly that on
   2026-07-28 as cheesy; quoting his own sentence back at him reads as a template. Keep labels plain,
   and keep them different from each other.
-  An optional `diagram: true` renders the request-flow exhibit under an **"Under the hood"**
-  heading, below the CTA — the heading fences the technical material off as an appendix so the
-  diagram doesn't read as the page's headline. Specific to this site's own case study; it is
-  not a general "architecture diagram" slot.
+  An optional `diagram: true` renders the **stack exhibit** (`StackDiagram.astro`, data in
+  `colophon.js` → `stack`) under an **"Under the hood"** heading below the CTA — the heading
+  fences the technical material off as an appendix so it doesn't read as the page's headline.
+  Two audiences, one artifact: the **boxes** are checkable facts for a reader evaluating whether
+  Jon can build, the **notes** are plain language for a client deciding what it's like to own the
+  thing. Without the notes it's just a wiring diagram — which is the failure mode Jon rejected on
+  2026-07-30, so `note` (and `heading`/`lead`) are **Jonathan's to write** and render nothing
+  while null. Specific to this site's own case study; not a general "architecture diagram" slot.
+  It replaced the request-flow diagram on 2026-07-30; that component and its data were deleted
+  in the same change rather than left unrendered, and are recoverable from git history.
   An optional `metrics` array puts outcome numbers — `{ icon, value, label }` — in the same
   evidence zone as the testimonial, above the CTA: proof, then the ask. `icon` keys a small
-  inline glyph set that lives in `src/components/ProjectMetrics.astro` (`box`, `trend-up`,
-  `truck`); an unknown or omitted key renders the number without a glyph rather than breaking.
+  inline glyph set that lives in `src/components/ProjectMetrics.astro` — add a key there when a
+  metric needs a glyph that isn't in it, and delete one that stops being used; an unknown or
+  omitted key renders the number without a glyph rather than breaking the row.
+  `value` is usually a number but may be a **short noun** where that's a checkable fact
+  ("Dev cloud"); never where it asserts quality ("Hardened", "enterprise-grade").
   **These are public claims about a real client — same bar as the testimonial. Never invent or
   round one; every value comes from Jonathan, and the comment records the date he gave it.**
   An optional `testimonial`

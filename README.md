@@ -92,7 +92,7 @@ protecting is different. Which one you protect is a design decision, not a defau
 | A form service | Three Pages Functions |
 | Analytics | Nothing. No pixels, no cookies, no tracking. |
 | A font CDN | Self-hosted, so nobody else sees you reading |
-| A diagram library | The flow diagram on the site is HTML and CSS |
+| A diagram library | The stack diagram on the site is HTML and CSS |
 
 Four dependencies: Astro, its sitemap plugin, and two fonts. Anyone can add things. The job
 is knowing what to leave out, then living with it.
@@ -147,7 +147,7 @@ src/
                 privacy · 404
   layouts/      BaseLayout — head, meta, header/footer, skip link
   components/   Header · Footer · Banner · ProjectCard · ContactForm
-                FeedbackWidget · AssessmentIntake · FlowDiagram · SubstackEmbed
+                FeedbackWidget · AssessmentIntake · StackDiagram · SubstackEmbed
                 NextStepCard · ProjectMetrics
   data/         site · projects · intake · privacy · colophon   ← all copy lives here
   styles/       tokens.css (the design system) · global.css

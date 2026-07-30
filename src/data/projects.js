@@ -77,10 +77,14 @@
 //     NEVER invent one, and never round a number up into a better story. Every value here comes
 //     from Jonathan directly — record the date he gave it, the way the blurbs do.
 //     Three reads best at the body measure; two or four also lay out.
-//   diagram — optional `true` on slugged projects: renders the request-flow exhibit
-//     (src/components/FlowDiagram.astro, data in src/data/colophon.js) under an "Under the hood"
-//     heading below the CTA. The heading is what keeps it an appendix rather than the page's
-//     headline. Specific to this site's own case study — not a general "architecture" slot.
+//   diagram — optional `true` on slugged projects: renders the stack exhibit
+//     (src/components/StackDiagram.astro, data in src/data/colophon.js → `stack`) under an
+//     "Under the hood" heading below the CTA. The heading is what keeps it an appendix rather
+//     than the page's headline. Specific to this site's own case study — not a general
+//     "architecture" slot for other projects.
+//     Replaced the request-flow exhibit here on 2026-07-30 (Jon): that one answered "what happens
+//     on submit", which is a narrower question than a reader of this page is asking. It was
+//     deleted rather than left unrendered; it's in git history if it's ever wanted back.
 
 export const projects = [
   {

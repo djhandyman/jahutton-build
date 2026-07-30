@@ -1,0 +1,122 @@
+---
+// How this site is put together, top to bottom. Presentation only — every label comes from
+// src/data/colophon.js → `stack`, where the accuracy notes and the outstanding TODOs live.
+//
+// Hand-built from HTML + CSS on the existing tokens: no SVG, no diagram library. A page
+// arguing for a small stack shouldn't add a dependency to draw itself. The
+// practical payoff is that the text is real text — selectable, searchable, and it reflows at
+// the reader's font size instead of scaling like an image.
+//
+// The `note` beside each layer is the client-facing half of this exhibit and is Jonathan's to
+// write. Where a note is null nothing renders and the layer simply spans the full width, so
+// the diagram is honest while it waits rather than propped up with filler.
+import { stack } from '../data/colophon.js';
+---
+<figure class="stack">
+  {(stack.heading || stack.lead) && (
+    <figcaption class="stack__head">
+      {stack.heading && <h3 class="stack__title">{stack.heading}</h3>}
+      {stack.lead && <p class="stack__lead">{stack.lead}</p>}
+    </figcaption>
+  )}
+
+  <ol class="stack__layers">
+    {stack.layers.map((layer) => (
+      <li class={`stack__row${layer.note ? ' stack__row--noted' : ''}`}>
+        <div class="stack__box">
+          <p class="stack__name">{layer.name}</p>
+          <ul class="stack__items">
+            {layer.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+        {layer.note && <p class="stack__note">{layer.note}</p>}
+      </li>
+    ))}
+  </ol>
+</figure>
+
+<style>
+  .stack { margin: var(--space-12) 0 0; max-width: 56rem; }
+  .stack__head { margin-bottom: var(--space-8); }
+  .stack__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    line-height: var(--leading-heading);
+    margin: 0 0 var(--space-2);
+  }
+  .stack__lead { margin: 0; color: var(--color-text-muted); max-width: var(--measure); }
+
+  /* A stack is vertical at every width — that's the idea being drawn, so it never turns into
+     a row. Only the notes move, from below each box to beside it. */
+  .stack__layers {
+    display: grid;
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stack__row { display: grid; gap: var(--space-3); position: relative; }
+  @media (min-width: 52rem) {
+    .stack__row--noted {
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: var(--space-6);
+      align-items: center;
+    }
+  }
+
+  /* Connectors drawn rather than typed, so they stay out of the accessibility tree and out of
+     copied text. Down the whole way — this is a stack, not a pipeline. */
+  .stack__row + .stack__row::before {
+    content: '↓';
+    position: absolute;
+    left: var(--space-6);
+    top: calc(var(--space-8) * -1);
+    transform: translate(-50%, -15%);
+    line-height: 1;
+    font-size: var(--text-xl);
+    color: var(--color-border);
+  }
+
+  .stack__box {
+    padding: var(--space-4) var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+  }
+  .stack__name {
+    margin: 0 0 var(--space-2);
+    max-width: none;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  /* Interpuncts drawn between items rather than typed, so the list stays a list for a screen
+     reader while reading as one line of prose. Same trick as the flow diagram's gate. */
+  .stack__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    line-height: 1.3;
+  }
+  .stack__items li + li::before {
+    content: '·';
+    margin-right: var(--space-3);
+    color: var(--color-border);
+  }
+
+  .stack__note {
+    margin: 0;
+    max-width: none;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

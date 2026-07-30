@@ -1,69 +1,57 @@
-// Data for the "how this site is built" case study — currently just the request-flow
-// diagram (src/components/FlowDiagram.astro renders it; the component is presentation-only).
+// Data for the "how this site is built" case study — the stack diagram on /work/this-site
+// (src/components/StackDiagram.astro renders it; the component is presentation-only).
 //
-// EVERY CLAIM HERE IS CHECKED AGAINST THE SOURCE. This diagram's whole value is that it's
-// true — it sits next to a link to a public repo, so a reader can verify it in about a
-// minute. If you change a Function's behaviour, change this too:
-//   functions/api/contact.js · functions/api/assessment-intake.js · functions/api/feedback.js
+// The request-flow diagram that used to live here was removed 2026-07-30 when StackDiagram
+// replaced it as that page's exhibit. It answered "what happens on submit", which is narrower
+// than what a reader of that page is asking. Recoverable from git history if the
+// three-Functions/opposite-failure-policies story ever earns its own surface again.
+
+// ─────────────────────────────────────────────────────────────────────────────
+// The stack, top to bottom — added 2026-07-30 (Jon), replacing the request-flow
+// diagram on /work/this-site as that page's exhibit.
 //
-// The `policy` field on each service is the point of the diagram, not decoration:
-//   'required'    — if this fails, the visitor sees an error and the submit is lost
-//   'best-effort' — if this fails, it's swallowed and the submit still succeeds
-// Compare the assessment lane to the feedback lane: same two services, opposite policies,
-// because the thing being protected is different. That contrast is the story.
+// Two audiences, one artifact: the BOXES are for a reader evaluating whether Jon
+// can build (they're specific and checkable against the repo linked at the bottom
+// of the page), and the NOTES are for a client who wants to know what it's like to
+// own the thing. Without the notes this is a wiring diagram, which is exactly the
+// failure mode Jon rejected on 2026-07-30.
+//
+// EVERY BOX IS CHECKED AGAINST THE SOURCE — verified 2026-07-30:
+//   no adapter in astro.config.mjs (static output) · @fontsource in BaseLayout
+//   (fonts self-hosted, no CDN) · functions/api/{contact,assessment-intake,feedback}.js
+//   · api.resend.com, supabase.co, api.anthropic.com, challenges.cloudflare.com are
+//   the only outbound hosts in functions/ · no analytics anywhere in dist/.
+//
+// TODO(jon): `note` on each layer — one short line, YOUR words, saying what that layer
+//   means for someone who has to live with the site (speed / cost / ease of change).
+//   Deliberately left null: this exhibit exists to answer a client's question, and the
+//   answer has to sound like you. Nothing renders where a note is missing.
+// TODO(jon): `heading` and `lead` for the figure, same reason. The page's "Under the
+//   hood" <h2> carries it until then.
+export const stack = {
+  heading: null,
+  lead: null,
 
-export const flow = {
-  heading: 'What happens when you use this site',
-  lead:
-    'Three forms, three Cloudflare Functions, three different ideas about what’s allowed to fail.',
-
-  // Sits in front of every POST, before any billable work runs.
-  gate: {
-    label: 'The edge',
-    items: ['Turnstile', 'honeypot', 'rate limit'],
-    note: 'Every submission clears this before a Function spends a cent.',
-  },
-
-  lanes: [
+  layers: [
     {
-      form: 'Contact form',
-      endpoint: '/api/contact',
-      // Turnstile verifies when JS is present, but the honeypot carries the no-JS path —
-      // deliberately softer than the two lanes below, because no LLM spend is at risk here.
-      gateNote: 'Verified when JS is on; honeypot covers the rest',
-      services: [
-        { name: 'Resend', detail: 'sends the email', policy: 'required' },
-      ],
+      name: 'Content + code',
+      items: ['Copy as data', 'Astro components', 'Public git repo'],
+      note: null,
     },
     {
-      form: 'Build Assessment',
-      endpoint: '/api/assessment-intake',
-      gateNote: 'Strict — this lane spends money',
-      services: [
-        { name: 'Supabase', detail: 'saves the intake', policy: 'best-effort' },
-        { name: 'Claude', detail: 'triages the lead', policy: 'best-effort' },
-        { name: 'Resend', detail: 'sends the email', policy: 'required' },
-      ],
+      name: 'Build + deploy',
+      items: ['Astro static build', 'Cloudflare Pages, from git'],
+      note: null,
     },
     {
-      form: 'Feedback widget',
-      endpoint: '/api/feedback',
-      gateNote: 'Strict — this lane spends money',
-      services: [
-        { name: 'Supabase', detail: 'saves the note', policy: 'required' },
-        { name: 'Claude', detail: 'tags it, sometimes asks more', policy: 'best-effort' },
-      ],
-      // The only lane where a model's output comes back to the visitor rather than to Jon.
-      returns: 'Roughly a third of the time, one follow-up question comes back to you.',
+      name: 'The live site',
+      items: ['Static files on a CDN', 'Self-hosted fonts', 'No analytics, no cookies'],
+      note: null,
+    },
+    {
+      name: 'Forms only',
+      items: ['Turnstile at the edge', 'Three Pages Functions', 'Resend · Supabase · Claude'],
+      note: null,
     },
   ],
-
-  legend: [
-    { policy: 'required', text: 'Must succeed — the visitor sees an error if it doesn’t.' },
-    { policy: 'best-effort', text: 'Allowed to fail quietly. The submission still lands.' },
-  ],
-
-  // The payoff. Without this, the diagram is just boxes.
-  note:
-    'Look at Supabase in the middle lane and the bottom one. Same service, opposite rules. On an assessment the email is the product, so a database hiccup must never cost me the lead. On feedback the saved row *is* the product, so that write is the one thing that has to happen. Which thing you protect depends on what you’d hate to lose.',
 };
