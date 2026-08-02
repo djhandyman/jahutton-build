@@ -122,7 +122,7 @@ export const contact = {
 // the first draft and said it didn't sound like him. It didn't: it was lists, parallel triads,
 // and quotable aphorisms, and his writing is almost none of those.
 //
-// MOSTLY HIS SENTENCES NOW. `lead`, `price`, `notItems`, and `notTail` are near-verbatim; `intro`
+// MOSTLY HIS SENTENCES NOW. `lead`, `price`, and `notItems` are near-verbatim; `intro`
 // is his answer to "what are they actually buying" turned from third person to second and
 // otherwise untouched. Before editing any of it, read his answers — the bar is his phrasing, not
 // smoother phrasing. Two things that look like slips and are his, on purpose:
@@ -139,13 +139,20 @@ export const services = {
   // walls as well as software.
   lead: 'I build things and solve problems in digital and physical spaces.',
   intro:
-    'What you get is partnership — the same energy that went into writing a book and building the production-grade apps I’ve built, someone who knows which questions to ask, and someone who can save you money by avoiding pricey platforms and building the thing yourself.',
+    'Partner with me and you`ll get the same energy that went into writing a book and building the production-grade apps; someone who knows what questions to ask, and who can save you money by helping you build the thing yourself.',
 
   startHeading: 'Start here',
   start:
-    'Most people start with a Build Assessment. We talk for an hour, and a week later you get a short written plan: what’s going on, what I’d build and in what order, what it costs, and which parts you could handle without me. $1,000, credited toward the work if we build together.',
-  startCtaLabel: 'About the Build Assessment',
-  startHref: '/assessment/',
+    'We talk for an hour, and a week later you get a short written plan: what’s going on, what I’d build and in what order, what it costs, and which parts you could handle without me. $1,000, credited toward your project if we build together.',
+  // 2026-08-02 (Jon): both CTAs on this page now go STRAIGHT to the intake form, not to the
+  // /assessment/ explainer. The paragraph above already says what the assessment is, what it
+  // costs, and what you get — so sending a reader who just read that to a page explaining it
+  // again was a step that only added friction.
+  // The label had to move with the href: "About the Build Assessment" on a button that opens a
+  // form is a broken promise. /assessment/ is still reachable from /contact and from the
+  // post-contact next-step card, so it isn't orphaned — it just isn't this page's job any more.
+  startCtaLabel: 'Start a Build Assessment',
+  startHref: '/assessment/intake/',
 
   shapesHeading: 'Three shapes the work takes',
   shapes: [
@@ -170,24 +177,29 @@ export const services = {
   // Verbatim. It replaced a manufactured aphorism about working slowly vs. fast, and it says
   // the same thing better by tying the pricing to the writing.
   price:
-    'I like to be as clear in my pricing as I am in my writing, and a fixed model works better for that than an hourly rate.',
+    'I like to be as clear in my pricing as I am in my writing, and a fixed model works better than an hourly rate.',
   priceDetail:
-    'We agree on what’s being built and what it costs before any money moves. The assessment is the one thing paid up front, and it comes off the price of the build.',
+    'First, we agree on what’s being built and what it costs. The assessment is the one thing paid up front, and it comes off the price of the build.',
 
   notHeading: 'What I’m not the right person for',
   notItems:
     'I’m probably not interested in projects involving fintech, crypto, multi-level or affiliate marketing, gaming, or lifestyle brands. My career is grounded in public service, small business, and nonprofits — I’ve done some work for a bootstrapped startup, but I don’t come from that world. What I do have is a strong grasp on how to leverage modern technology to build tools and apps that make life easier for people.',
-  notTail:
-    'And if you’re looking for free advice, or you already have the confidence to turn your ideas into reality — go forth and build it.',
 
-  // The closing question is Jon's own, lifted verbatim from the portfolio-site entry in
-  // .temp/project-copy.md — it is how he actually ends a piece of writing aimed at a reader
-  // he wants to hear from. Don't replace it with a manufactured CTA.
-  ctaHeading: 'Where to start',
-  ctaLead:
-    'If you already know what you want built, skip the assessment and just tell me. What would you like to start building together?',
+  // REMOVED 2026-08-02 (Jon) — deleted rather than left unrendered, the same call as FlowDiagram
+  // and the info callout. Both are in git history.
+  //   · `notTail` — the "go forth and build it" sign-off that closed the section above.
+  //   · `ctaHeading` ("Where to start") and `ctaLead`, the prose that introduced the buttons.
+  // The two BUTTONS below stayed — Jon put them back the same session. So the page still closes
+  // on an ask, just without a section wrapped around it: the last thing a reader meets after
+  // "what I'm not the right person for" is the two doors, unannounced.
+  // NOTE for anyone re-reading the older comments in this file: the one flagging "go forth and
+  //   build it" as Jon's own line — don't soften it — referred to `notTail`. That line is gone
+  //   by his own call, which is not the same thing as softening it.
+  // Same change as `startHref` above — straight to the form. Note this label and `startCtaLabel`
+  // are now identical, which is deliberate: it's the same ask at the top and the bottom of a long
+  // page, not two different offers.
   ctaPrimaryLabel: 'Start a Build Assessment',
-  ctaPrimaryHref: '/assessment/',
+  ctaPrimaryHref: '/assessment/intake/',
   ctaSecondaryLabel: 'Just talk first →',
   ctaSecondaryHref: '/contact/',
 };

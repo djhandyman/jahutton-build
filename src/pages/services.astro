@@ -37,16 +37,14 @@ import { services } from '../data/site.js';
 
       <h2>{services.notHeading}</h2>
       <p>{services.notItems}</p>
-      <p>{services.notTail}</p>
-
-      <div class="services__cta">
-        <h2>{services.ctaHeading}</h2>
-        <p>{services.ctaLead}</p>
-        <p class="cta-row">
-          <a class="btn" href={services.ctaPrimaryHref}>{services.ctaPrimaryLabel}</a>
-          <a class="btn btn--ghost" href={services.ctaSecondaryHref}>{services.ctaSecondaryLabel}</a>
-        </p>
-      </div>
+      {/* The "Where to start" heading and its lead paragraph were removed 2026-08-02 (Jon),
+          along with the `notTail` sign-off above — but the two buttons stayed. The page closes
+          on the ask with no prose introducing it, which is the point: after "what I'm not the
+          right person for", the reader gets two doors and no further pitch. */}
+      <p class="cta-row">
+        <a class="btn" href={services.ctaPrimaryHref}>{services.ctaPrimaryLabel}</a>
+        <a class="btn btn--ghost" href={services.ctaSecondaryHref}>{services.ctaSecondaryLabel}</a>
+      </p>
     </div>
   </section>
 </BaseLayout>
@@ -95,7 +93,13 @@ import { services } from '../data/site.js';
   /* Jon's own sentence about pricing being as clear as his writing — it carries the section,
      so it gets the size and the rest of the paragraph sits under it at body weight. */
   .services__price { font-size: var(--text-lg); }
-
-  .services__cta { margin-top: var(--space-12); }
-  .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-6) 0 0; }
+  /* `.services__cta` was dropped 2026-08-02 with the "Where to start" wrapper it styled; the
+     button row it used to space now carries that margin itself. `.cta-row` is scoped to this
+     component — index.astro has its own, untouched by anything here. */
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-12) 0 0;
+  }
 </style>
