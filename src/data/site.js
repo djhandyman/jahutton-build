@@ -10,8 +10,20 @@ export const site = {
   // pivoted from enterprise/"regulated, high-stakes" to an audience-named engagement front door).
   headline: 'I design, build, and ship.',
   // Hero lead — names the audience the headline leaves implicit ("for whom").
+  // 2026-08-02 (Jon): "turning ambiguity into something finished you can actually use" became
+  // "so the thing you've been meaning to build actually exists." He didn't want "ambiguity" —
+  // it was the one abstract noun in a concrete sentence, and it's the kind of word that could
+  // sit in any consulting firm's boilerplate. The replacement also drops the abstraction
+  // entirely rather than swapping in another one, and it covers the zero-to-one work as well as
+  // the rescues, which "turning X into Y" didn't.
+  // ⚠️ TODO(jon): public/og-default.png still has "I turn AMBIGUOUS problems into finished
+  //   things." rendered into the image, and the alt text in BaseLayout.astro + README.md
+  //   correctly describes that picture — so the word is still on the site, in the card that
+  //   shows every time anyone shares a link. Fixing it means regenerating the PNG (Fraunces
+  //   700, the ink/rust split, 1200×630), and the alt text in BOTH places moves with it.
+  //   Deliberately not done here: the alt must keep describing the image that exists.
   positioning:
-    'For solo operators, small businesses, and nonprofits — software, strategy, and structure, turning ambiguity into something finished you can actually use.',
+    'For solo operators, small businesses, and nonprofits — software, strategy, and structure, so the thing you’ve been meaning to build actually exists.',
   bookUrl: 'https://unflappable.press',
   // Contact form posts here — a Cloudflare Pages Function (functions/api/contact.js) that
   // emails submissions via Resend. No third-party form service, no per-seat fee.
