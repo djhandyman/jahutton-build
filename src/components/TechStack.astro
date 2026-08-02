@@ -1,0 +1,139 @@
+---
+// The tool list on /about, as grouped cards. Presentation only — content comes from
+// src/data/about.js → `about.stack.groups`.
+//
+// The job this does that a bullet list couldn't: Jon's groups were separated by blank lines,
+// so the grouping carried meaning the reader had no way to name. Every group now has a label,
+// and that label is the whole point of the component.
+//
+// The `hub` group (Claude Code) renders full-width above the rest, with its `under` items shown
+// as attached children. Everything else is a peer card in the grid below. That asymmetry is the
+// argument — one tool is the centre of the toolchain and the rest are things it reaches for.
+//
+// Tools are text, not logos. Twenty brand marks would mean twenty assets and a trademark
+// question each, on a site whose stated argument is four dependencies and no font CDN.
+import { about } from '../data/about.js';
+
+const groups = about.stack.groups;
+const hub = groups.find((g) => g.hub);
+const rest = groups.filter((g) => !g.hub);
+---
+<div class="kit">
+  {hub && (
+    <section class="kit__hub">
+      <p class="kit__label">{hub.label}</p>
+      {hub.items.map((item) => (
+        <div class="kit__hub-body">
+          <p class="kit__hub-name">{item.name}</p>
+          {item.under && (
+            <ul class="kit__under">
+              {item.under.map((u) => <li class="kit__pill kit__pill--quiet">{u}</li>)}
+            </ul>
+          )}
+        </div>
+      ))}
+    </section>
+  )}
+
+  <div class="kit__grid">
+    {rest.map((group) => (
+      <section class="kit__group">
+        <p class="kit__label">{group.label}</p>
+        <ul class="kit__pills">
+          {group.items.map((item) => <li class="kit__pill">{item.name}</li>)}
+        </ul>
+      </section>
+    ))}
+  </div>
+</div>
+
+<style>
+  /* Wider than the body measure — this is an exhibit, not a paragraph — but short of the full
+     container so it still reads as part of the page's column. */
+  .kit { max-width: 52rem; margin: var(--space-8) 0 0; }
+
+  .kit__label {
+    margin: 0 0 var(--space-3);
+    max-width: none;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+
+  /* --- The hub --- */
+  .kit__hub {
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    /* The one tinted panel here, so the hub reads as different in kind from the peer cards
+       below rather than just bigger. */
+    background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg));
+    border-color: color-mix(in srgb, var(--color-accent) 20%, var(--color-border));
+  }
+  .kit__hub .kit__label { color: var(--color-accent); font-weight: 600; }
+  .kit__hub-name {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    line-height: 1.1;
+  }
+
+  /* The three tools that sit under Claude Code. Indented behind a rust edge so they read as
+     belonging to it — the nesting Jon wrote in his draft, made visual. */
+  .kit__under {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-4) 0 0;
+    padding: 0 0 0 var(--space-4);
+    border-left: 2px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    list-style: none;
+  }
+
+  /* --- Peer groups --- */
+  .kit__grid {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+  }
+  @media (min-width: 34rem) {
+    .kit__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* With an odd number of peer groups the last one would sit alone in a half-width cell with
+       a hole beside it. Spanning it reads as deliberate instead. Self-adjusting: an even count
+       fails :nth-child(odd) and the rule doesn't apply, so adding a group can't break this. */
+    .kit__group:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  }
+  .kit__group {
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+  }
+
+  .kit__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .kit__pill {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    line-height: 1.4;
+  }
+  /* Sub-tools sit on the hub's tinted ground, so they need their own fill to stay legible. */
+  .kit__pill--quiet {
+    background: var(--color-bg);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

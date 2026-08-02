@@ -1,11 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubstackEmbed from '../components/SubstackEmbed.astro';
-import { site } from '../data/site.js';
+import TechStack from '../components/TechStack.astro';
+import { about } from '../data/about.js';
+
+// A paragraph is a plain string or an array of segments — see the shape notes in about.js.
+// Normalised here so the template has one thing to map over instead of two.
+const asSegments = (p) => (Array.isArray(p) ? p : [p]);
 ---
 <BaseLayout
   title="About — Jonathan A. Hutton"
-  description="Jonathan A. Hutton is a builder who turns organizational ambiguity into finished, working structure — plus the book Unflappable, flying, and what's next."
+  description="Jonathan A. Hutton has spent 10+ years building durable things in digital and physical space — for small businesses, non-profits, and public sector teams."
 >
   <section class="section">
     <div class="container prose">
@@ -24,56 +29,53 @@ import { site } from '../data/site.js';
         </picture>
       </figure>
 
-      <!-- DRAFT bio — reframed to the "systems-level change agent" through-line.
-           Grounded in real facts; Jonathan to review/approve wording. -->
-      <p>
-        I'm a builder, and the through-line across everything I make is <strong
-          >change</strong
-        >. I take organizational ambiguity and turn it into
-        elegant, working structure — software, systems, teams, physical spaces,
-        organizations, and the written word. I'm at my best from a blank sheet,
-        standing up something that didn't exist before, and I care most about the
-        change the work causes — not the process around it.
-      </p>
+      {about.intro.map((p) => (
+        <p>
+          {asSegments(p).map((seg) =>
+            typeof seg === 'string' ? seg
+              : seg.strong ? <strong>{seg.strong}</strong>
+              : seg.em ? <em>{seg.em}</em>
+              : <a href={seg.href} rel={seg.href.startsWith('/') ? undefined : 'noopener'}>{seg.text}</a>
+          )}
+        </p>
+      ))}
 
-      <p>
-        That's looked like a lot of things: founding a cross-functional business
-        architecture team inside a public sector org; leading a 20,000-SKU e-commerce
-        migration through an ownership change; helping revive a dormant nonprofit;
-        designing and shipping a live civic platform end to end; and remodeling a
-        kitchen down to the studs. Enterprise architecture and civic technology on
-        one side, hands-on building and design on the other — same instinct, turning
-        a mess into a finished thing.
-      </p>
+      {/* The ask, while the intro's closing line is still on screen. `clear: both` because the
+          headshot floats right above 48rem and the button would otherwise tuck under it. */}
+      <div class="cta">
+        <p class="cta__text">{about.cta.text}</p>
+        <p><a class="btn" href={about.cta.href}>{about.cta.label}</a></p>
+      </div>
 
-      <!-- Credibility signal -->
-      <h2>Recognition</h2>
-      <!-- TODO(jon): confirm/adjust this one-sentence framing before launch. -->
-      <p>
-        My reconstructive surgeon at UW Medicine, Dr. Barber, is interviewing me
-        for a department-wide grand rounds talk based in part on my story.
-      </p>
+      <h2>{about.stack.heading}</h2>
+      {about.stack.intro.map((p) => (
+        <p>
+          {asSegments(p).map((seg) =>
+            typeof seg === 'string' ? seg
+              : seg.strong ? <strong>{seg.strong}</strong>
+              : seg.em ? <em>{seg.em}</em>
+              : <a href={seg.href} rel={seg.href.startsWith('/') ? undefined : 'noopener'}>{seg.text}</a>
+          )}
+        </p>
+      ))}
 
-      <!-- DRAFT paragliding section — plain register, ties to the hero photo and the
-           book. Craft Jon cares about: he may want to take the pen here. -->
-      <h2>Flying</h2>
-      <p>
-        When I'm not building something, I'm usually flying. Paragliding is a launch,
-        a read of the air, and a commitment — no engine, no second chances at the
-        decision. It's also where a lot of the book came from. Being sick grounded me
-        for a while; getting back on a hillside with a wing laid out was part of
-        finding my way through.
-      </p>
+      <TechStack />
 
-      <h2>The book</h2>
-      <p>
-        I wrote <em>Unflappable: Soaring Beyond a Diagnosis</em>, a memoir about
-        rare disease, paragliding, and finding healing even when cures are out of
-        reach — published at
-        <a href={site.bookUrl} rel="noopener">unflappable.press</a>. Writing it was
-        one build; publishing it was another — the
-        <a href="/work/unflappable">work page has the rest of that story</a>.
-      </p>
+      {about.sections.map((s) => (
+        <>
+          <h2>{s.heading}</h2>
+          {s.body.map((p) => (
+            <p>
+              {asSegments(p).map((seg) =>
+                typeof seg === 'string' ? seg
+                  : seg.strong ? <strong>{seg.strong}</strong>
+                  : seg.em ? <em>{seg.em}</em>
+                  : <a href={seg.href} rel={seg.href.startsWith('/') ? undefined : 'noopener'}>{seg.text}</a>
+              )}
+            </p>
+          ))}
+        </>
+      ))}
     </div>
   </section>
 
@@ -83,6 +85,13 @@ import { site } from '../data/site.js';
 <style>
   .prose p { font-size: var(--text-lg); }
   .prose h2 { margin-top: var(--space-12); clear: both; }
+
+  .cta { clear: both; margin-top: var(--space-8); }
+  /* Deliberately NOT Fraunces (Jon, 2026-07-31). It's a sentence addressed to the reader, not a
+     heading — setting it in the display face made it look like a section title that had lost its
+     section. It inherits the body font and .prose's --text-lg like every other paragraph here;
+     the button below it is what marks this as an ask. */
+  .cta__text { margin-bottom: var(--space-4); }
 
   .headshot { margin: 0 0 var(--space-6); max-width: 260px; }
   .headshot img {

@@ -52,7 +52,8 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 - **Content is data, not markup.** All site copy and links live in `src/data/` — `site.js`
   (name, headline/positioning, nav, socials, contact + services + assessment copy, beta banner,
   Turnstile site key), `projects.js` (project cards + writing list), `intake.js` (the
-  multi-step Build Assessment form's questions/options), `privacy.js`, `colophon.js` (the
+  multi-step Build Assessment form's questions/options), `about.js` (the bio, the tool list,
+  and the page's remaining sections), `privacy.js`, `colophon.js` (the
   stack-diagram data for the `/work/this-site` exhibit). Pages and components map over these;
   components are presentation-only. To change wording or add a project, edit the data file — never hard-code
   copy into `.astro` files.
