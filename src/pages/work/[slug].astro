@@ -45,6 +45,64 @@ const initials = quote
         {project.role}{project.status && <span class="project__status"> · {project.status}</span>}
       </p>
 
+      {/* Optional scene-setter. Sits under the meta and above the body: the reader gets the
+          title and the role first, then the world the project lives in, then the story. It is
+          CONTEXT, not evidence — checkable material belongs in the exhibit zone below the CTA
+          (metrics, gallery, diagram). Eager-loaded, unlike every other image on the page,
+          because it's the one that's above the fold. */}
+      {project.hero && (
+        /* --ar caps the image by HEIGHT rather than width — see .hero below. A panoramic shot
+           and a square one can't share a single max-width without one of them dominating. */
+        <figure class="hero" style={`--ar: ${project.hero.width / project.hero.height}`}>
+          <picture>
+            <source srcset={`${project.hero.src}.webp`} type="image/webp" />
+            <img
+              src={`${project.hero.src}.jpg`}
+              width={project.hero.width}
+              height={project.hero.height}
+              alt={project.hero.alt}
+              fetchpriority="high"
+              decoding="async"
+            />
+          </picture>
+          {project.hero.caption && (
+            <figcaption class="hero__caption">{project.hero.caption}</figcaption>
+          )}
+        </figure>
+      )}
+
+      {/* The suite, up top: one card per major component, so a reader sees the SHAPE of what was
+          built before reading why. Deliberately above the body — on this project the scope is the
+          headline, and burying it under six sentences of prose made the page read as one app.
+          Pattern borrowed from TechStack.astro (labelled card + pills), so the two exhibits on
+          the site that enumerate parts look like the same idea. Inline rather than a component,
+          like .hero/.mark/.quote — markup, not logic, and the README's count tracks components.
+          Replaced the single info callout on 2026-08-02 (Jon); that slot was deleted rather than
+          left unrendered, same call as FlowDiagram — recoverable from git history. */}
+      {project.components && (
+        <section class="parts">
+          {project.components.heading && <h2 class="parts__heading">{project.components.heading}</h2>}
+          <div class="parts__grid">
+            {project.components.items.map((c) => (
+              <article class="parts__card">
+                <p class="parts__label">{c.name}</p>
+                <ul class="parts__pills">
+                  {c.items.map((i) => <li class="parts__pill">{i}</li>)}
+                </ul>
+                {c.link && (
+                  <p class="parts__link">
+                    <a
+                      href={c.link.href}
+                      rel={c.link.href.startsWith('/') ? undefined : 'noopener'}
+                    >{c.link.label} →</a>
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* A block is a paragraph or a labelled list — see the shape notes in projects.js. */}
       {blocks.map((b) =>
         typeof b === 'string' ? (
@@ -205,6 +263,97 @@ const initials = quote
   }
   .project__meta { color: var(--color-text-muted); font-weight: 600; margin-bottom: var(--space-8); }
   .project__status { font-weight: 400; }
+  /* Scene-setter. Wider than --measure so it reads as an establishing shot, but capped short
+     of the container so it stays an inset image rather than a full-bleed banner — this is an
+     editorial site, and a banner would make every detail page look like a landing page. Shares
+     the 56rem cap with .hood/.stack so the page has one wide column, not three.
+     The second cap is the load-bearing one: NO HERO IS TALLER THAN 30rem. Width alone can't
+     govern this slot, because aspect ratios differ wildly — a 1.95:1 panoramic at 56rem is a
+     comfortable band, but a 1:1 square at 56rem is 896px of photo before the reader reaches a
+     word of copy. Capping height and deriving width from --ar means a wide shot fills the
+     column and a square one sits at 30rem, and both stop at the same distance down the page. */
+  .hero {
+    margin: 0 0 var(--space-16);
+    max-width: min(56rem, calc(30rem * var(--ar, 1.8)));
+  }
+  .hero img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface); /* fills the box while the image decodes */
+  }
+  .hero__caption {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  /* The component suite. Matched to .hero's 56rem rather than TechStack's 52rem so the top of
+     the page has ONE column edge — these sit directly under the image and a 4rem step would
+     read as a mistake. */
+  .parts { margin: 0 0 var(--space-16); max-width: 56rem; }
+  .parts__heading {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    margin: 0 0 var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  /* auto-fit, like ProjectMetrics: three cards is today's count, not a constraint. A fourth
+     component wraps instead of squeezing, and on a phone they stack. */
+  .parts__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .parts__card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+  }
+  /* Rust, unlike TechStack's muted group labels: there the label named a shelf of other people's
+     tools, here it names a thing Jon built. */
+  .parts__label {
+    margin: 0 0 var(--space-3);
+    max-width: none;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+  .parts__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .parts__pill {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    line-height: 1.4;
+  }
+  /* margin-top:auto pins the link to the card's foot, so a 2-pill card and a 4-pill card still
+     line their links up across the row. */
+  .parts__link {
+    margin: var(--space-4) 0 0;
+    padding-top: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .parts__card .parts__pills { margin-bottom: auto; }
+
   .project__body { font-size: var(--text-lg); max-width: var(--measure); }
   .project__body + .project__body { margin-top: var(--space-6); }
 
@@ -224,7 +373,10 @@ const initials = quote
 
   /* Brand mark. Small, and on a white ground: the marks carry transparent backgrounds and the
      .jpg fallback is flattened onto white, so the card reads the same either way. */
-  .mark { margin: var(--space-10) 0 0; max-width: var(--measure); }
+  /* --space-12 matches .quote and .ba, the other objects that break the body column. This read
+     `--space-10` until 2026-08-02 — a token that has never existed on the scale (1/2/3/4/6/8/
+     12/16/24), so the declaration was invalid and the mark had NO top margin at all. */
+  .mark { margin: var(--space-12) 0 0; max-width: var(--measure); }
   .mark img {
     display: block;
     width: 100%;

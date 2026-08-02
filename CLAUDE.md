@@ -108,6 +108,21 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   while null. Specific to this site's own case study; not a general "architecture diagram" slot.
   It replaced the request-flow diagram on 2026-07-30; that component and its data were deleted
   in the same change rather than left unrendered, and are recoverable from git history.
+  An optional `hero` ({ src, width, height, alt, caption }) is a scene-setter **above the body**,
+  under the title and role — context, not evidence, which is why it sits outside the exhibit zone.
+  It is the one eager-loaded image on the page. The slot caps by **height, not width**
+  (`max-width: min(56rem, 30rem × aspect)`), because a 1.95:1 panoramic and a 1:1 square can't
+  share one max-width without the square swallowing the page; `--ar` is emitted inline from the
+  real pixel dims. Convert sources with the `sharp` that already ships inside Astro — no new
+  dependency, and it strips EXIF by default. **Check for GPS before publishing any photo of a
+  private place.**
+  An optional `components` ({ heading, items: [{ name, items, link }] }) renders the suite of
+  things a project is made of, as labelled cards with pills, **above the body** — where the scope
+  is the headline and burying it under prose makes a multi-part system read as one app. It reuses
+  `TechStack.astro`'s pattern so the two exhibits that enumerate parts look like one idea, but its
+  labels are rust rather than muted: there the label names a shelf of other people's tools, here
+  it names something Jon built. Added 2026-08-02, replacing a single info callout that described
+  one component and so misrepresented the scope; that slot was deleted, not left unrendered.
   An optional `metrics` array puts outcome numbers — `{ icon, value, label }` — in the same
   evidence zone as the testimonial, above the CTA: proof, then the ask. `icon` keys a small
   inline glyph set that lives in `src/components/ProjectMetrics.astro` — add a key there when a

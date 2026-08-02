@@ -133,6 +133,57 @@ export const projects = [
     status: 'Live',
     teaser:
       'Every inquiry was an email, every application a spreadsheet line item, and every year the team started from scratch. I fixed that.',
+    // Scene-setter, added 2026-08-02 (Jon's photo). Source `.temp/photo-import/gaggle.jpg`,
+    // 1275×653, converted to the .webp/.jpg pair with the sharp that already ships inside
+    // Astro — no new dependency, so the README's four-dependency claim still holds. EXIF and
+    // the Apple ICC profile were stripped in conversion; the original had no GPS.
+    // ⚠️ 1275px wide is the native size, and the slot renders up to 56rem (896px) — fine at 1×,
+    //   soft on a retina screen. TODO(jon): a higher-res original if you have one, then bump
+    //   width/height here. Same caveat as the server-closet shots.
+    // TODO(jon): approve the alt text below — it's drafted, not yours yet. It describes the
+    //   picture for someone who can't see it; it is not a caption and shouldn't sell.
+    // TODO(jon): a caption, if you want one — where and when this was shot, or what a gaggle
+    //   is. Renders nothing while null. This is the one place on the page where the sport
+    //   itself can be explained to a reader who has never heard of it.
+    hero: {
+      src: '/images/work/chelancomps/gaggle',
+      width: 1275,
+      height: 653,
+      alt: 'Dozens of paragliders circling together in a thermal beside a tall cumulus cloud, seen from below against a deep blue sky.',
+      caption: null,
+    },
+    // The suite, up top. Jon's content and his three groupings, 2026-08-02 — this REPLACED the
+    // single info callout tried earlier the same day, which he rejected. The callout described
+    // one document; the project is three things, and leading with one of them misrepresented
+    // the scope. The old `callout` slot was deleted with it rather than left unrendered (same
+    // call as FlowDiagram on 2026-07-30) — both are in git history.
+    // The guide link survived the swap: it's the one component with a public URL, verified live
+    // 2026-08-02 (HTTP 200). The front end is chelancomps.org itself, already the page's CTA, so
+    // linking it here would just be the same link twice. The admin backend is behind auth.
+    // ⚠️ Only mechanical change to Jon's words: sentence case on the pill text ("expectations" →
+    //   "Expectations"), because a lowercase pill beside a capitalised one looks like a bug.
+    //   Names are his verbatim, CSS does the uppercasing.
+    // TODO(jon): a `heading` for this block, if you want one — it renders nothing while null.
+    //   Three unlabelled boxes above the first paragraph do assume the reader knows they're
+    //   looking at the parts of one system. Something like "Three parts" would remove the guess.
+    components: {
+      heading: null,
+      items: [
+        {
+          name: 'Guide',
+          items: ['Expectations', 'Process', 'Narrative'],
+          link: { href: 'https://chelancomps.org/guide', label: 'Read the guide' },
+        },
+        {
+          name: 'App front end',
+          items: ['Email automations', 'Autocomplete'],
+        },
+        {
+          name: 'Admin backend',
+          items: ['Scoring', 'Workforce planning', 'Check-in', 'Camp census'],
+        },
+      ],
+    },
     blurb:
       'Every inquiry was an email, every application a spreadsheet line item, and every year the team started from scratch. I fixed that — designing and shipping a live platform for the Chelan paragliding competitions, end to end and solo, using an AI multi-agent workflow to do the work of a team. It cut the back-and-forth by more than 80% and gave the organizers better tools and process: recruit proven volunteers from past events, vet new applicants quickly, and keep every event’s data in a reusable repository that carries forward to the next comp. Less administration, more time on the work that actually matters. Built with React and TypeScript on a Supabase backend, hosted on Cloudflare.',
     // Metrics supplied by Jon 2026-07-30. The 80% is the same figure the blurb already carries
@@ -178,6 +229,28 @@ export const projects = [
     // TODO(jon): launch date, so the detail page can carry a "published <month year>" line.
     slug: 'unflappable',
     title: 'Unflappable: Soaring Beyond a Diagnosis',
+    // Scene-setter, added 2026-08-02 (Jon's photo, `.temp/photo-import/reading-browsers.png`).
+    // 640×640 PNG → the .webp/.jpg pair via Astro's bundled sharp. EXIF and XMP stripped in
+    // conversion: the original carried iPhone 16 Plus / iOS 18.6.2 / a device UUID and a capture
+    // timestamp, but NO GPS — checked before publishing.
+    // ⚠️ SQUARE, unlike the chelancomps hero (1.95:1). This is what forced the .hero rule to cap
+    //   by HEIGHT (max 30rem) instead of width — at a flat 56rem this would have been 896px of
+    //   photo above the first line of copy. It renders ~30rem (480px) wide.
+    // ⚠️ 640px native against a 480px slot leaves almost nothing for a retina screen.
+    //   TODO(jon): a higher-res original if the phone still has it — this is a 2× crop away from
+    //   being crisp, and it's the most human photo on the site.
+    // TODO(jon): approve the alt text — drafted, not yours yet.
+    // TODO(jon): a caption, if you want one. Two facts are already in hand and neither is
+    //   invented: the file's EXIF says it was shot 2025-10-11 at 4:20pm, and the filename says
+    //   Browsers — which would be Browsers Bookshop, Olympia, one of your three tour cities.
+    //   CONFIRM the venue before it goes in copy; a filename is evidence, not a citation.
+    hero: {
+      src: '/images/work/unflappable/reading-browsers',
+      width: 640,
+      height: 640,
+      alt: 'A seated audience, seen from the back of the room, listening to Jonathan read aloud from Unflappable in a small bookshop lined with shelves.',
+      caption: null,
+    },
     category: 'written work',
     role: 'Author / self-publisher',
     status: 'Published',
@@ -358,7 +431,7 @@ export const projects = [
     slug: 'wahbe-org-development',
     title: 'WAHBE — Org Development',
     category: 'teams',
-    role: 'Org development',
+    role: 'Org development, innovation',
     status: null,
     teaser:
       'Built the progression and coaching that advanced four people and gave the team a real ladder.',
@@ -384,7 +457,7 @@ export const projects = [
           'Experimenting with running a business architecture practice within the organization',
         ],
       },
-      'Four people have since advanced along that progression — two associate PMs to PM, two BSAs to BSA II — and for the first time every member of the product staff has a clear, concrete view of what advancement takes, which is still unique across the organization.',
+      'Four people have since advanced along that progression — two associate PMs to PM, two BSAs to BSA II — every member of the product staff has a clear, concrete view of what advancement takes.',
     ],
     link: null,
   },
