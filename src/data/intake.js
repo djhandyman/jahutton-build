@@ -18,7 +18,7 @@ import { contact } from './site.js';
 export const intake = {
   // Short lead above the wizard (plainest register, per .temp/voice-and-style.md).
   lead:
-    'A few questions before we talk. Takes a couple of minutes, and I read every one myself — it’s how I show up to the call already knowing your situation.',
+    'A few questions before we talk. Takes a couple of minutes.',
 
   steps: [
     {
@@ -32,9 +32,9 @@ export const intake = {
           label: 'What best describes it?',
           // Mirrors the five contact-page prompts (site.js → contact.prompts), condensed.
           options: [
-            'Wrong platform — something needs migrating',
-            'A process held together by email and spreadsheets',
-            'A mission with no working infrastructure behind it',
+            'I want to explore a new platform and need help',
+            'Need help with an existing process or workflow',
+            'Idea or concept for a new business venture',
             'Figuring out what to actually do with AI',
             'Something half-built that needs finishing',
             'Something else',
