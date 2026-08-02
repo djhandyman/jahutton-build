@@ -23,7 +23,10 @@ const step = assessment.nextStep;
 <style>
   .next-step {
     max-width: var(--measure);
-    margin-top: var(--space-10);
+    /* Was `--space-10` until 2026-08-02 — not a token on the scale (1/2/3/4/6/8/12/16/24), so
+       the declaration was invalid at computed-value time and this card butted straight against
+       whatever sat above it, on /contact and on both thanks pages. */
+    margin-top: var(--space-12);
     padding: var(--space-6);
     background: var(--color-bg);
     border: 1px solid var(--color-border);
