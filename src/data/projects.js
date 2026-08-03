@@ -623,24 +623,22 @@ export const projects = [
     //   a retained copyright stamp is normal practice and says nothing about the right to use.
     //   If Jon ever decides to credit David by name, that goes in the visible caption; the
     //   metadata is stripped on the way out, so nobody would see it there.
-    // ⚠️ IDENTIFIABLE PEOPLE. Jacob is recognisable and would be named in a caption, and
-    //   roughly ten more people are recognisable in the shelter behind. Outdoors at a flying
-    //   site is a low-stakes setting, but naming someone on a public page that sells
-    //   consulting is a different thing from being an anonymous figure in a photo.
-    //   TODO(jon): confirm Jacob is happy to be named and pictured here — same bar the
-    //   testimonial block sets for a named client.
+    // Caption is Jon's, supplied 2026-08-03 — naming Jacob Kalmakoff is his call. It does the
+    //   job the photo couldn't do alone: without it a reader has to guess why two men are
+    //   crouching in a field, and with it the shot becomes evidence that the board is real and
+    //   the work happens on the ground.
+    //   Only mechanical change: a closing period, to match the site's other four captions.
     // TODO(jon): approve the alt text — drafted, not yours. It describes the picture for
-    //   someone who can't see it; it is not a caption and shouldn't sell.
-    // TODO(jon): a caption, if you want one. This is the place to say who Jacob is and where
-    //   this is — the photo currently asks the reader to guess why two men are crouching in a
-    //   field, and "board member, at one of our project sites" answers it in six words.
-    //   Renders nothing while null.
+    //   someone who can't see it; it is not a caption and shouldn't sell. Note it deliberately
+    //   does NOT name anyone: the caption directly beneath already does, and a screen-reader
+    //   user would otherwise hear the names twice.
     hero: {
       src: '/images/work/cloudbase-foundation/launch-honduras',
       width: 1440,
       height: 960,
       alt: 'Two men crouch on a grassy launch site beside a spread-out yellow paraglider wing, with packed gear around them, a group of people watching from a covered shelter behind, and a hazy mountain valley beyond.',
-      caption: null,
+      caption:
+        'Jonathan with Cloudbase board member Jacob Kalmakoff at the annual Festival de Parapente in Honduras.',
     },
     blurb: [
       'Cloudbase Foundation began as a way for pilots to give back to communities near free flight sites around the world. When I joined in 2024, it was clear the nonprofit was in a state of decline: process and technology debt, coupled with a lack of vision for where the organization was going. I took over as Director in early 2026 and set out to build an engaged board, make investments in tech modernization, and prepare to grow, while mapping out a plan to make it happen.',
