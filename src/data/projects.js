@@ -155,14 +155,19 @@ export const projects = [
     // "20,000-plus" and a metrics card directly below, and a third telling on one page is
     // where a real number starts to read like a slogan.
     //
-    // TODO(jon): the four `note` lines — one per leg. Shape that worked on the stack diagram:
-    //   an all-caps benefit label, an em dash, one plain sentence. They should answer:
-    //     · WooCommerce  — what was wrong with what you inherited?
-    //     · BigCommerce  — why there, and what did the move buy her?
-    //     · Shopify      — why move again? (this is the one a reader will most want answered)
-    //     · Catalog      — what could she suddenly do that she couldn't before?
-    // TODO(jon): `heading` and `lead`, if you want them — both render nothing while null.
-    // TODO(jon): any box `items` worth adding. Anything that isn't checkable stays out.
+    // NOTES LANDED 2026-08-03 — all four are Jon's words, and so are the BigCommerce and
+    // Shopify items. His note shape here is NOT the stack diagram's (all-caps label — em
+    // dash — one sentence): it's two plain sentences, what happened then what it bought her.
+    // That's deliberate and it suits a sequence better than a label would. Match HIS shape if
+    // a leg is ever added; don't retrofit the colophon pattern onto it.
+    // They answer the question the boxes can't: the Shopify note explains the second move as
+    // the owner's downsizing decision rather than a fix, which is the thing no reader would
+    // have guessed from three platform names.
+    // ⚠️ These describe a real client's business decisions. Same bar as the metrics and the
+    //   testimonial — don't sharpen or embellish them.
+    // TODO(jon): `heading` and `lead` are still null — both render nothing while null, so the
+    //   exhibit is complete without them. Worth a short heading, though: it currently sits
+    //   between the prose and the numbers with nothing naming it.
     journey: {
       heading: null,
       lead: null,
@@ -185,10 +190,10 @@ export const projects = [
             'Legacy plugins',
             'Product catalog in disarray',
           ],
-          note: null,
+          note: 'The new owner had to deal with technical debt from years of digital neglect, which is where we started the project. After a thorough technical assessment, we decided a migration made more sense than trying to fix the existing platform.',
         },
-        { name: 'BigCommerce', items: [], note: null },
-        { name: 'Shopify', items: [], note: null },
+        { name: 'BigCommerce', items: ['Mobile-optimized', 'Large catalog support', 'Updated product taxonomy', 'Improved user experience'], note: 'We migrated a massive catalog to a new platform, and also reorganized it. The impact was immediate and positive; customers could shop from any device and the owner no longer had to support a crash-prone and disorganized system.' },
+        { name: 'Shopify', items: ['Smaller catalog', 'Weight-based shipping', 'Simpler admin interface'], note: 'The owner made a strategic decision to downsize, selling through a large percentage of inventory while on BigCommerce. After that, we reduced monthly tech spend even more by right-sizing the platform to the new need.' },
       ],
       branch: {
         name: 'Bulk-lot catalog',
@@ -198,7 +203,7 @@ export const projects = [
           'Built from Shopify data',
           'Images on Cloudflare R2',
         ],
-        note: null,
+        note: 'We kept all of the product inventory data in order to build a browsable static catalog that would sit alongside the remaining bulk product lots available for purchase. The early version of this web app was built in a week.',
       },
     },
     link: null, // store + catalog repos are private; nothing public to link yet
