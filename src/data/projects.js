@@ -586,9 +586,12 @@ export const projects = [
     // body paragraphs are his, verbatim except for mechanical fixes: `--` → a spaced em dash to
     // match every other blurb on the site, and a trailing space removed. Nothing was reworded.
     //
-    // ⚠️ ROLE CHANGED from "Board member / builder" to "Director". His narrative states it
-    //   plainly — joined 2024, "took over as Director in early 2026." The old label understated
-    //   the claim he's entitled to make. TODO(jon): confirm that's how you want it titled.
+    // ROLE: "Director / builder" — Jon's call, 2026-08-03. It was "Board member / builder";
+    //   his narrative states the promotion plainly (joined 2024, "took over as Director in early
+    //   2026"), so the first half moved up. The "/ builder" half stays because he does the coding
+    //   and design himself — and the page proves it: the "getting our hands dirty" card is a CRM,
+    //   a document repository, a website and branding. Director alone would read as governance
+    //   and undersell the half he actually built. Don't tidy it to just the title.
     // ⚠️ TEASER CHANGED. The old one said "new website, CRM, and board governance" as delivered
     //   facts, but the site doesn't go live until 8/7 — see the milestones note below. The new
     //   one leads with the turnaround rather than the artefacts, so nothing is claimed early.
@@ -598,7 +601,7 @@ export const projects = [
     slug: 'cloudbase-foundation',
     title: 'Cloudbase Foundation',
     category: 'organizations',
-    role: 'Director',
+    role: 'Director / builder',
     status: null,
     teaser:
       'A nonprofit in decline: process debt, technology debt, and no clear direction. I took it over and started rebuilding.',
