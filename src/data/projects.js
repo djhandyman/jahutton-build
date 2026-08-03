@@ -578,16 +578,17 @@ export const projects = [
     // fine and asked for the credit below. The `credit` field renders a linked "Photo: …" line
     // after the caption. ⚠️ The Cloudbase hero has an uncredited photographer (David Gamez) and
     // could carry the same field if Jon wants it.
-    // TODO(jon): approve the alt text — drafted, not yours.
-    // TODO(jon): a caption. Without one the figcaption is a bare credit, and the photo asks the
-    //   reader to work out why a man is plugging in a mixer on a page about team development.
-    //   Naming the event and what you were doing closes that in about eight words.
+    // Caption is Jon's, supplied 2026-08-03. Only mechanical change: sentence case and a
+    //   closing period, matching the site's other captions.
+    // TODO(jon): approve the alt text — drafted, not yours. It describes the picture for
+    //   someone who can't see it and deliberately doesn't mention playlists: the caption
+    //   beneath already says that, and alt shouldn't repeat what's about to be read aloud.
     hero: {
       src: '/images/work/wahbe-org-development/picnic-sound',
       width: 1440,
       height: 959,
       alt: 'A man in a T-shirt leans over a folding table outdoors, connecting cables to a small audio mixer beside a laptop, with a microphone stand in front of him and a parking lot behind.',
-      caption: null,
+      caption: 'Building playlists at the company picnic.',
       credit: { label: 'Aaseby Photography', href: 'https://aasebyphotography.smugmug.com/' },
     },
     blurb: [
