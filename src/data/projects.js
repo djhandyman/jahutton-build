@@ -555,6 +555,41 @@ export const projects = [
     status: null,
     teaser:
       'Built the progression and coaching that advanced four people and gave the team a real ladder.',
+    // Scene-setter, added 2026-08-03. Jon running sound at the WAHBE all-staff picnic.
+    // Source `.temp/photo-import/wahbe-picnic-me-audio.jpg`, 5392×3592 (exactly 1.5, same as
+    // the Cloudbase hero), downsized to 1440 = 2× the 720px slot. EXIF/XMP/IPTC stripped; no
+    // GPS in the original.
+    //
+    // CHOSEN OVER TWO OTHERS, and the reasoning matters if this is ever revisited:
+    //   · A posed shot of the twelve-person product team fits the topic far better — this page
+    //     is about developing that team. It was rejected anyway: eleven identifiable state
+    //     employees, several with legible name tags, who agreed to a company picnic photo and
+    //     not to a personal consulting site. On a page describing work Jon did developing them,
+    //     publishing their faces makes a claim about THEM, not just him. Don't quietly promote
+    //     it later without asking all eleven.
+    //   · A candid of Jon and one colleague: weaker editorially and still costs a second
+    //     person's consent.
+    // This one has nobody else identifiable, and it does the job a hero is for — a hero is a
+    // SCENE-SETTER, not evidence. The blurb proves the org-development work; the photo just
+    // shows the senior PM crouched over a mixer running sound at the staff picnic, which is the
+    // same unglamorous-competence note the server closet hits.
+    //
+    // Photographer: Nicholas Aaseby, a coworker — Jon confirmed 2026-08-03 that using these is
+    // fine and asked for the credit below. The `credit` field renders a linked "Photo: …" line
+    // after the caption. ⚠️ The Cloudbase hero has an uncredited photographer (David Gamez) and
+    // could carry the same field if Jon wants it.
+    // TODO(jon): approve the alt text — drafted, not yours.
+    // TODO(jon): a caption. Without one the figcaption is a bare credit, and the photo asks the
+    //   reader to work out why a man is plugging in a mixer on a page about team development.
+    //   Naming the event and what you were doing closes that in about eight words.
+    hero: {
+      src: '/images/work/wahbe-org-development/picnic-sound',
+      width: 1440,
+      height: 959,
+      alt: 'A man in a T-shirt leans over a folding table outdoors, connecting cables to a small audio mixer beside a laptop, with a microphone stand in front of him and a parking lot behind.',
+      caption: null,
+      credit: { label: 'Aaseby Photography', href: 'https://aasebyphotography.smugmug.com/' },
+    },
     blurb: [
       'It’s difficult to distill 12 years at an organization down to a few paragraphs, but the work I’m most proud of follows two key themes: supporting and innovating.',
       {

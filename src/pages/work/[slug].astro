@@ -80,8 +80,23 @@ const initials = quote
               decoding="async"
             />
           </picture>
-          {project.hero.caption && (
-            <figcaption class="hero__caption">{project.hero.caption}</figcaption>
+          {/* Caption says what's in the photo; `credit` says who took it. Two different jobs,
+              so two fields — and either renders alone. The credit is a link because a
+              photographer's credit that isn't clickable does them no good, and it's set in
+              the same muted type as the caption so it reads as a footnote, not a second
+              caption competing with the first. */}
+          {(project.hero.caption || project.hero.credit) && (
+            <figcaption class="hero__caption">
+              {project.hero.caption}
+              {project.hero.credit && (
+                <span class="hero__credit">
+                  {project.hero.caption ? ' ' : ''}Photo:{' '}
+                  <a href={project.hero.credit.href} rel="noopener">
+                    {project.hero.credit.label}
+                  </a>
+                </span>
+              )}
+            </figcaption>
           )}
         </figure>
       )}
@@ -381,6 +396,10 @@ const initials = quote
     font-size: var(--text-sm);
     color: var(--color-text-muted);
   }
+  /* Quieter still than the caption it trails — a credit is an obligation, not copy. */
+  .hero__credit { opacity: 0.85; }
+  .hero__credit a { color: inherit; }
+  .hero__credit a:hover { color: var(--color-accent); }
 
   /* The component suite. Matched to .hero's 56rem rather than TechStack's 52rem so the top of
      the page has ONE column edge — these sit directly under the image and a 4rem step would
