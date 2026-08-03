@@ -1,6 +1,19 @@
 ---
 import { site, nav } from '../data/site.js';
 const path = Astro.url.pathname;
+
+// Prefix match, not equality. Two reasons, and the first is a live bug fix:
+//   · Astro's default build.format is "directory", so every page renders with
+//     Astro.url.pathname === "/work/", while the nav hrefs in site.js are written
+//     "/work". `path === item.href` was therefore FALSE ON EVERY PAGE — verified
+//     2026-08-03, `grep -o 'aria-current' -r dist --include=*.html` returned nothing.
+//     The rust underline below had never rendered on the live site.
+//   · A section should stay lit on its detail pages: /work/<slug>, /notes/<slug>.
+const isActive = (href) => {
+  const base = href.replace(/\/+$/, '');
+  if (base === '') return path === '/'; // guard, in case "/" ever joins the nav
+  return path === base || path.startsWith(`${base}/`);
+};
 ---
 <header class="site-header">
   <div class="container site-header__inner">
@@ -9,7 +22,7 @@ const path = Astro.url.pathname;
       <ul class="site-header__nav">
         {nav.map((item) => (
           <li>
-            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
               {item.label}
             </a>
           </li>
@@ -40,7 +53,10 @@ const path = Astro.url.pathname;
   }
   .site-header__nav {
     display: flex;
-    gap: var(--space-6);
+    /* Four items fit a 320px row; a fifth (Notes, when it's unhidden) does not.
+       Wrapping is cheaper than a mobile menu and needs no JS. */
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
     list-style: none;
     margin: 0;
     padding: 0;
