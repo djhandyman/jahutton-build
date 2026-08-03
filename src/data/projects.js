@@ -142,15 +142,13 @@ export const projects = [
     //   width/height here. Same caveat as the server-closet shots.
     // TODO(jon): approve the alt text below — it's drafted, not yours yet. It describes the
     //   picture for someone who can't see it; it is not a caption and shouldn't sell.
-    // TODO(jon): a caption, if you want one — where and when this was shot, or what a gaggle
-    //   is. Renders nothing while null. This is the one place on the page where the sport
-    //   itself can be explained to a reader who has never heard of it.
+    // Caption is Jon's, supplied 2026-08-03.
     hero: {
       src: '/images/work/chelancomps/gaggle',
       width: 1275,
       height: 653,
       alt: 'Dozens of paragliders circling together in a thermal beside a tall cumulus cloud, seen from below against a deep blue sky.',
-      caption: null,
+      caption: 'The beginning of a paragliding competition, seen from below.',
     },
     // The suite, up top. Jon's content and his three groupings, 2026-08-02 — this REPLACED the
     // single info callout tried earlier the same day, which he rejected. The callout described
@@ -175,12 +173,33 @@ export const projects = [
           link: { href: 'https://chelancomps.org/guide', label: 'Read the guide' },
         },
         {
+          // 'Volunteer applications' added 2026-08-03. Verified, not inferred: the live front
+          // end's page title is "Chelan 2026 Volunteer Application" — it's the app's own name for
+          // itself. The card previously listed two conveniences and never named the thing the
+          // front end exists to do, so the scope read smaller than it is.
+          // 'Availability' added 2026-08-03 from Jon direct: the form is where people apply to
+          // volunteer and give their information and availability. The vetting he described in the
+          // same breath is the team's work, so it sits on the admin card below, not this one.
+          // TODO(jon): the multi-step form's own behaviour is the remaining candidate, if you want
+          //   a fourth. PLANNING.md (2026-07-23) records stepped flow / per-step validation /
+          //   progress bar / saved draft / review-before-submit — but that describes the vanilla
+          //   port built for THIS site's intake wizard, ported from Chelan's pattern. Confirm
+          //   which of them the Chelan form actually has before any becomes a pill here.
           name: 'App front end',
-          items: ['Email automations', 'Autocomplete'],
+          items: ['Volunteer applications', 'Availability', 'Email automations', 'Autocomplete'],
         },
         {
+          // 'Applicant vetting' added 2026-08-03 (Jon direct: "the team vets them"). It's also
+          // already claimed in the approved blurb — "recruit proven volunteers from past events,
+          // vet new applicants quickly" — so the card was listing less than the copy beside it.
+          // Leads the list because it's the step that comes first in the manager's actual work:
+          // vet, then plan the workforce, then check people in.
+          // 'Scoring' REMOVED the same day, Jon's call — beside 'Applicant vetting' it reads as
+          // scoring the applicants rather than scoring the competition. The word does two jobs in
+          // this domain and the card can't disambiguate it. The feature still exists; if it comes
+          // back it needs a name that says which scoring it means (e.g. 'Competition scoring').
           name: 'Admin backend',
-          items: ['Scoring', 'Workforce planning', 'Check-in', 'Camp census'],
+          items: ['Applicant vetting', 'Workforce planning', 'Check-in', 'Camp census'],
         },
       ],
     },
