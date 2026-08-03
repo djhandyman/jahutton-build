@@ -16,6 +16,12 @@ const {
   // OG/Twitter card props come from the launch-polish branch (PR #2).
   ogImage = '/og-default.png',
   ogImageAlt = 'Jonathan A. Hutton — I turn ambiguous problems into finished things.',
+  // Article metadata, for /notes/<slug> (2026-08-03). The defaults preserve every other
+  // page's output byte-for-byte: og:type stays "website", and the two article:* tags
+  // don't render at all unless a date is passed.
+  ogType = 'website',
+  publishedTime = null,
+  modifiedTime = null,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -36,7 +42,18 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#b55627" />
 
-    <meta property="og:type" content="website" />
+    {/* Feed autodiscovery. Site-wide because BaseLayout has no head slot, and a reader
+        should be able to find the feed from any page rather than only from /notes. */}
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Notes — Jonathan A. Hutton"
+      href="/rss.xml"
+    />
+
+    <meta property="og:type" content={ogType} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

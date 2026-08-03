@@ -124,3 +124,150 @@ img { max-width: 100%; height: auto; display: block; }
   html { scroll-behavior: auto; }
   * { transition: none !important; }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * MARKDOWN PROSE (.prose-md) — added 2026-08-03 with /notes
+ *
+ * The only place on this site where HTML is GENERATED rather than authored, and
+ * therefore the only place needing baseline rules for blockquote, lists, code,
+ * hr, tables and h4–h6. None of it existed before because nothing on the site
+ * produced those elements. The element list below was taken from the actual
+ * build output of src/content/notes/kitchen-sink.md, not guessed.
+ *
+ * Three deliberate constraints:
+ *
+ *  1. NOT `.prose`. /about, /now and /work/<slug> each carry class="prose" and
+ *     define their own `.prose p` / `.prose h2` in scoped <style> blocks.
+ *     Defining `.prose` here would silently restyle all twelve of those pages.
+ *  2. EVERY selector is scoped under .prose-md — no bare element rules. A bare
+ *     `blockquote` would land on the testimonial block on ten project pages; a
+ *     bare `ul` would hit /privacy, /services and the footer.
+ *  3. It lives in this file rather than a third stylesheet because README.md and
+ *     CLAUDE.md both claim this site has exactly two hand-written CSS files, and
+ *     because these are element baselines on tokens — what this file is for.
+ *     A scoped <style> in the page could not have worked anyway: markdown output
+ *     carries no data-astro-cid attribute, so Astro's scoping misses it entirely.
+ *
+ * ⚠️ This file's header claims it is shared verbatim with unflappable.press.
+ * This block is generic prose styling and should go there too the day that site
+ * grows a post — or that claim needs amending. See CLAUDE.md → Gotchas.
+ * ────────────────────────────────────────────────────────────────────────────── */
+.prose-md { max-width: var(--measure); font-size: var(--text-lg); }
+.prose-md > :first-child { margin-top: 0; }
+.prose-md > :last-child { margin-bottom: 0; }
+
+.prose-md p { margin: 0 0 var(--space-6); max-width: none; }
+.prose-md a { text-decoration-thickness: 1px; }
+.prose-md del { color: var(--color-text-muted); }
+
+/* Headings. A note's body starts at `##` — the h1 belongs to the page, not the
+   body. h4 gets a size here for the first time (global.css above gives it a family
+   and no size); h5/h6 had no rule at all and fell back to browser defaults. */
+.prose-md h2 { font-size: var(--text-2xl); margin: var(--space-12) 0 var(--space-4); }
+.prose-md h3 { font-size: var(--text-xl);  margin: var(--space-8) 0 var(--space-3); }
+.prose-md h4 { font-size: var(--text-lg);  margin: var(--space-8) 0 var(--space-3); }
+.prose-md h5,
+.prose-md h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  font-size: var(--text-base);
+  margin: var(--space-6) 0 var(--space-2);
+}
+/* Astro slugs heading ids automatically (github-slugger ships inside it), so #anchor
+   links work — this keeps the target off the top edge of the viewport. */
+.prose-md :is(h2, h3, h4, h5, h6) { scroll-margin-top: var(--space-8); }
+
+.prose-md ul,
+.prose-md ol { margin: 0 0 var(--space-6); padding-left: 1.4em; }
+.prose-md li + li { margin-top: var(--space-2); }
+.prose-md li > ul,
+.prose-md li > ol { margin: var(--space-2) 0 0; }
+/* GFM task lists. remark supplies these two class hooks itself — verified in the
+   build output — so no :has() is needed and old browsers are fine. */
+.prose-md .contains-task-list { list-style: none; padding-left: 0; }
+.prose-md .task-list-item input { margin-right: var(--space-2); }
+
+/* A quotation inside a piece of writing — deliberately lighter than the .quote block
+   on project pages, which is a testimonial with attribution and earns a card. */
+.prose-md blockquote {
+  margin: var(--space-8) 0;
+  padding: var(--space-1) 0 var(--space-1) var(--space-6);
+  border-left: 3px solid var(--color-accent);
+  color: var(--color-text-muted);
+  font-family: var(--font-heading);
+}
+.prose-md blockquote > :last-child { margin-bottom: 0; }
+
+/* No monospace webfont is loaded and none is going to be — that would be a fifth
+   dependency for a face that appears in a code fence. System stack. */
+.prose-md code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875em;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+/* Astro highlights fences with the Shiki bundled inside it and emits
+   <pre class="astro-code"> with the theme background as an INLINE style, so the only
+   job left here is the box. overflow-x is required: shikiConfig.wrap defaults to
+   false, so one long line would otherwise widen the whole page on a phone. The
+   inline-code chrome above has to be undone inside a fence. */
+.prose-md pre {
+  margin: 0 0 var(--space-6);
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+.prose-md pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+.prose-md hr { margin: var(--space-12) 0; border: 0; border-top: 1px solid var(--color-border); }
+
+.prose-md figure { margin: var(--space-8) 0; }
+.prose-md img {
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.prose-md figcaption {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* GFM tables. Deliberately NOT a scroll container — `display: block` on a <table> is
+   the usual trick and it costs table semantics in some engines. Keep tables in notes
+   narrow; a wide one is a sign the content wants a list. */
+.prose-md table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-base);
+}
+.prose-md th,
+.prose-md td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+.prose-md th { font-family: var(--font-heading); }
+
+/* GFM footnotes land as <section data-footnotes class="footnotes"> with a
+   <h2 class="sr-only">Footnotes</h2>. This site's visually-hidden helper is named
+   .visually-hidden, so .sr-only has to be defined here or that heading prints. */
+.prose-md .footnotes {
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+}
+.prose-md .footnotes p { margin-bottom: var(--space-3); }
+.prose-md .sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}

@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { notes as copy } from '../../data/notes.js';
+
+// Same predicate as the index. A draft therefore has NO page in production, which is also
+// why drafts need no sitemap exclusion — there is nothing to exclude.
+// An empty collection returns [], which generates zero pages and is not an error.
+export async function getStaticPaths() {
+  const entries = await getCollection(
+    'notes',
+    ({ data }) => import.meta.env.DEV || !data.draft,
+  );
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const fmt = (d) =>
+  d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+const iso = (d) => d.toISOString().slice(0, 10);
+
+// Only override the default social card when the note carries one; the schema's refine()
+// guarantees alt text is present whenever src is.
+const og = entry.data.ogImage
+  ? { ogImage: entry.data.ogImage, ogImageAlt: entry.data.ogImageAlt }
+  : {};
+---
+
+<BaseLayout
+  title={`${entry.data.title} — Notes — Jonathan A. Hutton`}
+  description={entry.data.description}
+  ogType="article"
+  publishedTime={entry.data.date.toISOString()}
+  modifiedTime={entry.data.updated ? entry.data.updated.toISOString() : null}
+  {...og}
+>
+  <section class="section">
+    <article class="container note">
+      <p class="note__back"><a href="/notes/">{copy.backLabel}</a></p>
+      <p class="note__date">
+        <time datetime={iso(entry.data.date)}>{fmt(entry.data.date)}</time>
+        {entry.data.updated && <span> · updated {fmt(entry.data.updated)}</span>}
+      </p>
+      <h1>{entry.data.title}</h1>
+
+      {/* .prose-md is the ONLY hook the markdown styles hang off, and it is deliberately
+          NOT .prose: /about, /now and /work/<slug> each carry class="prose" and define
+          their own .prose p / .prose h2 locally, so reusing the name would restyle all
+          three. The rules live in global.css rather than in a <style> block here because
+          markdown output carries no data-astro-cid attribute — Astro's scoping cannot
+          reach it, and a scoped rule would silently do nothing. */}
+      <div class="prose-md">
+        <Content />
+      </div>
+    </article>
+  </section>
+</BaseLayout>
+
+<style>
+  .note {
+    max-width: var(--measure);
+  }
+  .note__back {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+  }
+  .note__date {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+  /* The body's own h2 spacing is set in global.css under .prose-md; the gap under the
+     title belongs to the title. */
+  .note h1 {
+    margin-bottom: var(--space-8);
+  }
+</style>

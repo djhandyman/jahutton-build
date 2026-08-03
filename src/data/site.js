@@ -279,6 +279,13 @@ export const thanks = {
 
 export const nav = [
   { label: 'Work', href: '/work' },
+  // /notes ships built but UNLINKED (2026-08-03), the same way /now is hidden — the
+  // surface was built before the writing exists, and pointing the nav at "Nothing here
+  // yet" advertises an empty room. Notes sits next to Work because both are "things I
+  // made"; Services/About/Contact are the offer ladder and splitting that run reads worse.
+  // Uncomment this line and drop the matching /notes exclusion from astro.config.mjs
+  // together, on the day the first note publishes. Both say so.
+  // { label: 'Notes', href: '/notes' },
   { label: 'Services', href: '/services' },
   { label: 'About', href: '/about' },
   // Pulled from the nav 2026-07-29 (Jon). The page still builds and still works at /now/ —

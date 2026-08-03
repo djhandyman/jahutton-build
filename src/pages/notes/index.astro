@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { notes as copy } from '../../data/notes.js';
+
+// ONE predicate, four consumers: this list, getStaticPaths() on [slug].astro, /rss.xml,
+// and — by consequence — the sitemap. A draft gets no page, so there is nothing to crawl
+// and no sitemap rule to write. import.meta.env.DEV is true under `npm run dev` and false
+// in `npm run build`, so drafts are previewable locally and unshippable.
+const entries = (
+  await getCollection('notes', ({ data }) => import.meta.env.DEV || !data.draft)
+).sort((a, b) => b.data.date - a.data.date);
+
+// Pinned notes come out of the stream and sit above it. This exists because rolling notes
+// and evergreen pieces pull opposite ways: the buyer-question writing is what earns a
+// lead, and in a pure reverse-chron list it sinks under whatever went up last month.
+// Both groups stay date-sorted; pinning changes placement, not order.
+const pinned = entries.filter((n) => n.data.pinned);
+const stream = entries.filter((n) => !n.data.pinned);
+
+// Rendered in UTC, like /privacy, so the date doesn't shift with the visitor's locale or
+// the build machine's timezone.
+const fmt = (d) =>
+  d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+const iso = (d) => d.toISOString().slice(0, 10);
+---
+
+<BaseLayout title={`${copy.title} — Jonathan A. Hutton`} description={copy.lead}>
+  <section class="section">
+    <div class="container">
+      <h1>{copy.title}</h1>
+      <p class="lead">{copy.lead}</p>
+
+      {
+        entries.length === 0 ? (
+          <p class="empty">{copy.empty}</p>
+        ) : (
+          <Fragment>
+            {/* Renders nothing at all until a note is pinned — no heading, no rule. */}
+            {pinned.length > 0 && (
+              <Fragment>
+                <h2 class="group">{copy.pinnedHeading}</h2>
+                <ul class="notes">
+                  {pinned.map((n) => (
+                    <li class="note">
+                      <p class="note__date">
+                        <time datetime={iso(n.data.date)}>{fmt(n.data.date)}</time>
+                        {/* Only ever visible in dev — a draft has no production page. */}
+                        {n.data.draft && <span class="note__draft">Draft</span>}
+                      </p>
+                      <h3 class="note__title">
+                        <a href={`/notes/${n.id}/`}>{n.data.title}</a>
+                      </h3>
+                      <p class="note__desc">{n.data.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              </Fragment>
+            )}
+
+            {/* A LIST, not the card grid /work uses. That grid is auto-fit/minmax, which
+                stretches a lone item to the full container width — /work never sees it
+                because it always has ten projects, and /notes starts with one or two. A
+                stacked list reads correctly at one entry and at fifty. */}
+            <ul class="notes">
+              {stream.map((n) => (
+                <li class="note">
+                  <p class="note__date">
+                    <time datetime={iso(n.data.date)}>{fmt(n.data.date)}</time>
+                    {n.data.draft && <span class="note__draft">Draft</span>}
+                  </p>
+                  <h2 class="note__title">
+                    <a href={`/notes/${n.id}/`}>{n.data.title}</a>
+                  </h2>
+                  <p class="note__desc">{n.data.description}</p>
+                </li>
+              ))}
+            </ul>
+          </Fragment>
+        )
+      }
+
+      <p class="feed"><a href="/rss.xml">{copy.feedLabel}</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lead {
+    font-size: var(--text-lg);
+    max-width: var(--measure);
+  }
+  .empty {
+    margin-top: var(--space-8);
+    max-width: var(--measure);
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+  .group {
+    margin: var(--space-12) 0 0;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+  }
+  /* The pinned group and the stream are both .notes; the group heading supplies the only
+     separation the pinned block needs. */
+  .notes {
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    max-width: var(--measure);
+  }
+  .note + .note {
+    margin-top: var(--space-8);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+  .note__date {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+  /* Dev-only flag — same dashed-and-muted language as the testimonial's placeholder
+     badge, so "not shipped" is legible at a glance. */
+  .note__draft {
+    margin-left: var(--space-3);
+    padding: 0 var(--space-2);
+    border: 1px dashed var(--color-accent);
+    border-radius: 4px;
+    color: var(--color-accent);
+  }
+  .note__title {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    margin: 0 0 var(--space-2);
+  }
+  .note__title a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .note__title a:hover {
+    color: var(--color-accent);
+  }
+  .note__desc {
+    margin: 0;
+    font-size: var(--text-lg);
+  }
+  .feed {
+    margin: var(--space-12) 0 0;
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+  }
+  .feed a {
+    color: var(--color-text-muted);
+  }
+  .feed a:hover {
+    color: var(--color-accent);
+  }
+</style>
