@@ -605,6 +605,37 @@ export const projects = [
     status: null,
     teaser:
       'A nonprofit in decline: process debt, technology debt, and no clear direction. I took it over and started rebuilding.',
+    // Scene-setter, added 2026-08-03 (Jon's photo: him and Jacob, a CBF board member, at a
+    // launch site in Honduras — an area where the foundation has active projects). Source
+    // `.temp/photo-import/jonathan-jacob-honduras.png`, 640×427, converted to the .webp/.jpg
+    // pair with the sharp that already ships inside Astro — no new dependency.
+    // EXIF and XMP verified STRIPPED on both outputs; the original carried **no GPS** in
+    // either block (checked before conversion, per the standing rule about photos of places).
+    // ⚠️ SHOT MARCH 2026 — Jon, 2026-08-03. The file's EXIF says 2026:07:20; that's an export
+    //   timestamp, not the capture date. If a caption ever carries a date, it's March.
+    // ⚠️ 640px wide is the native size and the slot renders up to 720px here
+    //   (min(56rem, 30rem × 1.5) — this is a 1.5:1 frame), so it is UPSCALED even at 1× and
+    //   will be soft on any modern screen. This is the lowest-resolution hero on the site by
+    //   some way. TODO(jon): a higher-res original if one exists, then bump width/height.
+    // ⚠️ IDENTIFIABLE PEOPLE. Jacob is recognisable and would be named in a caption, and
+    //   roughly ten more people are recognisable in the shelter behind. Outdoors at a flying
+    //   site is a low-stakes setting, but naming someone on a public page that sells
+    //   consulting is a different thing from being an anonymous figure in a photo.
+    //   TODO(jon): confirm Jacob is happy to be named and pictured here — same bar the
+    //   testimonial block sets for a named client.
+    // TODO(jon): approve the alt text — drafted, not yours. It describes the picture for
+    //   someone who can't see it; it is not a caption and shouldn't sell.
+    // TODO(jon): a caption, if you want one. This is the place to say who Jacob is and where
+    //   this is — the photo currently asks the reader to guess why two men are crouching in a
+    //   field, and "board member, at one of our project sites" answers it in six words.
+    //   Renders nothing while null.
+    hero: {
+      src: '/images/work/cloudbase-foundation/launch-honduras',
+      width: 640,
+      height: 427,
+      alt: 'Two men crouch on a grassy launch site beside a spread-out yellow paraglider wing, with packed gear around them, a group of people watching from a covered shelter behind, and a hazy mountain valley beyond.',
+      caption: null,
+    },
     blurb: [
       'Cloudbase Foundation began as a way for pilots to give back to communities near free flight sites around the world. When I joined in 2024, it was clear the nonprofit was in a state of decline: process and technology debt, coupled with a lack of vision for where the organization was going. I took over as Director in early 2026 and set out to build an engaged board, make investments in tech modernization, and prepare to grow, while mapping out a plan to make it happen.',
       'My work with Cloudbase is illustrative of how I manage and lead — by finding the right people, getting aligned on purpose and direction, and then getting our hands dirty. Cloudbase is still in the stabilization period, but we are very close to the next phase: engaging with existing and potential donors, and bringing more visibility to our mission.',
