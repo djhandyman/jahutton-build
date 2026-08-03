@@ -84,6 +84,17 @@
 //     NEVER invent one, and never round a number up into a better story. Every value here comes
 //     from Jonathan directly — record the date he gave it, the way the blurbs do.
 //     Three reads best at the body measure; two or four also lay out.
+//   journey — optional platform/migration exhibit on a slugged project, rendered inline by
+//     work/[slug].astro AFTER the body and BEFORE the metrics: story → shape → results → ask.
+//     { heading, lead, steps: [{ name, items, note }], branch: { name, items, note } }.
+//     Same two-audience split as the stack diagram: BOXES are checkable facts, NOTES are
+//     Jonathan's and answer "why did this move happen" — without them it's a wiring diagram,
+//     which is the failure mode rejected on 2026-07-30. `note`, `heading` and `lead` all
+//     render nothing while null, so the exhibit is honest while it waits.
+//     `branch` is for a thing built FROM the last step rather than a further step in the
+//     line — it renders indented, with a corner connector and a rust edge. Use it only for
+//     that relationship; a fourth platform is a fourth `step`.
+//     Added 2026-08-03 for Bello Modo (Woo → BigCommerce → Shopify, plus the catalog app).
 //   diagram — optional `true` on slugged projects: renders the stack exhibit
 //     (src/components/StackDiagram.astro, data in src/data/colophon.js → `stack`) under an
 //     "Under the hood" heading below the CTA. The heading is what keeps it an appendix rather
@@ -122,6 +133,55 @@ export const projects = [
       { icon: 'trend-up', value: '+30%', label: 'Profitability' },
       { icon: 'truck', value: '98%', label: 'On-time shipping' },
     ],
+    // The platform journey, added 2026-08-03 (Jon asked for it). Sits AFTER the body and
+    // BEFORE the metrics: story → shape of the work → results → ask.
+    //
+    // Same two-audience split as the stack diagram on /work/this-site, and for the same
+    // reason: the BOXES are checkable facts, the NOTES are Jon's and answer a different
+    // question. Three platform names with arrows between them is a wiring diagram — which is
+    // the exact failure mode Jon rejected on 2026-07-30. Nobody re-platforms 20,000 SKUs
+    // twice for fun, and *why each move happened* is the part that says something about how
+    // he works. That's what the notes carry, and they render nothing while null, so the
+    // exhibit is honest while it waits rather than propped up with filler.
+    //
+    // The catalog app is a BRANCH, not a fourth step — it's built *from* Shopify data, so it
+    // hangs off the last node rather than continuing the line. Getting that relationship
+    // right is half the point of drawing this: it shows the owner was left with something the
+    // platform didn't give her.
+    //
+    // Box contents are deliberately sparse. The only verified facts are the platform order
+    // (blurb) and the catalog stack (private repo djhandyman/bellomodo-catalog, verified
+    // 2026-07-23). "20,000+ SKUs" is deliberately NOT repeated here — it's already the blurb's
+    // "20,000-plus" and a metrics card directly below, and a third telling on one page is
+    // where a real number starts to read like a slogan.
+    //
+    // TODO(jon): the four `note` lines — one per leg. Shape that worked on the stack diagram:
+    //   an all-caps benefit label, an em dash, one plain sentence. They should answer:
+    //     · WooCommerce  — what was wrong with what you inherited?
+    //     · BigCommerce  — why there, and what did the move buy her?
+    //     · Shopify      — why move again? (this is the one a reader will most want answered)
+    //     · Catalog      — what could she suddenly do that she couldn't before?
+    // TODO(jon): `heading` and `lead`, if you want them — both render nothing while null.
+    // TODO(jon): any box `items` worth adding. Anything that isn't checkable stays out.
+    journey: {
+      heading: null,
+      lead: null,
+      steps: [
+        { name: 'WooCommerce', items: ['The inherited store'], note: null },
+        { name: 'BigCommerce', items: [], note: null },
+        { name: 'Shopify', items: [], note: null },
+      ],
+      branch: {
+        name: 'Bulk-lot catalog',
+        items: [
+          'Eleventy + Nunjucks',
+          'Pagefind search',
+          'Built from Shopify data',
+          'Images on Cloudflare R2',
+        ],
+        note: null,
+      },
+    },
     link: null, // store + catalog repos are private; nothing public to link yet
   },
   {

@@ -164,6 +164,58 @@ const initials = quote
 
       {/* Proof sits between the story and the ask, so the CTA follows the evidence — the
           outcome numbers and the quote are both part of that zone. */}
+      {/* The platform journey (Bello Modo). After the body and before the metrics: the prose
+          tells the story, this shows its shape, the numbers land after it, then the ask.
+          Vertical rather than a left-to-right row of logos — a sequence with a note beside
+          each step is the same two-column shape as StackDiagram, which is deliberate: the
+          two exhibits that explain how something was built should look like one idea.
+          Inline rather than a component, like .hero/.mark/.quote/.parts — markup, not logic,
+          and the README's count tracks components. */}
+      {project.journey && (
+        <figure class="path">
+          {(project.journey.heading || project.journey.lead) && (
+            <figcaption class="path__head">
+              {project.journey.heading && <h2 class="path__title">{project.journey.heading}</h2>}
+              {project.journey.lead && <p class="path__lead">{project.journey.lead}</p>}
+            </figcaption>
+          )}
+          <ol class="path__steps">
+            {project.journey.steps.map((step) => (
+              <li class={`path__row${step.note ? ' path__row--noted' : ''}`}>
+                <div class="path__box">
+                  <p class="path__name">{step.name}</p>
+                  {step.items?.length > 0 && (
+                    <ul class="path__items">{step.items.map((i) => <li>{i}</li>)}</ul>
+                  )}
+                </div>
+                {step.note && <p class="path__note">{step.note}</p>}
+              </li>
+            ))}
+            {/* The branch: built FROM the last platform's data, not migrated to. Indented and
+                marked so it can't be misread as a fourth move. */}
+            {project.journey.branch && (
+              <li
+                class={`path__row path__row--branch${
+                  project.journey.branch.note ? ' path__row--noted' : ''
+                }`}
+              >
+                <div class="path__box path__box--branch">
+                  <p class="path__name">{project.journey.branch.name}</p>
+                  {project.journey.branch.items?.length > 0 && (
+                    <ul class="path__items">
+                      {project.journey.branch.items.map((i) => <li>{i}</li>)}
+                    </ul>
+                  )}
+                </div>
+                {project.journey.branch.note && (
+                  <p class="path__note">{project.journey.branch.note}</p>
+                )}
+              </li>
+            )}
+          </ol>
+        </figure>
+      )}
+
       {project.metrics && <ProjectMetrics metrics={project.metrics} />}
 
       {quote && (
@@ -321,6 +373,78 @@ const initials = quote
   /* The component suite. Matched to .hero's 56rem rather than TechStack's 52rem so the top of
      the page has ONE column edge — these sit directly under the image and a 4rem step would
      read as a mistake. */
+  /* ── The platform journey ──────────────────────────────────────────────────
+     Two columns at width — box | note — the same shape as StackDiagram, so the
+     site's two "how this was built" exhibits read as one idea. A row with no note
+     spans the full width, so an unwritten note leaves no hole. Stacks below 48rem.
+     The connector is a ::before rule on each row after the first; it's decorative,
+     so the <ol> carries the sequence for anyone not seeing it. */
+  .path { margin: var(--space-12) 0 var(--space-16); max-width: 56rem; }
+  .path__head { margin-bottom: var(--space-8); }
+  .path__title { font-size: var(--text-xl); line-height: 1.2; margin: 0 0 var(--space-2); }
+  .path__lead { margin: 0; color: var(--color-text-muted); }
+  .path__steps { list-style: none; margin: 0; padding: 0; }
+  .path__row { position: relative; }
+  .path__row + .path__row { margin-top: var(--space-6); }
+  /* The connector between steps. */
+  .path__row + .path__row::before {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: calc(var(--space-6) * -1);
+    height: var(--space-6);
+    border-left: 2px solid var(--color-border);
+  }
+  .path__box {
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+  }
+  /* The catalog app is a branch off the last platform, not a fourth move: indented,
+     with a corner connector rather than a straight one, and a rust edge because it's
+     the thing Jon built rather than a platform he moved to. */
+  .path__row--branch { margin-left: var(--space-8); }
+  .path__row--branch::before {
+    left: calc(var(--space-8) * -1 + 1.25rem);
+    width: calc(var(--space-8) - 0.5rem);
+    border-bottom: 2px solid var(--color-border);
+    border-bottom-left-radius: var(--radius);
+  }
+  .path__box--branch { border-left: 3px solid var(--color-accent); }
+  .path__name {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+  .path__items {
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .path__items li {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.1em 0.6em;
+    background: var(--color-surface);
+  }
+  .path__note { margin: var(--space-3) 0 0; max-width: none; color: var(--color-text-muted); }
+  @media (min-width: 48rem) {
+    .path__row--noted {
+      display: grid;
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: var(--space-6);
+      align-items: start;
+    }
+    .path__note { margin-top: 0; }
+  }
+
   .parts { margin: 0 0 var(--space-16); max-width: 56rem; }
   .parts__heading {
     font-size: var(--text-xl);
