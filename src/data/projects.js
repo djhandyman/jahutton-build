@@ -607,16 +607,22 @@ export const projects = [
       'A nonprofit in decline: process debt, technology debt, and no clear direction. I took it over and started rebuilding.',
     // Scene-setter, added 2026-08-03 (Jon's photo: him and Jacob, a CBF board member, at a
     // launch site in Honduras — an area where the foundation has active projects). Source
-    // `.temp/photo-import/jonathan-jacob-honduras.png`, 640×427, converted to the .webp/.jpg
-    // pair with the sharp that already ships inside Astro — no new dependency.
-    // EXIF and XMP verified STRIPPED on both outputs; the original carried **no GPS** in
-    // either block (checked before conversion, per the standing rule about photos of places).
+    // `.temp/photo-import/jonathan-jacob-honduras.jpg`, 6000×4000, DOWNSIZED to 1440 wide and
+    // converted to the .webp/.jpg pair with the sharp that already ships inside Astro.
+    // 1440 is exactly 2× the rendered slot — this is a 1.5:1 frame, so the slot resolves to
+    // min(56rem, 30rem × 1.5) = 720 CSS px. Crisp on retina without shipping a 4MB original.
+    // The first version of this file was a 640px PNG and was upscaled; Jon replaced it with
+    // the full-size original on 2026-08-03. If the ratio ever changes, redo the slot maths.
+    // EXIF, XMP and IPTC verified STRIPPED on both outputs; the original carried **no GPS** in
+    // either metadata block (checked before conversion, per the standing rule about photos).
     // ⚠️ SHOT MARCH 2026 — Jon, 2026-08-03. The file's EXIF says 2026:07:20; that's an export
     //   timestamp, not the capture date. If a caption ever carries a date, it's March.
-    // ⚠️ 640px wide is the native size and the slot renders up to 720px here
-    //   (min(56rem, 30rem × 1.5) — this is a 1.5:1 frame), so it is UPSCALED even at 1× and
-    //   will be soft on any modern screen. This is the lowest-resolution hero on the site by
-    //   some way. TODO(jon): a higher-res original if one exists, then bump width/height.
+    // PHOTOGRAPHER: the original's XMP carries `dc:rights: David Gamez`. **Jon confirmed
+    //   2026-08-03 he has permission to use these photos.** Recorded here rather than left as
+    //   an open question, the same way the Red Williamson headshot was settled on 2026-08-02 —
+    //   a retained copyright stamp is normal practice and says nothing about the right to use.
+    //   If Jon ever decides to credit David by name, that goes in the visible caption; the
+    //   metadata is stripped on the way out, so nobody would see it there.
     // ⚠️ IDENTIFIABLE PEOPLE. Jacob is recognisable and would be named in a caption, and
     //   roughly ten more people are recognisable in the shelter behind. Outdoors at a flying
     //   site is a low-stakes setting, but naming someone on a public page that sells
@@ -631,8 +637,8 @@ export const projects = [
     //   Renders nothing while null.
     hero: {
       src: '/images/work/cloudbase-foundation/launch-honduras',
-      width: 640,
-      height: 427,
+      width: 1440,
+      height: 960,
       alt: 'Two men crouch on a grassy launch site beside a spread-out yellow paraglider wing, with packed gear around them, a group of people watching from a covered shelter behind, and a hazy mountain valley beyond.',
       caption: null,
     },
