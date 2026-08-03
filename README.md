@@ -87,7 +87,7 @@ protecting is different. Which one you protect is a design decision, not a defau
 |---|---|
 | A framework | Astro components and plain HTML |
 | Tailwind / a CSS library | Two hand-written CSS files on a token system |
-| A component library | Twelve components, all in this repo |
+| A component library | Thirteen components, all in this repo |
 | A CMS | Copy lives in `src/data/*.js`; notes are markdown files in the repo |
 | A form service | Three Pages Functions |
 | Analytics | Nothing. No pixels, no cookies, no tracking. |
@@ -160,7 +160,7 @@ src/
   layouts/      BaseLayout — head, meta, header/footer, skip link
   components/   Header · Footer · Banner · ProjectCard · ContactForm
                 FeedbackWidget · AssessmentIntake · StackDiagram · SubstackEmbed
-                NextStepCard · ProjectMetrics · TechStack
+                NextStepCard · ProjectMetrics · ProjectParts · TechStack
   content/      notes/*.md  ← the one place words aren't data
   content.config.js         ← the notes collection schema
   data/         site · projects · about · intake · privacy · colophon · notes  ← all other copy

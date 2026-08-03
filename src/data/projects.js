@@ -122,7 +122,7 @@ export const projects = [
     teaser:
       'From acquisition, stabilization, and tech stack migration to increased profitability. I worked closely with a solo operator through complex challenges.',
     blurb:
-      'When this specialty e-commerce business changed hands, I stepped in at the operator level — not just advising — to steady it through the transition and re-platform its 20,000-plus SKUs, migrating the store from WooCommerce to BigCommerce and ultimately Shopify, delivered on schedule. Costs came down, profitability went up, and inventory got dramatically simpler — helped by a custom, searchable catalog I built from the Shopify data to handle the bulk-lot inventory details — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
+      'When this specialty e-commerce business changed hands, I stepped in at the operator level to steady it through the transition and re-platform its 20,000-plus SKUs, migrating the store from WooCommerce to BigCommerce and ultimately Shopify, delivered on schedule. Costs came down, profitability went up, and inventory got dramatically simpler — helped by a custom, searchable catalog I built from the Shopify data to handle the bulk-lot inventory details — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
     // Metrics supplied by Jon 2026-07-30, the first project to carry the block. The SKU count
     // matches the blurb's "20,000-plus"; profitability is the INCREASE, not a margin (Jon
     // confirmed 2026-07-30), which is also why it stays consistent with the note above about
@@ -582,31 +582,99 @@ export const projects = [
     link: null,
   },
   {
-    // TODO(jon): the mission in one line, and where it stands now (members / revenue / programs).
-    // TODO(jon): stack — name the CRM you integrated and the site platform, to weave in as evidence.
-    //   (Can be pulled from the repo like the others once you point me at it.)
+    // REWRITTEN 2026-08-03 from Jon's own narrative (.temp/cbf-project-narrative.md). The two
+    // body paragraphs are his, verbatim except for mechanical fixes: `--` → a spaced em dash to
+    // match every other blurb on the site, and a trailing space removed. Nothing was reworded.
+    //
+    // ⚠️ ROLE CHANGED from "Board member / builder" to "Director". His narrative states it
+    //   plainly — joined 2024, "took over as Director in early 2026." The old label understated
+    //   the claim he's entitled to make. TODO(jon): confirm that's how you want it titled.
+    // ⚠️ TEASER CHANGED. The old one said "new website, CRM, and board governance" as delivered
+    //   facts, but the site doesn't go live until 8/7 — see the milestones note below. The new
+    //   one leads with the turnaround rather than the artefacts, so nothing is claimed early.
+    //   TODO(jon): approve it; it's new microcopy.
+    // TODO(jon): still open — name the CRM product and the site platform once you're happy to.
+    //   "Open source" is the only part confirmed, so it's the only part that ships.
     slug: 'cloudbase-foundation',
     title: 'Cloudbase Foundation',
     category: 'organizations',
-    role: 'Board member / builder',
+    role: 'Director',
     status: null,
     teaser:
-      'Helped bring a dormant nonprofit back to life — new website, CRM, and board governance.',
-    blurb:
-      'Helped bring a dormant nonprofit back to life — standing up a new website, integrating a CRM, and rebuilding board governance so the organization could operate and grow again.',
+      'A nonprofit in decline: process debt, technology debt, and no clear direction. I took it over and started rebuilding.',
+    blurb: [
+      'Cloudbase Foundation began as a way for pilots to give back to communities near free flight sites around the world. When I joined in 2024, it was clear the nonprofit was in a state of decline: process and technology debt, coupled with a lack of vision for where the organization was going. I took over as Director in early 2026 and set out to build an engaged board, make investments in tech modernization, and prepare to grow, while mapping out a plan to make it happen.',
+      'My work with Cloudbase is illustrative of how I manage and lead — by finding the right people, getting aligned on purpose and direction, and then getting our hands dirty. Cloudbase is still in the stabilization period, but we are very close to the next phase: engaging with existing and potential donors, and bringing more visibility to our mission.',
+    ],
+    // The milestones, as an exhibit AFTER the body — the narrative explains an organization in
+    // decline, and these are the proof. That's why `placement: 'after'`: on chelancomps the
+    // scope is the headline and the block leads, here the prose has to set the cards up.
+    //
+    // The three groups are JON'S OWN SENTENCE from the paragraph directly above — "finding the
+    // right people, getting aligned on purpose and direction, and then getting our hands dirty."
+    // Every one of his nine bullets falls into one of the three. That's the whole reason this
+    // works: a flat list of nine reads as busywork, three groups read as someone who knows what
+    // an organization is made of and rebuilt all three layers. The cards prove the line above
+    // them rather than repeating it.
+    // TODO(jon): approve the three card labels — they're derived from your sentence, not lifted
+    //   word for word, so they're new microcopy and yours to bless.
+    //
+    // ⚠️ THE SITE IS NOT LIVE YET. "Live 8/7" is stated on the pill and Jon's own lead-in says
+    //   "already passed, or will be very soon" — together those keep the claim honest. A
+    //   portfolio page listing an unlaunched site as delivered is exactly the kind of thing a
+    //   board member could read and wince at. TODO(jon): on 8/7, confirm it shipped and drop the
+    //   date from the pill. If it slips, move the date — don't quietly delete it.
+    // NOTE: his sub-bullet about the site being CRM-integrated ("so we can build relationships
+    //   with potential donors and grant recipients, while keeping our work out of email") did not
+    //   fit a pill and is not on the page anywhere. It's a good detail — TODO(jon): a third body
+    //   paragraph if you want it.
+    components: {
+      placement: 'after',
+      heading: 'Milestones',
+      lead: 'Some major milestones we’ve already passed, or will be very soon:',
+      items: [
+        {
+          name: 'Finding the right people',
+          items: ['3 new board members', 'Weekly working sessions'],
+        },
+        {
+          name: 'Purpose and direction',
+          items: ['New Theory of Change', '2026 technology roadmap'],
+        },
+        {
+          name: 'Getting our hands dirty',
+          items: [
+            'Open-source CRM',
+            'Document repository',
+            'Site + branding — live 8/7',
+            'Branded merchandise',
+          ],
+        },
+      ],
+    },
     // Metrics supplied by Jon 2026-07-30.
     // "3 · NEW board members" — Jon confirmed 2026-07-30 these are people brought ONTO the board,
     //   not the board's total size. The word "new" is load-bearing; dropping it silently converts
     //   a recruiting number into a claim about how big the board is.
     // ⚠️ The CRM card deliberately does NOT name the product: TODO(jon) above is still open on
     //   which CRM it is. "Open source" is the part Jon confirmed, so that's the part that ships.
-    // The mission card is the weakest of the three — it's a deliverable, not a measurement, and
-    //   the blurb doesn't yet state what the mission IS (see the TODO). It earns its place once
-    //   that line lands; until then it's asking the reader to take an update on faith.
+    // 2026-08-03: the "Mission / Updated" card is GONE, replaced by the meeting cadence. It was
+    //   already flagged here as the weakest of the three — a deliverable, not a measurement,
+    //   asking the reader to take an update on faith. The cadence is the opposite: it's the
+    //   sharpest number in Jon's whole narrative and it was buried in a parenthetical
+    //   ("6 board meetings a year wasn't nearly enough"). Roughly 6 a year → ~50 is the most
+    //   concrete evidence of "an engaged board" on the page.
+    //   `clock` reuses an existing glyph rather than adding a calendar one for a single card.
+    // ⚠️ TODO(jon): confirm "weekly" is right, and that the board still meets formally 6× a year
+    //   ON TOP of the working sessions. If weekly REPLACED the six, the label needs to say so —
+    //   "was 6 a year" implies replacement, and that's a claim about how a real board operates.
+    // The remaining two cards also appear as pills in the milestones block above. That's the
+    //   same relationship Bello Modo has between its metrics and its blurb: the numbers row is
+    //   the measured view, the cards are the inventory. Don't "fix" it by deleting either.
     metrics: [
       { icon: 'users', value: '3', label: 'New board members' },
+      { icon: 'clock', value: 'Weekly', label: 'Working sessions, was 6 a year' },
       { icon: 'code', value: 'Open source', label: 'CRM' },
-      { icon: 'compass', value: 'Mission', label: 'Updated' },
     ],
     link: null,
   },

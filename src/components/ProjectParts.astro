@@ -1,0 +1,114 @@
+---
+// The "what this is made of" exhibit on a project detail page: labelled cards with pills.
+// Presentation only — every word comes from `components` on the project in src/data/projects.js.
+//
+// Extracted from work/[slug].astro on 2026-08-03, when a second project needed it in a
+// DIFFERENT position. It was inline while chelancomps was the only caller (see that page's
+// .hero/.mark/.quote precedent); two positions meant either duplicating the markup or lifting
+// it, and duplicated markup is the version that drifts. README's component count moved with it.
+//
+// Placement is the caller's decision, and it's a real one:
+//   · ABOVE the body — where the SCOPE is the headline. chelancomps is three separate things,
+//     and burying that under six sentences made a multi-part system read as one app.
+//   · AFTER the body — where the deliverables are the PAYOFF and the prose sets them up.
+//     Cloudbase's narrative explains an organization in decline; the cards are the proof.
+//
+// The card labels are rust rather than muted, unlike TechStack's: there the label names a shelf
+// of other people's tools, here it names something Jon built.
+const { parts } = Astro.props;
+---
+
+<section class="parts">
+  {parts.heading && <h2 class="parts__heading">{parts.heading}</h2>}
+  {/* Optional standfirst under the heading. Added for Cloudbase, where Jon's own lead-in
+      ("...already passed, or will be very soon") is what keeps the not-yet-shipped item
+      honest. Renders nothing while absent. */}
+  {parts.lead && <p class="parts__lead">{parts.lead}</p>}
+  <div class="parts__grid">
+    {parts.items.map((c) => (
+      <article class="parts__card">
+        <p class="parts__label">{c.name}</p>
+        <ul class="parts__pills">
+          {c.items.map((i) => <li class="parts__pill">{i}</li>)}
+        </ul>
+        {c.link && (
+          <p class="parts__link">
+            <a href={c.link.href} rel={c.link.href.startsWith('/') ? undefined : 'noopener'}>
+              {c.link.label} →
+            </a>
+          </p>
+        )}
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .parts { margin: 0 0 var(--space-16); max-width: 56rem; }
+  .parts__heading {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    margin: 0 0 var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  /* auto-fit, like ProjectMetrics: three cards is today's count, not a constraint. A fourth
+     component wraps instead of squeezing, and on a phone they stack. */
+  .parts__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .parts__card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+  }
+  /* Rust, unlike TechStack's muted group labels: there the label named a shelf of other people's
+     tools, here it names a thing Jon built. */
+  .parts__label {
+    margin: 0 0 var(--space-3);
+    max-width: none;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+  .parts__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .parts__pill {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    line-height: 1.4;
+  }
+  /* margin-top:auto pins the link to the card's foot, so a 2-pill card and a 4-pill card still
+     line their links up across the row. */
+  .parts__link {
+    margin: var(--space-4) 0 0;
+    padding-top: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .parts__card .parts__pills { margin-bottom: auto; }
+  /* Optional standfirst. Added 2026-08-03 for Cloudbase; pulls up under the heading's
+     bottom rule so it reads as part of the head, not as a first card. */
+  .parts__lead {
+    margin: 0 0 var(--space-4);
+    max-width: var(--measure);
+    color: var(--color-text-muted);
+  }
+</style>

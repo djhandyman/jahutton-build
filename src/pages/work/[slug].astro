@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StackDiagram from '../../components/StackDiagram.astro';
 import ProjectMetrics from '../../components/ProjectMetrics.astro';
+import ProjectParts from '../../components/ProjectParts.astro';
 import { projects } from '../../data/projects.js';
 
 // Prerender one detail page per project that has a slug (the flagships).
@@ -33,6 +34,11 @@ const description = project.teaser || `${firstProse.slice(0, 152)}…`;
 const ctas = project.link ? (Array.isArray(project.link) ? project.link : [project.link]) : [];
 // Testimonial. The avatar falls back to an initials monogram until a real photo exists,
 // so the block can go in before the headshot does.
+// Where the parts exhibit goes. Default is ABOVE the body (chelancomps: the scope is the
+// headline). `placement: 'after'` puts it below the prose, for a project where the
+// deliverables are the payoff and the narrative has to set them up first (Cloudbase).
+const partsAbove = project.components && project.components.placement !== 'after';
+const partsAfter = project.components?.placement === 'after';
 const quote = project.testimonial;
 const initials = quote
   ? quote.name
@@ -88,29 +94,7 @@ const initials = quote
           like .hero/.mark/.quote — markup, not logic, and the README's count tracks components.
           Replaced the single info callout on 2026-08-02 (Jon); that slot was deleted rather than
           left unrendered, same call as FlowDiagram — recoverable from git history. */}
-      {project.components && (
-        <section class="parts">
-          {project.components.heading && <h2 class="parts__heading">{project.components.heading}</h2>}
-          <div class="parts__grid">
-            {project.components.items.map((c) => (
-              <article class="parts__card">
-                <p class="parts__label">{c.name}</p>
-                <ul class="parts__pills">
-                  {c.items.map((i) => <li class="parts__pill">{i}</li>)}
-                </ul>
-                {c.link && (
-                  <p class="parts__link">
-                    <a
-                      href={c.link.href}
-                      rel={c.link.href.startsWith('/') ? undefined : 'noopener'}
-                    >{c.link.label} →</a>
-                  </p>
-                )}
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
+      {partsAbove && <ProjectParts parts={project.components} />}
 
       {/* A block is a paragraph or a labelled list — see the shape notes in projects.js. */}
       {blocks.map((b) =>
@@ -164,6 +148,9 @@ const initials = quote
 
       {/* Proof sits between the story and the ask, so the CTA follows the evidence — the
           outcome numbers and the quote are both part of that zone. */}
+      {/* Deliverables as the payoff, after the narrative that sets them up (Cloudbase). */}
+      {partsAfter && <ProjectParts parts={project.components} />}
+
       {/* The platform journey (Bello Modo). After the body and before the metrics: the prose
           tells the story, this shows its shape, the numbers land after it, then the ask.
           Vertical rather than a left-to-right row of logos — a sequence with a note beside
@@ -457,66 +444,8 @@ const initials = quote
     .path__note { margin-top: 0; }
   }
 
-  .parts { margin: 0 0 var(--space-16); max-width: 56rem; }
-  .parts__heading {
-    font-size: var(--text-xl);
-    line-height: 1.2;
-    margin: 0 0 var(--space-4);
-    padding-bottom: var(--space-3);
-    border-bottom: 1px solid var(--color-border);
-  }
-  /* auto-fit, like ProjectMetrics: three cards is today's count, not a constraint. A fourth
-     component wraps instead of squeezing, and on a phone they stack. */
-  .parts__grid {
-    display: grid;
-    gap: var(--space-4);
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  }
-  .parts__card {
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-bg);
-  }
-  /* Rust, unlike TechStack's muted group labels: there the label named a shelf of other people's
-     tools, here it names a thing Jon built. */
-  .parts__label {
-    margin: 0 0 var(--space-3);
-    max-width: none;
-    font-size: var(--text-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 600;
-    color: var(--color-accent);
-  }
-  .parts__pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .parts__pill {
-    padding: var(--space-1) var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    background: var(--color-surface);
-    font-family: var(--font-heading);
-    font-size: var(--text-base);
-    line-height: 1.4;
-  }
-  /* margin-top:auto pins the link to the card's foot, so a 2-pill card and a 4-pill card still
-     line their links up across the row. */
-  .parts__link {
-    margin: var(--space-4) 0 0;
-    padding-top: var(--space-1);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .parts__card .parts__pills { margin-bottom: auto; }
+  /* .parts styles moved to ProjectParts.astro with the markup, 2026-08-03. */
+
 
   .project__body { font-size: var(--text-lg); max-width: var(--measure); }
   .project__body + .project__body { margin-top: var(--space-6); }

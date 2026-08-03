@@ -160,13 +160,26 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   real pixel dims. Convert sources with the `sharp` that already ships inside Astro — no new
   dependency, and it strips EXIF by default. **Check for GPS before publishing any photo of a
   private place.**
-  An optional `components` ({ heading, items: [{ name, items, link }] }) renders the suite of
-  things a project is made of, as labelled cards with pills, **above the body** — where the scope
-  is the headline and burying it under prose makes a multi-part system read as one app. It reuses
+  An optional `components` ({ heading, lead, placement, items: [{ name, items, link }] }) renders
+  labelled cards with pills, via `ProjectParts.astro`. It reuses
   `TechStack.astro`'s pattern so the two exhibits that enumerate parts look like one idea, but its
   labels are rust rather than muted: there the label names a shelf of other people's tools, here
   it names something Jon built. Added 2026-08-02, replacing a single info callout that described
   one component and so misrepresented the scope; that slot was deleted, not left unrendered.
+  **`placement` is a real editorial decision, not a layout preference** (added 2026-08-03):
+  default is **above the body**, for a project where the *scope* is the headline and burying it
+  under prose makes a multi-part system read as one app (chelancomps). `placement: 'after'` puts
+  it below the prose, for a project where the deliverables are the *payoff* and the narrative has
+  to set them up (Cloudbase — the body describes an organization in decline, the cards are the
+  proof). It was inline in `[slug].astro` until the second placement existed; two positions meant
+  duplicating the markup or lifting it, and duplicated markup is the version that drifts.
+  `lead` is an optional standfirst under the heading — on Cloudbase it carries Jon's own "already
+  passed, or will be very soon," which is what keeps a not-yet-shipped item honest.
+  **The card labels earn their keep by echoing the body.** Cloudbase's three come straight out of
+  the sentence above them ("finding the right people, getting aligned on purpose and direction,
+  and then getting our hands dirty"), so the exhibit proves the line rather than repeating it. A
+  flat list of nine bullets reads as busywork; three groups read as someone who knows what an
+  organization is made of. Group by the client's own framing where one exists.
   An optional `metrics` array puts outcome numbers — `{ icon, value, label }` — in the same
   evidence zone as the testimonial, above the CTA: proof, then the ask. `icon` keys a small
   inline glyph set that lives in `src/components/ProjectMetrics.astro` — add a key there when a
