@@ -203,23 +203,28 @@ const initials = quote
         </figure>
       )}
 
-      {/* A mid-page invitation, between the exhibits and the numbers. Separate from the
-          `link` CTA at the foot of the page: that one is the close, this one catches a reader
-          who has just seen what got delivered and doesn't need the rest to decide.
-          Filled, unlike the outlined metrics directly below it — the two blocks sit adjacent
-          and the contrast is what stops them reading as one slab (same reasoning as the
-          metrics-vs-testimonial note in ProjectMetrics.astro).
+      {/* A question, between the exhibits and the numbers. It sets the numbers up rather than
+          interrupting them: the reader is asked whether this is their situation, then shown
+          the evidence, and the `link` pill at the foot is where they answer. Proof still lands
+          before the ask — the question just aims it.
+          `link` here is OPTIONAL. With one, this is a self-contained CTA; without, it's a
+          standfirst for what follows and the page's ask lives at the bottom (Cloudbase).
+          Filled, unlike the outlined metrics directly below — two blocks of the same treatment
+          stacked read as one slab (same reasoning as the metrics-vs-testimonial note in
+          ProjectMetrics.astro).
           Inline rather than a component, like .hero/.mark/.quote — markup, not logic. */}
       {project.prompt && (
         <aside class="ask">
           <p class="ask__text">{project.prompt.text}</p>
-          <p class="ask__action">
-            <a
-              class="btn"
-              href={project.prompt.link.href}
-              rel={project.prompt.link.href.startsWith('/') ? undefined : 'noopener'}
-            >{project.prompt.link.label} →</a>
-          </p>
+          {project.prompt.link && (
+            <p class="ask__action">
+              <a
+                class="btn"
+                href={project.prompt.link.href}
+                rel={project.prompt.link.href.startsWith('/') ? undefined : 'noopener'}
+              >{project.prompt.link.label} →</a>
+            </p>
+          )}
         </aside>
       )}
 
@@ -576,6 +581,8 @@ const initials = quote
     background: var(--color-surface);
     border-radius: var(--radius);
   }
+  /* No bottom margin when the box is question-only — nothing follows it inside the panel. */
+  .ask__text:last-child { margin-bottom: 0; }
   .ask__text {
     margin: 0 0 var(--space-4);
     max-width: none;

@@ -724,21 +724,21 @@ export const projects = [
       { icon: 'pin', value: '2026', label: 'Technology roadmap' },
       { icon: 'code', value: 'Open source', label: 'CRM' },
     ],
-    // Mid-page invitation, between the milestones and the metrics — Jon's placement and
-    // roughly his words, 2026-08-03 ("something like this"). It's the page's ONLY ask:
-    // `link` is null here, so nothing repeats it at the foot.
-    // The label clears the pill rule — "Let's connect" doesn't echo the question above it.
-    // ⚠️ It sits ABOVE the metrics, which inverts the site's usual proof-then-ask order. That's
-    //   defensible here: by this point the reader has had the narrative and nine milestones,
-    //   which is the real proof, and the numbers below are a summary rather than the case. But
-    //   it does mean the page now ENDS on the metrics row with no closing ask. If that reads
-    //   as trailing off, the fix is a `link` pill at the foot, not moving this one.
+    // The question sits between the milestones and the metrics; the pill that answers it is
+    // `link`, at the foot of the page. Jon's split, 2026-08-03 — and it's the better shape:
+    // the question aims the numbers ("is this you?"), the numbers are the proof, and the ask
+    // comes after the proof, which is the order the rest of the site uses.
+    // Deliberately NO `prompt.link` here — the box is question-only. A pill inside it plus a
+    // pill sixty pixels below would be the same ask twice.
     // TODO(jon): approve the wording — you said "something like this", so it's yours to settle.
     prompt: {
       text: 'Is your organization in need of a jump start?',
-      link: { href: '/contact/', label: 'Let’s connect' },
     },
-    link: null,
+    // The answer to the question in the .ask box above the metrics. Contact pill rather than
+    // an outbound link — there is nothing public to point at, and the page's job is the ask.
+    // Label is Jon's ("let's connect", 2026-08-03) and clears the pill rule: it doesn't echo
+    // the question it answers.
+    link: { href: '/contact/', label: 'Let’s connect' },
   },
   {
     // Promoted to a detail page 2026-07-27: the before/after photos are the "more to show"
