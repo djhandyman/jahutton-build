@@ -182,7 +182,7 @@ const initials = quote
           <ol class="path__steps">
             {project.journey.steps.map((step) => (
               <li class={`path__row${step.note ? ' path__row--noted' : ''}`}>
-                <div class="path__box">
+                <div class={`path__box${step.tone ? ` path__box--${step.tone}` : ''}`}>
                   <p class="path__name">{step.name}</p>
                   {step.items?.length > 0 && (
                     <ul class="path__items">{step.items.map((i) => <li>{i}</li>)}</ul>
@@ -412,6 +412,18 @@ const initials = quote
     border-bottom-left-radius: var(--radius);
   }
   .path__box--branch { border-left: 3px solid var(--color-accent); }
+  /* Two edge colours, two meanings, and they must not be confused:
+       rust (--color-accent)    → the thing Jon built
+       teal (--color-secondary) → the inherited state that was the problem
+     A plain box is a move he made along the way. Deliberately not a red — an alarm
+     colour on a warm editorial page reads as a UI error state. */
+  .path__box--problem { border-left: 3px solid var(--color-secondary); }
+  .path__box--problem .path__name { color: var(--color-secondary); }
+  .path__box--problem .path__items li {
+    color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    background: var(--color-bg);
+  }
   .path__name {
     margin: 0;
     max-width: none;

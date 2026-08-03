@@ -167,7 +167,26 @@ export const projects = [
       heading: null,
       lead: null,
       steps: [
-        { name: 'WooCommerce', items: ['The inherited store'], note: null },
+        // tone: 'problem' marks the state that was WRONG — the thing the rest of the journey
+        // is a response to. Renders teal (--color-secondary) rather than rust, because on
+        // this exhibit rust already means "the thing Jon built" (the catalog branch below),
+        // and one colour can't carry both. Teal is the palette's designated secondary
+        // contrast accent, so this needs no new token and tokens.css stays in sync with
+        // unflappable.press. Deliberately NOT a red: an alarm colour on a warm editorial
+        // page reads as a UI error state, and this is a story about an inherited store, not
+        // a validation failure.
+        // Items below are Jon's, 2026-08-03.
+        {
+          name: 'WooCommerce',
+          tone: 'problem',
+          items: [
+            'The inherited store',
+            'Desktop only',
+            'Legacy plugins',
+            'Product catalog in disarray',
+          ],
+          note: null,
+        },
         { name: 'BigCommerce', items: [], note: null },
         { name: 'Shopify', items: [], note: null },
       ],
@@ -601,7 +620,7 @@ export const projects = [
     teaser:
       'Redesigned a sun-bleached, unreadable park sign — now installed at the Chelan Falls landing zone.',
     blurb:
-      'Print-ready signage designed in Illustrator for a paragliding and hang-gliding site managed by Chelan County PUD — bringing order and clarity to a launch used by the flying community.',
+      'Print-ready signage designed in Illustrator for a paragliding and hang-gliding site managed in Chelan.',
     link: null,
     gallery: [
       {
