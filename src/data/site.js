@@ -195,7 +195,7 @@ export const services = {
 
   notHeading: 'What I’m not the right person for',
   notItems:
-    'I’m probably not interested in projects involving fintech, crypto, multi-level or affiliate marketing, gaming, or lifestyle brands. My career is grounded in public service, small business, and nonprofits — I’ve done some work for a bootstrapped startup, but I don’t come from that world. What I do have is a strong grasp on how to leverage modern technology to build tools and apps that make life easier for people.',
+    'I’m probably not interested in projects involving fintech, crypto, multi-level or affiliate marketing, gaming, or lifestyle brands. My career is grounded in public service, small business, and nonprofits — I’ve done some work for a bootstrapped startup, but I don’t come from that world and don’t use startup lingo. What I do have is a strong grasp on how to leverage modern technology to build tools and apps that make life easier for people.',
 
   // REMOVED 2026-08-02 (Jon) — deleted rather than left unrendered, the same call as FlowDiagram
   // and the info callout. Both are in git history.
