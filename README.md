@@ -88,7 +88,7 @@ protecting is different. Which one you protect is a design decision, not a defau
 | A framework | Astro components and plain HTML |
 | Tailwind / a CSS library | Two hand-written CSS files on a token system |
 | A component library | Twelve components, all in this repo |
-| A CMS | Copy lives in `src/data/*.js` |
+| A CMS | Copy lives in `src/data/*.js`; notes are markdown files in the repo |
 | A form service | Three Pages Functions |
 | Analytics | Nothing. No pixels, no cookies, no tracking. |
 | A font CDN | Self-hosted, so nobody else sees you reading |
@@ -101,6 +101,17 @@ is knowing what to leave out, then living with it.
 
 **Content is data, not markup.** Every word on the site lives in `src/data/`. Pages map over
 it; components are presentation-only. Rewording anything is a one-line edit in a data file.
+The one exception is `/notes`, where the bodies are markdown — prose with headings, lists and
+quotes inside a JS file is markup smuggled into data, which is the thing this rule is against.
+
+**One boolean hides a draft in four places.** A note's `draft: true` keeps it out of the
+index, out of the routes, and out of the feed — and out of the sitemap for free, because the
+mechanism is "the page does not exist." There is no sitemap rule for drafts, and there
+doesn't need to be one.
+
+**A feed without a dependency.** `/rss.xml` is forty lines of string building in a static
+endpoint rather than a fifth package. The count in the badge above is a claim someone can
+check in a minute, which is the point of keeping it true.
 
 **Two-tier projects, promoted by a single field.** A project with a `slug` gets a prerendered
 detail page and its card shows a short teaser. Without one, the card renders the full blurb
@@ -143,13 +154,16 @@ Wrangler reads secrets from `.dev.vars` — copy `.dev.vars.example` and fill in
 ```
 src/
   pages/        index · work · work/[slug] · services · about · now · contact
+                notes · notes/[slug] · rss.xml (the only endpoint)
                 thanks · thanks/build-assessment · assessment · assessment/intake
                 privacy · 404
   layouts/      BaseLayout — head, meta, header/footer, skip link
   components/   Header · Footer · Banner · ProjectCard · ContactForm
                 FeedbackWidget · AssessmentIntake · StackDiagram · SubstackEmbed
                 NextStepCard · ProjectMetrics · TechStack
-  data/         site · projects · about · intake · privacy · colophon  ← all copy lives here
+  content/      notes/*.md  ← the one place words aren't data
+  content.config.js         ← the notes collection schema
+  data/         site · projects · about · intake · privacy · colophon · notes  ← all other copy
   styles/       tokens.css (the design system) · global.css
 functions/api/  contact · assessment-intake · feedback
 supabase/       migrations/

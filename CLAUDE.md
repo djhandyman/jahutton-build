@@ -54,13 +54,57 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   Turnstile site key), `projects.js` (project cards + writing list), `intake.js` (the
   multi-step Build Assessment form's questions/options), `about.js` (the bio, the tool list,
   and the page's remaining sections), `privacy.js`, `colophon.js` (the
-  stack-diagram data for the `/work/this-site` exhibit). Pages and components map over these;
+  stack-diagram data for the `/work/this-site` exhibit), `notes.js` (the `/notes` furniture —
+  lead, empty state, labels). Pages and components map over these;
   components are presentation-only. To change wording or add a project, edit the data file — never hard-code
   copy into `.astro` files.
 
+  **The one exception: `/notes` bodies are markdown**, in `src/content/notes/*.md`, via an
+  Astro content collection (`src/content.config.js`). Added 2026-08-03. Prose with headings,
+  lists, quotes and code inside a JS file is markup smuggled into data — the thing this rule
+  exists to prevent — and the segment-array trick in `about.js` (right for two bold sentences)
+  does not scale to a post. **The boundary is exact: markdown is for `src/content/notes/`
+  only. Every other word on the site still lives in `src/data/*.js`.** Don't widen it.
+
+  **Zero new dependencies, and that's load-bearing.** Content collections, the `glob` loader,
+  and markdown rendering all ship inside `astro` itself; `/rss.xml` is a hand-written endpoint
+  rather than `@astrojs/rss`. The count of **four** is claimed in the README badge, the README
+  prose, the `/work/this-site` teaser and blurb, and a metrics card on that page — which links
+  to this public repo, so a reader can check it in a minute. Adding a package to this feature
+  falsifies all five at once.
+
 - **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
-  `assessment`, `assessment/intake`, `privacy`, `thanks`, `thanks/build-assessment`, `404`. Each is
-  a thin `.astro` file wrapping `BaseLayout` and rendering data.
+  `notes`, `notes/[slug]`, `assessment`, `assessment/intake`, `privacy`, `thanks`,
+  `thanks/build-assessment`, `404`. Each is
+  a thin `.astro` file wrapping `BaseLayout` and rendering data. `rss.xml.js` is the site's
+  **only endpoint** — a `.js` file exporting `GET`, prerendered to `dist/rss.xml`.
+  **`/notes` is currently hidden** (2026-08-03), by the same two switches as `/now` and for a
+  related reason: the surface shipped before the writing exists, and pointing the nav at
+  "Nothing here yet" advertises an empty room. The commented-out nav entry in `src/data/site.js`
+  and the `/notes` exclusion in `astro.config.mjs` move together on the day the first note
+  publishes. Both say so.
+
+- **`/notes` — the publishing surface.** Rolling short notes, reverse-chronological, dated.
+  A note is one markdown file; **the filename is the URL** and the directory is flat (the
+  entry `id` is its path, so a subfolder would yield `2026/foo` and `[slug].astro` couldn't
+  match it). Frontmatter: `title`, `description`, `date` required; `draft`, `pinned`,
+  `updated`, `ogImage`/`ogImageAlt` optional.
+  `description` is required because one sentence does four jobs — the index card, the meta
+  description, the OG description, and the RSS summary.
+  **`draft: true` is one predicate with four consumers** — the index, `getStaticPaths()`, the
+  feed, and the sitemap *by consequence*: a draft has no page, so there is nothing to crawl
+  and **no sitemap rule for drafts exists or is needed**. Drafts render under `npm run dev`
+  and never in a production build. `src/content/notes/kitchen-sink.md` is a permanent draft
+  that exercises every element `.prose-md` styles — a free regression test; keep it.
+  **`pinned: true`** lifts a note into the "Start here" group above the stream. It exists
+  because rolling notes and evergreen pieces pull opposite ways: the buyer-question writing
+  is what earns a lead, and in a pure reverse-chron list it sinks under last month's post.
+  Keep it to three or four; a pinned group that fills the screen is just a second stream.
+  **No cadence is promised anywhere** — no "last updated", no "latest post". That is
+  deliberate, and it is the lesson from `/now`: a surface that promises currency and can't
+  keep it gets hidden. An archive promises nothing, so a quiet month looks like nothing.
+  **Notes are Jonathan's writing.** Per the voice guide, Claude builds the surface and drafts
+  only the furniture in `notes.js` — never a note.
   **`/now` is currently hidden** (2026-07-29): still built and still resolving, but pulled from the
   nav and the sitemap until its "Exploring next" section is rewritten — it's job-search copy, which
   reads as role-shopping next to the engagement offer on `/services`. Two switches, and they must
@@ -153,7 +197,15 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 - **Styling** is two plain CSS files, no framework:
   - `src/styles/tokens.css` — the design system: color roles, the Fraunces/Inter type scale, spacing,
     layout widths. **This scale is shared verbatim with unflappable.press** — keep them in sync.
-  - `src/styles/global.css` — element and component styles built on those tokens.
+  - `src/styles/global.css` — element and component styles built on those tokens, plus the
+    **`.prose-md`** block for markdown output (`/notes` bodies). Three things about it:
+    it is deliberately **not** `.prose` (that class is used on `/about`, `/now` and every
+    `/work/<slug>`, each defining its own rules in a scoped block — redefining it globally
+    would restyle twelve pages); **every selector is scoped under `.prose-md`**, because a
+    bare `blockquote` would hit the testimonial on ten project pages and a bare `ul` would
+    hit `/privacy`, `/services` and the footer; and it can't live in a page's scoped
+    `<style>` because **Astro's scoping can't reach markdown output** — generated HTML
+    carries no `data-astro-cid` attribute, so a scoped rule silently does nothing.
   Direction is "warm editorial": paper/cream ground, ink text, Fraunces headlines, rust accent.
 
 ### The three Functions, and what's allowed to fail
@@ -205,7 +257,14 @@ Shared conventions across all three:
   banner without a code edit; `banner.enabled` in `site.js` is the other switch).
 
 - **Sitemap exclusions** live in `astro.config.mjs`. Currently filtered: **`/thanks*`** (post-submit
-  redirect targets, nothing to crawl) and **`/now`** (hidden pending a rewrite — see Pages above).
+  redirect targets, nothing to crawl), **`/now`** (hidden pending a rewrite — see Pages above),
+  and **`/notes`** (hidden until the first note publishes — an empty "Nothing here yet" page is
+  a thin result for the one surface whose whole job is being found).
+  The filter is **path-anchored** (`new URL(page).pathname`) as of 2026-08-03. It used to test
+  the whole URL, which meant a note published at `/notes/now/` or `/notes/thanks/` would have
+  been silently dropped. Individual notes need no rule, drafts need no rule (they have no page),
+  and `/rss.xml` can't appear at all — `@astrojs/sitemap` only lists routes of type `page`, and
+  an endpoint isn't one.
   **`/assessment*` is deliberately NOT excluded** as of 2026-07-28: it's linked from `/services` and
   `/contact`, so hiding it from the sitemap while advertising it everywhere else would just be a
   worse version of being indexed. Jon confirmed 2026-07-29 he's fine with it indexable. Don't
@@ -238,6 +297,16 @@ finished, working structure." When editing any site copy:
 
 ## Gotchas
 
+- **`.prose` vs `.prose-md`.** Two different things. `.prose` is the hand-authored pages'
+  hook, styled per-page in scoped blocks; `.prose-md` is the markdown one, styled globally.
+  Don't merge them, and don't add bare element rules to `global.css` for markdown's sake —
+  see the Styling section for what each would break.
+- **The nav active state was dead site-wide until 2026-08-03.** `Header.astro` tested
+  `path === item.href`, but Astro's default `build.format: "directory"` renders `/work/`
+  while `site.js` writes `/work` — so `aria-current="page"` appeared on **zero** pages and
+  the rust underline had never rendered in production. Now a prefix match, which also keeps
+  a section lit on its detail pages. If nav hrefs ever gain trailing slashes, `isActive()`
+  already strips them.
 - **`docs/architecture.md` is stale** — it predates several decisions and still describes Formspree
   (it's Resend), a Groundcrew project (removed), "no per-project detail pages" (they exist now), and
   knows nothing of Supabase, Turnstile, or the assessment/feedback Functions. Treat this file, the

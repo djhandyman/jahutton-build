@@ -6,8 +6,10 @@
 // doesn't any more.
 //
 // PARAGRAPH SHAPE. A paragraph is a string, or an ARRAY of segments so a sentence can carry
-// emphasis or a link without markdown (copy goes through Astro's escaping, so there is no
-// markdown pipeline and adding one for two bold sentences would be silly):
+// emphasis or a link without markdown (copy here goes through Astro's escaping — the data
+// files don't touch the markdown pipeline, which as of 2026-08-03 exists but is scoped to
+// src/content/notes/ only, and routing this file through it for two bold sentences would
+// still be silly):
 //   'plain text'              → a text run
 //   { strong: 'text' }        → <strong>, for the two sentences Jon bolded in his draft
 //   { href: '/work', text: '…' } → a link; `rel="noopener"` is added for external hrefs
@@ -116,7 +118,7 @@ export const about = {
     {
       heading: 'Volunteer work',
       body: [
-        'I am currently an ambassador for the Head & Neck Cancer Alliance and also serve as the Director of the non-profit Cloudbase Foundation.',
+        'I am currently an ambassador for the Head & Neck Cancer Alliance and also serve as the Director of the non-profit Cloudbase Foundation and Vice President of the Lake Chelan Flyers Club.',
       ],
     },
     {
