@@ -703,15 +703,25 @@ export const projects = [
     //   ("6 board meetings a year wasn't nearly enough"). Roughly 6 a year → ~50 is the most
     //   concrete evidence of "an engaged board" on the page.
     //   `clock` reuses an existing glyph rather than adding a calendar one for a single card.
-    // ⚠️ TODO(jon): confirm "weekly" is right, and that the board still meets formally 6× a year
-    //   ON TOP of the working sessions. If weekly REPLACED the six, the label needs to say so —
-    //   "was 6 a year" implies replacement, and that's a claim about how a real board operates.
-    // The remaining two cards also appear as pills in the milestones block above. That's the
-    //   same relationship Bello Modo has between its metrics and its blurb: the numbers row is
-    //   the measured view, the cards are the inventory. Don't "fix" it by deleting either.
+    // 2026-08-03, Jon: "was 6 a year" REMOVED from the cadence label. It implied weekly
+    //   replaced the six formal meetings, which is a claim about how a real board operates and
+    //   isn't one he wanted to make. "Weekly / Working sessions" states only what's true.
+    // 2026-08-03, Jon: two cards added — the technology roadmap and the Theory of Change.
+    // Ordered to mirror the milestones block above: people, then direction, then what got
+    //   built. The row reads as the same story in numbers.
+    // ⚠️ Four of these five also appear as pills in the milestones block. That's the same
+    //   relationship Bello Modo has between its metrics and its blurb — the numbers row is the
+    //   measured view, the cards are the inventory — but it's a lot heavier here. If the page
+    //   ever feels repetitive, this row is what to thin, not the cards.
+    // ⚠️ These two new ones are deliverables rather than measurements, which is exactly why the
+    //   old "Mission / Updated" card was cut. They're Jon's call and they're checkable facts
+    //   (both exist), so the block's "short noun where that's a checkable fact" rule covers
+    //   them — but the line to hold is the same as ever: never a card that asserts quality.
     metrics: [
       { icon: 'users', value: '3', label: 'New board members' },
-      { icon: 'clock', value: 'Weekly', label: 'Working sessions, was 6 a year' },
+      { icon: 'clock', value: 'Weekly', label: 'Working sessions' },
+      { icon: 'compass', value: 'Theory of Change', label: 'Mission & strategy' },
+      { icon: 'pin', value: '2026', label: 'Technology roadmap' },
       { icon: 'code', value: 'Open source', label: 'CRM' },
     ],
     link: null,

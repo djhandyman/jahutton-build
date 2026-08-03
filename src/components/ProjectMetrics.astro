@@ -70,7 +70,7 @@ const ICONS = {
 };
 ---
 {metrics.length > 0 && (
-  <ul class="metrics">
+  <ul class={`metrics${metrics.length > 4 ? ' metrics--wide' : ''}`}>
     {metrics.map((m) => (
       <li class="metric">
         {ICONS[m.icon] && (
@@ -110,6 +110,15 @@ const ICONS = {
     padding: 0;
     list-style: none;
   }
+  /* Five or more cards break the body measure: at 38rem only three fit per row
+     (3 × 9rem + 2 × 1rem gap = 29rem; a fourth would need 39rem), so a five-card row lands
+     as 3 + 2 with the bottom pair stretching to nearly double the width of the top three.
+     At 56rem all five sit on one line — and 56rem is already the width of the parts and
+     journey exhibits, so the wide row lines up with them rather than inventing a third
+     measure. Added 2026-08-03 when Cloudbase went to five cards; nothing else on the site
+     has more than three, so no existing page moves.
+     ⚠️ Must stay AFTER .metrics — same specificity, so source order decides the winner. */
+  .metrics--wide { max-width: 56rem; }
   /* Outlined, not filled (Jon, 2026-07-30) — deliberately NOT --color-surface. These cards sit
      directly above the testimonial, which IS filled; two tinted panels stacked read as one
      undifferentiated slab. The separation here is object class, not color: outline vs. fill.
