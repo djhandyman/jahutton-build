@@ -16,8 +16,15 @@
 //   teaser — short card hook (slugged projects only)
 //   blurb  — the full body (detail page; or the card body when teaser-only). A string for
 //     a single paragraph, or an ARRAY for multi-paragraph copy — both the card and the
-//     detail page normalize it and render one <p> per entry. Plain text only: it goes
+//     detail page normalize it and render one <p> per entry. Plain text by default: it goes
 //     through Astro's escaping, so no markdown/HTML (use “quotes”, not _italics_).
+//     An entry may also be a SEGMENT ARRAY — the same shape as about.js — when a sentence
+//     needs an inline link or emphasis (added 2026-08-03 for the server closet's parts list):
+//       'plain text'                 → a text run
+//       { href: '…', text: '…' }     → a link; rel="noopener" is added for external hrefs
+//       { strong: '…' } / { em: '…' } → <strong> / <em>
+//     Reach for it only when the link belongs INSIDE the sentence that earns it — a link that
+//     can stand on its own is a `link` CTA pill or a `source`, both of which read better.
 //     An entry may also be a LIST BLOCK — { heading, items: [...] } — rendering as a small
 //     heading plus a <ul>. Added 2026-07-29 for WAHBE, where Jon's own copy is two labelled
 //     inventories ("I supported" / "I innovated by"); flattening those into prose would have
@@ -323,7 +330,17 @@ export const projects = [
     teaser:
       '8TB, an Intel i5, and a few hundred feet of ethernet — the box the rest of this work runs on.',
     blurb: [
-      '8TB of storage. A mix of solid state and spinning drives, powered by an Intel i5 chip perfectly suited for this application. Deep research went into curating the components—I wanted to build this box once and not worry about upgrading it for a long time.',
+      // Segment paragraph (2026-08-03, Jon): "components" links out to the PC Part Picker
+      // build list — the receipts for "deep research went into curating" them, one click from
+      // the sentence that makes the claim. Jon's words are untouched; only the shape changed.
+      [
+        '8TB of storage. A mix of solid state and spinning drives, powered by an Intel i5 chip perfectly suited for this application. Deep research went into curating the ',
+        {
+          href: 'https://pcpartpicker.com/user/djhandyman/saved/#view=gfqWBm',
+          text: 'components',
+        },
+        '—I wanted to build this box once and not worry about upgrading it for a long time.',
+      ],
       'The closet also serves as the central hub for all the home networking equipment, which is now rack mounted, and the termination point for hundreds of feet of ethernet wire run throughout the home. It’s important to understand physical infrastructure, and the fact that so much of our digital lives is stored in the cloud abstracts this away most of the time. But really, “the cloud” is a box like this one, scaled to a degree that’s difficult to understand.',
       'Functionally, having an on-premise server is great for development work. I’m not bogging down any of my daily driver machines, and I can control how the network traffic flows, adding additional safeguards. I can spin up VMs and containers on Unraid whenever I need and quickly build test environments and sandboxes. Having this machine wired into the network has been a big unlock for my workflow—if you want to build something similar, let’s talk.',
     ],

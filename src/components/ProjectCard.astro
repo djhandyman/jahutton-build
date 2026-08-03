@@ -14,11 +14,28 @@ const blocks = Array.isArray(body) ? body : [body];
     {status && <span class="card__status">{status}</span>}
   </h2>
   {role && <p class="card__role">{role}</p>}
-  {/* A teaser-only card can carry list blocks too — render them rather than letting an
-      object stringify into the page. Slugged cards only ever show the teaser string. */}
+  {/* A teaser-only card can carry list blocks and segment paragraphs too — render them
+      rather than letting an object stringify into the page. Slugged cards only ever show
+      the teaser string, so this path is for teaser-less projects only. */}
   {blocks.map((b) =>
     typeof b === 'string' ? (
       <p class="card__blurb">{b}</p>
+    ) : Array.isArray(b) ? (
+      <p class="card__blurb">
+        {b.map((seg) =>
+          typeof seg === 'string' ? (
+            seg
+          ) : seg.strong ? (
+            <strong>{seg.strong}</strong>
+          ) : seg.em ? (
+            <em>{seg.em}</em>
+          ) : (
+            <a href={seg.href} rel={seg.href.startsWith('/') ? undefined : 'noopener'}>
+              {seg.text}
+            </a>
+          )
+        )}
+      </p>
     ) : (
       <div class="card__list">
         <p class="card__blurb card__list-head">{b.heading}</p>
