@@ -925,11 +925,34 @@ export const projects = [
       width: 560,
       height: 463,
       alt: 'The Ascension Medicines logo: an oval badge with a blue outer ring carrying “Ascension” arced across the top and “Medicines” across the bottom in white capitals, around a white centre holding a stylised letter A drawn as a mountain peak.',
-      note: 'I designed the branding, this mark included. A practice that doesn’t exist yet still has to look like one.',
+      note: 'I designed the branding, this mark included, based on a sketch one of the founders drew in pencil',
     },
     // His last line turns to the reader, so the pill is the ask. Label kept plain and distinct
-    // from the other three contact pills (Unflappable, server closet, this site) per the rule above.
+    // from the other contact pills per the rule above.
     link: { href: '/contact/', label: 'Get in touch' },
+    // ⚠️ PLACEHOLDER, added 2026-08-04 at Jon's request to show the block on this page.
+    // NOBODY SAID THIS. Jon supplied the attribution — "Timothy, Physician", one of the two
+    // Atlanta founders the blurb opens with — so `placeholder: true` and the visible "not a
+    // real quote" flag it prints are the ONLY things standing between this block and a
+    // fabricated quote attributed to a named, identifiable doctor. Do not delete that line
+    // until Timothy's actual words are in the `quote` field. Deleting it is the single step
+    // that says "Timothy said this."
+    // `org` is deliberately unset: the org is the page's own title, and "Physician, Ascension
+    // Medicines" under a heading that already says Ascension Medicines just repeats itself.
+    // To make it live: replace `quote` with what he said, add his `photo`, then remove
+    // `placeholder`.
+    // TODO(jon): get the real one, and note this is a harder ask than the Chelan quote — the
+    //   business shut down in 2022 and he's a named physician being quoted about a COVID-era
+    //   treatment venture. Worth asking whether he wants a surname, and confirming in writing
+    //   that he's happy to be named on a public site before this goes live.
+    testimonial: {
+      placeholder: true,
+      quote:
+        'Placeholder — a real quote goes here. Two or three sentences in his own words, concrete about what changed: what standing up the practice looked like from the clinical side, and what it meant to be seeing patients in under three months. Roughly this long reads well in the block.',
+      name: 'Timothy',
+      role: 'Physician',
+      photo: null, // → /images/work/ascension-medicines/<name>.{webp,jpg}, square crop
+    },
   },
   {
     // Added 2026-07-27 so the flow diagram could be reviewed in its real context. Claude's

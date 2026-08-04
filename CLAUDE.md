@@ -153,11 +153,19 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   do different jobs: `link` is the CTA pill under the body, `source` is a muted GitHub icon link
   pinned to the bottom — evidence, not a CTA. `link` is one `{ href, label }` or an array of them
   (first = solid pill, rest = ghost) and drops `rel="noopener"` for internal hrefs. The convention:
-  a project whose blurb **ends by asking the reader for something** leads with a `/contact/` pill
-  (Unflappable, server closet, Ascension, this site); everything else just links to the live thing.
+  a project links to **the live thing** where one exists (chelancomps, and Unflappable's
+  unflappable.press as its ghost second link); where none does, the pill is `/contact/`. **Seven
+  of ten** carry a contact pill — Bello Modo, Unflappable, server closet, the remodel, Cloudbase,
+  Ascension, this site. Four of those close by turning to the reader, which is the clearest case;
+  Bello Modo and Cloudbase end on the client's outcome and carry one anyway, because there's
+  nothing live to point at. Don't read the "ends by asking" pattern as the gate — it correlates,
+  it doesn't decide.
   **The label must NOT echo the closing line it sits under** — Jon rejected exactly that on
   2026-07-28 as cheesy; quoting his own sentence back at him reads as a template. Keep labels plain,
-  and keep them different from each other.
+  and **keep them different from each other** — with seven in play the generic ones are spent
+  ("Let's chat", "Let's talk", "Let's connect", "Get in touch", "Work with me", "Start building
+  together"), so an eighth needs a genuinely new one. Identical CTAs across pages are the tell
+  that nobody wrote them.
   An optional `diagram: true` renders the **stack exhibit** (`StackDiagram.astro`, data in
   `colophon.js` → `stack`) under an **"Under the hood"** heading below the CTA — the heading
   fences the technical material off as an appendix so it doesn't read as the page's headline.
