@@ -8,7 +8,7 @@ export const site = {
   // Hero headline — the sharpest, most distinctive line, promoted from body to top.
   // See ~/.claude/plans/misty-dreaming-hinton.md (positioning updated 2026-07-23:
   // pivoted from enterprise/"regulated, high-stakes" to an audience-named engagement front door).
-  headline: 'I design, build, and ship.',
+  headline: 'Design, build, and ship.',
   // Hero lead — names the audience the headline leaves implicit ("for whom").
   // 2026-08-02 (Jon): "turning ambiguity into something finished you can actually use" became
   // "so the thing you've been meaning to build actually exists." He didn't want "ambiguity" —
@@ -22,7 +22,7 @@ export const site = {
   // ships) via `node .temp/make-og-card.mjs`. If this headline changes again, the card and
   // BOTH alt strings change with it — the alt describes the picture, so a stale alt is a lie.
   positioning:
-    'For solo operators, small businesses, and nonprofits — software, strategy, and structure, so the thing you’ve been meaning to build actually exists.',
+    'For solo operators, small businesses, and nonprofits — I create software and actionable strategy, so the thing you’ve been meaning to build actually exists.',
   bookUrl: 'https://unflappable.press',
   // Contact form posts here — a Cloudflare Pages Function (functions/api/contact.js) that
   // emails submissions via Resend. No third-party form service, no per-seat fee.
