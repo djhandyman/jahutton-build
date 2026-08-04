@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/og-default.png" alt="jahutton.build — I turn ambiguous problems into finished things." width="640">
+<img src="public/og-default.png" alt="jahutton.build — I design, build, and ship." width="640">
 
 # jahutton.build
 

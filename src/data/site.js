@@ -16,12 +16,11 @@ export const site = {
   // sit in any consulting firm's boilerplate. The replacement also drops the abstraction
   // entirely rather than swapping in another one, and it covers the zero-to-one work as well as
   // the rescues, which "turning X into Y" didn't.
-  // ⚠️ TODO(jon): public/og-default.png still has "I turn AMBIGUOUS problems into finished
-  //   things." rendered into the image, and the alt text in BaseLayout.astro + README.md
-  //   correctly describes that picture — so the word is still on the site, in the card that
-  //   shows every time anyone shares a link. Fixing it means regenerating the PNG (Fraunces
-  //   700, the ink/rust split, 1200×630), and the alt text in BOTH places moves with it.
-  //   Deliberately not done here: the alt must keep describing the image that exists.
+  // Resolved 2026-08-04: og-default.png was regenerated from the current headline, and the
+  // alt text in BaseLayout.astro + README.md moved with it. The card is rebuilt from
+  // .temp/og-card.html (geometry measured off the original, same @fontsource faces the site
+  // ships) via `node .temp/make-og-card.mjs`. If this headline changes again, the card and
+  // BOTH alt strings change with it — the alt describes the picture, so a stale alt is a lie.
   positioning:
     'For solo operators, small businesses, and nonprofits — software, strategy, and structure, so the thing you’ve been meaning to build actually exists.',
   bookUrl: 'https://unflappable.press',
