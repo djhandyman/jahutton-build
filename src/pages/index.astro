@@ -8,9 +8,18 @@ const featured = projects.slice(0, 4);
 <BaseLayout description="Jonathan A. Hutton designs, builds, and ships — software, strategy, and structure for solo operators, small businesses, and nonprofits.">
   <section class="section hero">
     {/* Merge resolution (Jon, 2026-07-23): main's two-column hero__grid layout,
-        carrying docs-refresh's paragliding image instead of the portrait.
+        carrying a paragliding image instead of the portrait.
         The portrait (/images/hero.*) is still in public/ but is now unused.
-        JSX-style comment so it stays out of the shipped HTML. */}
+        JSX-style comment so it stays out of the shipped HTML.
+
+        Image swapped 2026-08-04 (Jon): the Annecy shot replaces the coastal flight.
+        Same 1280×960, so the layout is untouched. Converted from his PNG with the sharp
+        that ships inside astro — no new dependency, and it drops EXIF/XMP on the way out
+        (the original carried both; no GPS tag was present either way).
+        WebP with NO jpg fallback, which is the pre-existing shape of this one slot —
+        every other image on the site is a <picture> with both. Worth reconciling one day;
+        not changed here, because a hero swap shouldn't quietly alter the markup contract.
+        /images/paragliding/coastal-flight.webp is now unused — Jon's to keep or delete. */}
     <div class="container hero__grid">
       <div class="hero__content">
         <p class="hero__kicker">Jonathan A. Hutton</p>
@@ -24,10 +33,10 @@ const featured = projects.slice(0, 4);
       <div class="hero__media">
         <img
           class="hero__img"
-          src="/images/paragliding/coastal-flight.webp"
+          src="/images/paragliding/annecy-flying.webp"
           width="1280"
           height="960"
-          alt="Three paragliders soaring over the sea along a steep coastal bluff under a bright, cloud-scattered sky."
+          alt="Two paragliders flying close to a tall limestone cliff, with forested slopes falling away to a valley town far below and mountains on the horizon."
           fetchpriority="high"
         />
       </div>
