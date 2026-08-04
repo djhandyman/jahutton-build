@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import StackDiagram from '../../components/StackDiagram.astro';
 import ProjectMetrics from '../../components/ProjectMetrics.astro';
 import ProjectParts from '../../components/ProjectParts.astro';
+import ProjectTestimonial from '../../components/ProjectTestimonial.astro';
 import { projects } from '../../data/projects.js';
 
 // Prerender one detail page per project that has a slug (the flagships).
@@ -32,23 +33,18 @@ const description = project.teaser || `${firstProse.slice(0, 152)}…`;
 // `link` is one CTA or several. The first is the primary pill; any others are ghosts —
 // which is how a project keeps its outbound link while the ask goes first.
 const ctas = project.link ? (Array.isArray(project.link) ? project.link : [project.link]) : [];
-// Testimonial. The avatar falls back to an initials monogram until a real photo exists,
-// so the block can go in before the headshot does.
 // Where the parts exhibit goes. Default is ABOVE the body (chelancomps: the scope is the
 // headline). `placement: 'after'` puts it below the prose, for a project where the
 // deliverables are the payoff and the narrative has to set them up first (Cloudbase).
 const partsAbove = project.components && project.components.placement !== 'after';
 const partsAfter = project.components?.placement === 'after';
 const quote = project.testimonial;
-const initials = quote
-  ? quote.name
-      .split(/\s+/)
-      .map((w) => w.replace(/[^a-zA-Z]/g, '').charAt(0))
-      .filter(Boolean)
-      .slice(0, 2)
-      .join('')
-      .toUpperCase()
-  : '';
+// Default is quote-then-CTA: proof sits between the story and the ask, so the CTA follows the
+// evidence. `testimonial.placement: 'after-cta'` inverts it for ONE page (Ascension, Jon's call
+// 2026-08-04), where the quote is still a placeholder — a block flagged "not a real quote" has
+// no business standing between the reader and the actual ask. Flip it back to the default the
+// day a real quote lands, and the page needs no other change.
+const quoteAfterCta = quote?.placement === 'after-cta';
 ---
 <BaseLayout title={`${project.title} — Work — Jonathan A. Hutton`} description={description}>
   <section class="section">
@@ -106,10 +102,35 @@ const initials = quote
           headline, and burying it under six sentences of prose made the page read as one app.
           Pattern borrowed from TechStack.astro (labelled card + pills), so the two exhibits on
           the site that enumerate parts look like the same idea. Inline rather than a component,
-          like .hero/.mark/.quote — markup, not logic, and the README's count tracks components.
+          like .hero/.mark — markup, not logic, and the README’s count tracks components.
           Replaced the single info callout on 2026-08-02 (Jon); that slot was deleted rather than
           left unrendered, same call as FlowDiagram — recoverable from git history. */}
       {partsAbove && <ProjectParts parts={project.components} />}
+
+      {/* The brand mark, at the TOP — under the title and role, above the first paragraph
+          (Jon's call, 2026-08-04). Ascension is the only project with one and has no `hero`,
+          so the mark does the hero's job: the reader sees the thing before reading how it got
+          made, on a project where designing it WAS part of the work.
+          It has moved twice today — with the body, then below the quote, now here. If it moves
+          again, move this comment with it rather than leaving three explanations in the file.
+          Unconditional rather than a `placement` prop: one project, one position. Add the flag
+          when a second logo needs a different slot, the way ProjectParts got one. */}
+      {project.logo && (
+        <figure class="mark">
+          <picture>
+            <source srcset={`${project.logo.src}.webp`} type="image/webp" />
+            <img
+              src={`${project.logo.src}.jpg`}
+              width={project.logo.width}
+              height={project.logo.height}
+              alt={project.logo.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          {project.logo.note && <figcaption class="mark__note">{project.logo.note}</figcaption>}
+        </figure>
+      )}
 
       {/* A block is a paragraph or a labelled list — see the shape notes in projects.js. */}
       {blocks.map((b) =>
@@ -152,7 +173,7 @@ const initials = quote
           Vertical rather than a left-to-right row of logos — a sequence with a note beside
           each step is the same two-column shape as StackDiagram, which is deliberate: the
           two exhibits that explain how something was built should look like one idea.
-          Inline rather than a component, like .hero/.mark/.quote/.parts — markup, not logic,
+          Inline rather than a component, like .hero/.mark — markup, not logic,
           and the README's count tracks components. */}
       {project.journey && (
         <figure class="path">
@@ -208,7 +229,7 @@ const initials = quote
           Filled, unlike the outlined metrics directly below — two blocks of the same treatment
           stacked read as one slab (same reasoning as the metrics-vs-testimonial note in
           ProjectMetrics.astro).
-          Inline rather than a component, like .hero/.mark/.quote — markup, not logic. */}
+          Inline rather than a component, like .hero/.mark — markup, not logic. */}
       {project.prompt && (
         <aside class="ask">
           <p class="ask__text">{project.prompt.text}</p>
@@ -226,64 +247,7 @@ const initials = quote
 
       {project.metrics && <ProjectMetrics metrics={project.metrics} />}
 
-      {quote && (
-        <figure class="quote">
-          <blockquote class="quote__text"><p>“{quote.quote}”</p></blockquote>
-          <figcaption class="quote__who">
-            {quote.photo ? (
-              <picture>
-                <source srcset={`${quote.photo.src}.webp`} type="image/webp" />
-                <img
-                  class="quote__avatar"
-                  src={`${quote.photo.src}.jpg`}
-                  width={quote.photo.width}
-                  height={quote.photo.height}
-                  alt={quote.photo.alt}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
-            ) : (
-              <span class="quote__avatar quote__avatar--empty" aria-hidden="true">{initials}</span>
-            )}
-            <span class="quote__who-text">
-              <span class="quote__name">{quote.name}</span>
-              {(quote.role || quote.org) && (
-                <span class="quote__role">{[quote.role, quote.org].filter(Boolean).join(', ')}</span>
-              )}
-            </span>
-          </figcaption>
-          {/* Renders only while `placeholder: true`. Deleting that one flag is what makes a
-              testimonial live — nothing invented can reach the page looking real. */}
-          {quote.placeholder && (
-            <p class="quote__flag">Placeholder — not a real quote</p>
-          )}
-        </figure>
-      )}
-
-      {/* The brand mark, BELOW the quote (Jon's call, 2026-08-04). It used to sit up with the
-          body on the reasoning that designing the logo was part of the job — but on the only
-          page that carries one it interrupted the narrative mid-story, and it reads better as
-          the last piece of evidence before the ask.
-          Unconditional rather than a `placement` prop: Ascension is the only project with a
-          logo, and the second position doesn't exist yet. Same rule ProjectParts followed —
-          the flag arrived with the second case, not in anticipation of it. */}
-      {project.logo && (
-        <figure class="mark">
-          <picture>
-            <source srcset={`${project.logo.src}.webp`} type="image/webp" />
-            <img
-              src={`${project.logo.src}.jpg`}
-              width={project.logo.width}
-              height={project.logo.height}
-              alt={project.logo.alt}
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-          {project.logo.note && <figcaption class="mark__note">{project.logo.note}</figcaption>}
-        </figure>
-      )}
+      {quote && !quoteAfterCta && <ProjectTestimonial quote={quote} />}
 
       {ctas.length > 0 && (
         <p class="project__cta">
@@ -298,6 +262,11 @@ const initials = quote
           ))}
         </p>
       )}
+
+      {/* The inverted order — CTA, then quote. See `quoteAfterCta` up top for why one page
+          wants it: a block flagged "not a real quote" shouldn't sit between the reader and
+          the ask. */}
+      {quote && quoteAfterCta && <ProjectTestimonial quote={quote} />}
 
       {/* Opt-in per project: `diagram: true` renders the stack exhibit. Only the site's own
           case study uses it — it's specific to this stack, not a reusable "architecture"
@@ -534,58 +503,6 @@ const initials = quote
     font-size: var(--text-sm);
     color: var(--color-text-muted);
   }
-  /* Testimonial. Same measure as the body so it reads as part of the column, with a rust
-     edge and the surface tint to lift it off the page. */
-  .quote {
-    margin: var(--space-12) 0 0;
-    max-width: var(--measure);
-    padding: var(--space-6);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-left: 3px solid var(--color-accent);
-    border-radius: var(--radius);
-  }
-  .quote__text { margin: 0; }
-  .quote__text p {
-    margin: 0;
-    font-family: var(--font-heading);
-    font-size: var(--text-lg);
-    line-height: 1.5;
-  }
-  .quote__who {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
-  }
-  .quote__avatar {
-    width: 56px;
-    height: 56px;
-    flex: none;
-    border-radius: 50%;
-    object-fit: cover; /* a non-square headshot crops to the circle instead of squashing */
-    background: var(--color-bg);
-  }
-  /* Stand-in until a real headshot lands — dashed, so it reads as "photo pending". */
-  .quote__avatar--empty {
-    display: grid;
-    place-items: center;
-    border: 1px dashed var(--color-border);
-    color: var(--color-text-muted);
-    font-family: var(--font-heading);
-    font-size: var(--text-xl);
-  }
-  .quote__who-text { display: flex; flex-direction: column; }
-  .quote__name { font-weight: 600; }
-  .quote__role { font-size: var(--text-sm); color: var(--color-text-muted); }
-  .quote__flag {
-    margin: var(--space-4) 0 0;
-    font-size: var(--text-sm);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-  }
-
   /* Wraps to a stack on narrow screens rather than letting two pills collide. */
   .project__cta {
     margin-top: var(--space-8);

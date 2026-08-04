@@ -956,6 +956,11 @@ export const projects = [
     //   that he's happy to be named on a public site before this goes live.
     testimonial: {
       placeholder: true,
+      // Puts the CTA ABOVE this block — the only page that inverts the default (Jon,
+      // 2026-08-04). While the quote is a placeholder it shouldn't stand between the reader
+      // and the ask; delete this line when Timothy's real words land and the page returns to
+      // the site-wide order with no other change.
+      placement: 'after-cta',
       quote:
         'Placeholder — a real quote goes here. Two or three sentences in his own words, concrete about what changed: what standing up the practice looked like from the clinical side, and what it meant to be seeing patients in under three months. Roughly this long reads well in the block.',
       name: 'Timothy',

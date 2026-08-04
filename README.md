@@ -82,7 +82,7 @@ different. That's a decision each time, not a default.
 |---|---|
 | A framework | Astro components and plain HTML |
 | Tailwind or a CSS library | Two hand-written CSS files on a token system |
-| A component library | Thirteen components, all in this repo |
+| A component library | Fourteen components, all in this repo |
 | A CMS | Copy lives in `src/data/*.js`; notes are markdown files |
 | A form service | Three Pages Functions |
 | Analytics | Nothing. No pixels, no cookies, no tracking. |
@@ -130,7 +130,7 @@ Wrangler reads secrets from `.dev.vars` — copy `.dev.vars.example` and fill in
 ## Layout
 
 ```
-src/       pages · layouts · components (13) · content/notes/*.md
+src/       pages · layouts · components (14) · content/notes/*.md
            data/*.js  ← every word on the site
            styles/    tokens.css (the design system) · global.css
 functions/api/  contact · assessment-intake · feedback

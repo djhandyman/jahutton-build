@@ -214,8 +214,9 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   **These are public claims about a real client — same bar as the testimonial. Never invent or
   round one; every value comes from Jonathan, and the comment records the date he gave it.**
   An optional `testimonial`
-  ({ quote, name, role, org, photo, placeholder }) renders a quote block between the body and the
-  CTA — round photo, or an initials monogram when there's no headshot yet. **`placeholder: true`
+  ({ quote, name, role, org, photo, placeholder, placement }) renders a quote block between the
+  body and the CTA, via **`ProjectTestimonial.astro`** — round photo, or an initials monogram
+  when there's no headshot yet. **`placeholder: true`
   prints a visible "not a real quote" flag; never strip it from invented copy.**
   **While a testimonial is a placeholder, `name` is a first name only** — Austin, Bailey,
   Timothy (Jon's call, 2026-08-04, applied to all three at once). The flag stops the quote
@@ -223,9 +224,18 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   words to one specific, findable person. A surname goes in when that person has seen the quote
   and agreed to be named — same gate as adding their `photo`. Don't "complete" one from the
   source comments or a git message.
-  An optional `logo` ({ src, width, height, alt, note }) puts a brand mark **below the
-  testimonial and above the CTA** (Jon's call, 2026-08-04) — the last piece of evidence before
-  the ask. It used to sit with the body, on the reasoning that designing the mark was part of
+  **`placement: 'after-cta'`** flips the block below the CTA. Default is quote-then-CTA — proof
+  between the story and the ask. Ascension is the only page that inverts it (Jon, 2026-08-04),
+  because its quote is a placeholder and a block flagged "not a real quote" shouldn't stand
+  between the reader and the ask; delete the line when the real quote lands and the page returns
+  to the default with no other change. **That second position is what lifted the markup out of
+  `[slug].astro` into its own component** — same reasoning as `ProjectParts`, and the `.quote`
+  styles moved with it, because Astro scopes CSS per component and a rule left behind in the
+  page would silently reach nothing.
+  An optional `logo` ({ src, width, height, alt, note }) puts a brand mark **at the top, under
+  the title and role and above the body** (Jon's call, 2026-08-04) — Ascension is the only
+  project with one and has no `hero`, so the mark does the hero's job. It used to sit with the
+  body, on the reasoning that designing the mark was part of
   the job; on the one page that carries one it interrupted the narrative mid-story. Position is
   unconditional, not a `placement` prop: Ascension is the only project with a logo and a second
   position doesn't exist yet. Add the flag when a second case needs it, not before.
@@ -364,7 +374,7 @@ finished, working structure." When editing any site copy:
   a section lit on its detail pages. If nav hrefs ever gain trailing slashes, `isActive()`
   already strips them.
 - **Three docs, three jobs — keep them in their lanes.** `README.md` is for a visiting hiring
-  manager: short, and its claims (four dependencies, thirteen components, ten detail pages, what
+  manager: short, and its claims (four dependencies, fourteen components, ten detail pages, what
   talks to what) are checkable against the repo, so a change to the architecture is a change to
   the README. **This file** is the working rules — every convention and the reason for it.
   `docs/architecture.md` is the current shape plus the **dated decision log**, including
