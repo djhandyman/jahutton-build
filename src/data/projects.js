@@ -690,6 +690,25 @@ export const projects = [
       'Four people have since advanced along that progression — two associate PMs to PM, two BSAs to BSA II — every member of the product staff has a clear, concrete view of what advancement takes.',
     ],
     link: null,
+    // ⚠️ PLACEHOLDER, added 2026-08-04 while Jon writes to former colleagues. NOBODY SAID THIS.
+    // `name` and `role` are BRACKETED because he hasn't said who yet, and no name has been
+    // guessed from the blurb. Fill them in from the reply, first name only (see CLAUDE.md),
+    // and keep `placeholder: true` until the real words land.
+    // ⚠️ This page has NO CTA (`link: null`), so the quote is the last thing on it. That makes
+    // it the note the page closes on — worth weighting when choosing whose it is.
+    // TODO(jon): the strongest version of this one is the analyst you mentored and promoted —
+    //   the blurb already claims that, and a quote from them turns your claim into their
+    //   account of it. An exec or a scrum-team peer speaks to the delivery work instead.
+    //   Either way: this is a named ex-colleague at a public agency, so get written
+    //   confirmation they're happy to be quoted and named on a public site.
+    testimonial: {
+      placeholder: true,
+      quote:
+        'Placeholder — a real quote goes here. Two or three sentences in their own words, concrete about what changed: what the team or the career path looked like before this work existed, and what it made possible for them. Roughly this long reads well in the block.',
+      name: '[Name]',
+      role: '[Role]',
+      photo: null, // → /images/work/wahbe-org-development/<name>.{webp,jpg}, square crop
+    },
   },
   {
     // REWRITTEN 2026-08-03 from Jon's own narrative (.temp/cbf-project-narrative.md). The two
@@ -849,6 +868,24 @@ export const projects = [
     // Label is Jon's ("let's connect", 2026-08-03) and clears the pill rule: it doesn't echo
     // the question it answers.
     link: { href: '/contact/', label: 'Let’s connect' },
+    // ⚠️ PLACEHOLDER, added 2026-08-04 while Jon writes to the board. NOBODY SAID THIS.
+    // `name` and `role` are BRACKETED because he hasn't said who yet — the way chelancomps
+    // started before Austin's details arrived. Nothing here is invented: no name has been
+    // guessed from the photo credit, the blurb, or anywhere else. Fill them in from the reply,
+    // first name only (see CLAUDE.md), and keep `placeholder: true` until the real words land.
+    // `org` stays unset — it would repeat the page's own title.
+    // TODO(jon): the ask is the before/after. This page claims an organization in decline that
+    //   turned around, so the quote that earns it comes from someone who saw both states —
+    //   what the board and the operation looked like when you stepped in, and what's different
+    //   now. Confirm in writing they're happy to be named on a public site.
+    testimonial: {
+      placeholder: true,
+      quote:
+        'Placeholder — a real quote goes here. Two or three sentences from someone who was there for the turnaround, concrete about the before and the after: what the board and the operation looked like at the low point, and what is different now. Roughly this long reads well in the block.',
+      name: '[Name]',
+      role: '[Board role]',
+      photo: null, // → /images/work/cloudbase-foundation/<name>.{webp,jpg}, square crop
+    },
   },
   {
     // Promoted to a detail page 2026-07-27: the before/after photos are the "more to show"
