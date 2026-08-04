@@ -332,7 +332,7 @@ export const projects = [
     // half the work are gone: `placeholder: true` and the visible "not a real quote" flag it
     // prints are now the ONLY things standing between this block and a fabricated quote
     // attributed to a named person. Do not delete that line until Austin's actual words are in
-    // the `quote` field — deleting it is the single step that says "Austin Cox said this."
+    // the `quote` field — deleting it is the single step that says "Austin said this."
     // To make it live: replace `quote` with what he said, add his `photo`, then remove
     // `placeholder`.
     // TODO(jon): ask a Chelan organizer for a real one. The concrete before/after is the ask —
@@ -342,7 +342,7 @@ export const projects = [
       placeholder: true,
       quote:
         'Placeholder — a real quote goes here. Two or three sentences in their own words, concrete about what changed: what running the comp used to cost them, and what they do with that time now. Roughly this long reads well in the block.',
-      name: 'Austin Cox',
+      name: 'Austin',
       role: 'Owner / organizer',
       org: 'Northwest Paragliding',
       photo: null, // → /images/work/chelancomps/<name>.{webp,jpg}, square crop
@@ -415,7 +415,7 @@ export const projects = [
     // the work are gone: `placeholder: true` and the visible "not a real quote" flag it prints
     // are now the ONLY things standing between this block and a fabricated quote attributed to
     // a named person. Do not delete that line until Bailey's actual words are in the `quote`
-    // field — deleting it is the single step that says "Bailey Lang said this."
+    // field — deleting it is the single step that says "Bailey said this."
     // To make it live: replace `quote` with what they said, add their `photo`, uncomment `org`
     // if there is one, then remove `placeholder`.
     // Second placeholder on the site (chelancomps has the other) — two visible "not a real
@@ -431,7 +431,7 @@ export const projects = [
       placeholder: true,
       quote:
         'Placeholder — a real quote goes here.',
-      name: 'Bailey Lang',
+      name: 'Bailey',
       role: 'Editor',
       // org: '[Organization, if any]',
       photo: null, // → /images/work/unflappable/<name>.{webp,jpg}, square crop

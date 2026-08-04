@@ -217,6 +217,12 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   ({ quote, name, role, org, photo, placeholder }) renders a quote block between the body and the
   CTA — round photo, or an initials monogram when there's no headshot yet. **`placeholder: true`
   prints a visible "not a real quote" flag; never strip it from invented copy.**
+  **While a testimonial is a placeholder, `name` is a first name only** — Austin, Bailey,
+  Timothy (Jon's call, 2026-08-04, applied to all three at once). The flag stops the quote
+  deceiving anyone, but a fabricated sentence sitting under a full name still attaches invented
+  words to one specific, findable person. A surname goes in when that person has seen the quote
+  and agreed to be named — same gate as adding their `photo`. Don't "complete" one from the
+  source comments or a git message.
   An optional `logo` ({ src, width, height, alt, note }) puts a brand mark **below the
   testimonial and above the CTA** (Jon's call, 2026-08-04) — the last piece of evidence before
   the ask. It used to sit with the body, on the reasoning that designing the mark was part of
