@@ -6,8 +6,10 @@
 
 **Software, systems, wires, and walls.**
 
-The portfolio site of [Jonathan A. Hutton](https://jahutton.build) — built in the hours
-around a full-time job and a kitchen remodel.
+Four dependencies, no framework, no CMS. The portfolio site of
+[Jonathan A. Hutton](https://jahutton.build) — static Astro on Cloudflare Pages, with three
+serverless functions behind the forms. Public because showing someone the source is easier
+than describing it.
 
 [**Live site**](https://jahutton.build) · [**How it's built**](https://jahutton.build/work/this-site/) · [**The book**](https://unflappable.press)
 
@@ -22,19 +24,16 @@ around a full-time job and a kitchen remodel.
 
 ---
 
-The `.build` TLD is the whole framing: **I am a builder** — of software, systems, teams,
-physical spaces, organizations, and written work. This repo is the software half, and it's
-public because handing someone the source beats telling them you can code.
+The `.build` TLD is the framing: I build things — software, systems, teams, physical spaces,
+organizations, and a book. This repo is the software half, built in the hours around a
+full-time job and a kitchen remodel. It's small on purpose; most of the decisions were about
+what not to build.
 
-It is deliberately small. Most of the decisions here were about what *not* to build.
-
----
-
-## How it actually works
+## How it works
 
 A static Astro site on Cloudflare Pages, plus three Pages Functions. The browser only ever
-talks to this site — every key lives on the server, and no third-party service is reached
-from the visitor's device.
+talks to this site — every key stays on the server, and nothing third-party loads on a
+visitor's device.
 
 ```mermaid
 flowchart LR
@@ -66,68 +65,49 @@ flowchart LR
   FN3 -.-> AN
 ```
 
-**Thick arrows must succeed. Dotted arrows are allowed to fail quietly.**
-
-## What's allowed to fail
-
-The interesting part isn't what talks to what. It's what happens when something breaks.
+Thick arrows have to succeed. Dotted arrows are allowed to fail quietly.
 
 | Function | Must succeed | Allowed to fail | Why |
 |---|---|---|---|
 | `/api/contact` | Resend | — | One job: get the message to a human. |
-| `/api/assessment-intake` | Resend | Supabase, Claude | The **email** is the product. A database hiccup must never cost a lead. |
-| `/api/feedback` | Supabase | Claude | The **saved row** is the product. Tagging is a bonus, so the write happens first and enrichment failure is swallowed. |
+| `/api/assessment-intake` | Resend | Supabase, Claude | The email is the lead. A paused database shouldn't cost one. |
+| `/api/feedback` | Supabase | Claude | The saved row is the product, so the write happens first and the tagging is a bonus. |
 
-Same building blocks in the bottom two rows, opposite rules — because the thing worth
-protecting is different. Which one you protect is a design decision, not a default.
+Same parts in the bottom two rows, opposite rules, because the thing worth protecting is
+different. That's a decision each time, not a default.
 
 ## What I didn't build
 
 | Not here | Instead |
 |---|---|
 | A framework | Astro components and plain HTML |
-| Tailwind / a CSS library | Two hand-written CSS files on a token system |
+| Tailwind or a CSS library | Two hand-written CSS files on a token system |
 | A component library | Thirteen components, all in this repo |
-| A CMS | Copy lives in `src/data/*.js`; notes are markdown files in the repo |
+| A CMS | Copy lives in `src/data/*.js`; notes are markdown files |
 | A form service | Three Pages Functions |
 | Analytics | Nothing. No pixels, no cookies, no tracking. |
-| A font CDN | Self-hosted, so nobody else sees you reading |
+| A font CDN | Self-hosted |
 | A diagram library | The stack diagram on the site is HTML and CSS |
 
-Four dependencies: Astro, its sitemap plugin, and two fonts. Anyone can add things. The job
-is knowing what to leave out, then living with it.
+Four dependencies: Astro, its sitemap plugin, and two fonts.
 
-## Ideas worth stealing
+## A few decisions
 
-**Content is data, not markup.** Every word on the site lives in `src/data/`. Pages map over
-it; components are presentation-only. Rewording anything is a one-line edit in a data file.
-The one exception is `/notes`, where the bodies are markdown — prose with headings, lists and
-quotes inside a JS file is markup smuggled into data, which is the thing this rule is against.
+**Content is data, not markup.** Every word lives in `src/data/`. Pages map over it; components
+only present it. The exception is `/notes`, where bodies are markdown — prose with headings and
+lists inside a JS file is markup smuggled into data, which is what the rule is against.
 
-**One boolean hides a draft in four places.** A note's `draft: true` keeps it out of the
-index, out of the routes, and out of the feed — and out of the sitemap for free, because the
-mechanism is "the page does not exist." There is no sitemap rule for drafts, and there
-doesn't need to be one.
+**The forms work without JavaScript.** Every Function answers JSON to a `fetch` and a 303
+redirect to a native form post, so progressive enhancement is a property of the site rather
+than a claim about it.
 
-**A feed without a dependency.** `/rss.xml` is forty lines of string building in a static
-endpoint rather than a fifth package. The count in the badge above is a claim someone can
-check in a minute, which is the point of keeping it true.
-
-**Two-tier projects, promoted by a single field.** A project with a `slug` gets a prerendered
-detail page and its card shows a short teaser. Without one, the card renders the full blurb
-inline and there's no page. Promote or demote a project by adding or removing `slug` — no
-page edits, no routing changes.
-
-**Spam defense split by what abuse costs.** Turnstile is strict on the two Functions that
-spend money per submit; the contact form keeps a honeypot fallback so it still works with
-JavaScript off; a WAF rate limit is the hard ceiling. Three layers, three different jobs.
-
-**Progressive enhancement, honestly.** Every Function answers JSON to `fetch` and a 303
-redirect to a native form post. Turn JavaScript off and the forms still work.
+**Spam defense sized to what abuse costs.** Turnstile is strict on the two Functions that spend
+money per submit and lenient on contact, which keeps a honeypot fallback so it survives with
+JavaScript off. A WAF rate limit is the ceiling.
 
 **The database schema is in the repo.** `supabase/migrations/` — because the first version of
-this table was clicked together in a dashboard, and when the project auto-paused there was no
-record of what to recreate.
+that table was clicked together in a dashboard, and when the project auto-paused there was no
+record of what to rebuild.
 
 ## Running it
 
@@ -138,9 +118,7 @@ npm run build    # → dist/
 npm run preview
 ```
 
-Node 22+ required (`.nvmrc`).
-
-The forms are Pages Functions, so the Astro dev server doesn't run them. To exercise them:
+Node 22+ (`.nvmrc`). The forms are Pages Functions, so the Astro dev server won't run them:
 
 ```bash
 npm run build
@@ -152,41 +130,27 @@ Wrangler reads secrets from `.dev.vars` — copy `.dev.vars.example` and fill in
 ## Layout
 
 ```
-src/
-  pages/        index · work · work/[slug] · services · about · now · contact
-                notes · notes/[slug] · rss.xml (the only endpoint)
-                thanks · thanks/build-assessment · assessment · assessment/intake
-                privacy · 404
-  layouts/      BaseLayout — head, meta, header/footer, skip link
-  components/   Header · Footer · Banner · ProjectCard · ContactForm
-                FeedbackWidget · AssessmentIntake · StackDiagram · SubstackEmbed
-                NextStepCard · ProjectMetrics · ProjectParts · TechStack
-  content/      notes/*.md  ← the one place words aren't data
-  content.config.js         ← the notes collection schema
-  data/         site · projects · about · intake · privacy · colophon · notes  ← all other copy
-  styles/       tokens.css (the design system) · global.css
+src/       pages · layouts · components (13) · content/notes/*.md
+           data/*.js  ← every word on the site
+           styles/    tokens.css (the design system) · global.css
 functions/api/  contact · assessment-intake · feedback
-supabase/       migrations/
+supabase/migrations/
+docs/architecture.md  ← current shape and the dated decision log
 ```
 
-`src/styles/tokens.css` is shared verbatim with **[unflappable.press](https://unflappable.press)**,
-the sibling site for the book, so the two read as a family rather than by coincidence.
+`tokens.css` is shared verbatim with **[unflappable.press](https://unflappable.press)**, the
+sibling site for the book, so the two read as a family rather than by accident.
 
-## Built with AI, and where the line is
+## Built with AI
 
-This site was built with heavy AI assistance, and [`CLAUDE.md`](CLAUDE.md) is in the repo so
-you can see exactly how. That's the point rather than an embarrassment: shipping quickly with
-AI leverage is a large part of what I do.
-
-The line sits in a specific place. Scaffolding, refactors, plumbing, and the kind of microcopy
-I'd rather not hand-write — all fair game. The writing I actually care about, the book and the
-essays, is mine and stays mine. Knowing which is which is the skill; the tool is just a tool.
+Heavily, and [`CLAUDE.md`](CLAUDE.md) is in the repo so you can see how. Building this way is a
+large part of how I work now, so hiding it would be strange. Scaffolding, refactors, plumbing,
+and microcopy I'd rather not hand-write are fair game. The book and the essays are mine.
 
 ## Using this
 
-There's no license file, so ordinary copyright applies and the content — the writing, the
-photographs, the design — isn't up for reuse. The engineering ideas are, though. That's why
-it's public. Take anything useful.
+No license file, so ordinary copyright applies and the content — the writing, the photographs,
+the design — isn't up for reuse. The engineering is. Take anything useful.
 
 ---
 

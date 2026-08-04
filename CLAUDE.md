@@ -17,6 +17,14 @@ The repo is public and is itself a portfolio artifact — `README.md` is written
 hiring manager, not for maintainers. Its claims (dependency count, component count, what talks
 to what) are load-bearing; if you change the architecture, change the README too.
 
+**Read the comments before changing anything.** This codebase carries its own decision record:
+source comments state *why*, dated, often naming what was tried and rejected (see
+`src/content.config.js`, `src/pages/rss.xml.js`, `astro.config.mjs`, the `nav` array in
+`site.js`). They are the reason a change that looks like an obvious cleanup usually isn't. The
+two files worth opening first are `src/data/projects.js` (930 lines — every project, every
+optional slot, and the rules for each) and `src/pages/work/[slug].astro` (709 lines — the
+renderer that consumes them). Everything else is small.
+
 ## Commands
 
 ```
@@ -50,14 +58,16 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 ## Architecture
 
 - **Content is data, not markup.** All site copy and links live in `src/data/` — `site.js`
-  (name, headline/positioning, nav, socials, contact + services + assessment copy, beta banner,
-  Turnstile site key), `projects.js` (project cards + writing list), `intake.js` (the
+  (name, headline/positioning, nav, socials, `substack`, contact + services + assessment copy,
+  beta banner, Turnstile site key), `projects.js` (the `projects` array — the separate writing
+  list was deleted 2026-07-23, when the book became a full project card), `intake.js` (the
   multi-step Build Assessment form's questions/options), `about.js` (the bio, the tool list,
   and the page's remaining sections), `privacy.js`, `colophon.js` (the
   stack-diagram data for the `/work/this-site` exhibit), `notes.js` (the `/notes` furniture —
   lead, empty state, labels). Pages and components map over these;
   components are presentation-only. To change wording or add a project, edit the data file — never hard-code
-  copy into `.astro` files.
+  copy into `.astro` files. (`substack` is the outbound subscribe link `SubstackEmbed` puts on
+  `/about` — an anchor, not an iframe; the embed read as clunky and was dropped.)
 
   **The one exception: `/notes` bodies are markdown**, in `src/content/notes/*.md`, via an
   Astro content collection (`src/content.config.js`). Added 2026-08-03. Prose with headings,
@@ -96,6 +106,12 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   and **no sitemap rule for drafts exists or is needed**. Drafts render under `npm run dev`
   and never in a production build. `src/content/notes/kitchen-sink.md` is a permanent draft
   that exercises every element `.prose-md` styles — a free regression test; keep it.
+  **A leading underscore hides a file from the loader entirely** — the glob pattern is
+  `**/[^_]*.md`, which is what lets `_TEMPLATE.md` sit in the notes directory without being a
+  note (no schema validation, no page, no feed item). Start a new note by copying that
+  template; it documents the frontmatter in the place an author is already looking. Two
+  different mechanisms, don't confuse them: `_` means *not content*, `draft: true` means
+  *content that isn't published yet*.
   **`pinned: true`** lifts a note into the "Start here" group above the stream. It exists
   because rolling notes and evergreen pieces pull opposite ways: the buyer-question writing
   is what earns a lead, and in a pure reverse-chron list it sinks under last month's post.
@@ -206,6 +222,11 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 
 - **`BaseLayout.astro`** wraps every page: imports fonts + global CSS, renders `Banner`/`Header`/
   `Footer`, sets `<title>`/description/canonical/OG tags (overridable via props), skip link.
+  Two things that are easy to miss because no page opts into them: **`FeedbackWidget` renders
+  site-wide** from here (so the feedback Function is reachable from every page, not just one),
+  and so does the **`/rss.xml` autodiscovery `<link>`** — site-wide because the layout has no
+  `<head>` slot for a page to add one. The `ogType`/`publishedTime`/`modifiedTime` props exist
+  for `/notes/<slug>` only; their defaults leave every other page's `<head>` byte-identical.
 
 - **Styling** is two plain CSS files, no framework:
   - `src/styles/tokens.css` — the design system: color roles, the Fraunces/Inter type scale, spacing,
@@ -220,6 +241,10 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
     `<style>` because **Astro's scoping can't reach markdown output** — generated HTML
     carries no `data-astro-cid` attribute, so a scoped rule silently does nothing.
   Direction is "warm editorial": paper/cream ground, ink text, Fraunces headlines, rust accent.
+  One style decision lives outside both files: `markdown.shikiConfig.theme` in `astro.config.mjs`
+  is `github-light`, because Astro's default (`github-dark`) drops a black slab into the paper
+  page. Shiki emits the theme background as an **inline** style on `<pre class="astro-code">`, so
+  no CSS rule in `global.css` can override it — the fix has to be the config line.
 
 ### The three Functions, and what's allowed to fail
 
@@ -320,10 +345,15 @@ finished, working structure." When editing any site copy:
   the rust underline had never rendered in production. Now a prefix match, which also keeps
   a section lit on its detail pages. If nav hrefs ever gain trailing slashes, `isActive()`
   already strips them.
-- **`docs/architecture.md` is stale** — it predates several decisions and still describes Formspree
-  (it's Resend), a Groundcrew project (removed), "no per-project detail pages" (they exist now), and
-  knows nothing of Supabase, Turnstile, or the assessment/feedback Functions. Treat this file, the
-  README, and the source as authoritative; update `docs/architecture.md` rather than trusting it.
+- **Three docs, three jobs — keep them in their lanes.** `README.md` is for a visiting hiring
+  manager: short, and its claims (four dependencies, thirteen components, ten detail pages, what
+  talks to what) are checkable against the repo, so a change to the architecture is a change to
+  the README. **This file** is the working rules — every convention and the reason for it.
+  `docs/architecture.md` is the current shape plus the **dated decision log**, including
+  superseded decisions; add an entry there when a decision changes, rather than only editing the
+  prose around it. It was rewritten 2026-08-04 after being stale since ~2026-07-23 (it described
+  Formspree, Groundcrew, and "no detail pages"); it is accurate now, so don't carry the old
+  "treat it as stale" warning forward. Source wins over all three.
 - **`.claude/` is gitignored and holds worktrees** — full untracked copies of the repo including
   `node_modules/` and `dist/`. Repo-wide greps/finds will return duplicate hits; scope searches to
   `src/`, `functions/`, `supabase/`, and `docs/`.
