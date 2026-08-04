@@ -149,8 +149,24 @@ export const services = {
   // the page for the same reason it worked at the party: no jargon, and it covers wires and
   // walls as well as software.
   lead: 'I build things and solve problems in digital and physical spaces.',
-  intro:
-    'Partner with me and you`ll get the same energy that went into writing a book and building the production-grade apps; someone who knows what questions to ask, and who can save you money by helping you build the thing yourself.',
+  // SEGMENT ARRAY, not a string (2026-08-04) — same shape as about.js and the server-closet
+  // blurb: 'plain text' runs, and { href, text } for a link. Astro escapes this, so there is
+  // no markdown to reach for. Only this one field carries segments; the rest of `services`
+  // is plain strings.
+  //
+  // Three fixes in this sentence, all Jon's call:
+  //   · "the production-grade apps" → "production-grade apps". The article was pointing at
+  //     apps the reader hasn't been introduced to, which is also why it now links to /work/.
+  //   · "you`ll" → "you’ll". A BACKTICK, which rendered literally on the live page. Second
+  //     time this file has caught one — see bfbcc56. If you draft in an editor that turns a
+  //     lone quote into a backtick, check this field after every edit.
+  //   · "production-grade apps" now links to /work/ (Jon), so the claim has the evidence
+  //     one click away instead of asking to be taken on faith.
+  intro: [
+    'Partner with me and you’ll get the same energy that went into writing a book and building ',
+    { href: '/work/', text: 'production-grade apps' },
+    '; someone who knows what questions to ask, and who can save you money by helping you build the thing yourself.',
+  ],
 
   startHeading: 'Start here',
   start:

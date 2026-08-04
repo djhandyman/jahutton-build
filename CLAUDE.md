@@ -69,6 +69,13 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   copy into `.astro` files. (`substack` is the outbound subscribe link `SubstackEmbed` puts on
   `/about` — an anchor, not an iframe; the embed read as clunky and was dropped.)
 
+  **Segment arrays are how a sentence carries a link or emphasis** — `'plain text'`,
+  `{ href, text }`, `{ strong }`, `{ em }` — because data files are escaped by Astro and never
+  touch the markdown pipeline. Documented in `about.js`; also used by project blurbs and, since
+  2026-08-04, `services.intro` (the only segment field in `site.js`; everything else there is a
+  plain string). Convert a field only when it actually needs a link, and give the page the same
+  three-line `asSegments` renderer the others use rather than a new one.
+
   **The one exception: `/notes` bodies are markdown**, in `src/content/notes/*.md`, via an
   Astro content collection (`src/content.config.js`). Added 2026-08-03. Prose with headings,
   lists, quotes and code inside a JS file is markup smuggled into data — the thing this rule

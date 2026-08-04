@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { services } from '../data/site.js';
+
+// A paragraph is a plain string or an array of segments — same convention as /about and the
+// project blurbs. Normalised so the template maps over one thing instead of two.
+const asSegments = (p) => (Array.isArray(p) ? p : [p]);
 ---
 <BaseLayout
   title="Services — Jonathan A. Hutton"
@@ -10,7 +14,17 @@ import { services } from '../data/site.js';
     <div class="container services">
       <h1>{services.title}</h1>
       <p class="services__lead">{services.lead}</p>
-      <p class="services__intro">{services.intro}</p>
+      {/* `intro` is a segment array so the sentence can carry a link — same shape and the same
+          renderer as /about and the project blurbs. Everything else on this page is a plain
+          string and stays one; don't convert a field until it actually needs a link. */}
+      <p class="services__intro">
+        {asSegments(services.intro).map((seg) =>
+          typeof seg === 'string' ? seg
+            : seg.strong ? <strong>{seg.strong}</strong>
+            : seg.em ? <em>{seg.em}</em>
+            : <a href={seg.href} rel={seg.href.startsWith('/') ? undefined : 'noopener'}>{seg.text}</a>
+        )}
+      </p>
 
       {/* The assessment leads the page on purpose — it is the front door to all three
           shapes below, not a fourth option sitting beside them. */}
