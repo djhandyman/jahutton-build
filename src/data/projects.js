@@ -129,7 +129,7 @@ export const projects = [
     role: 'Consultant',
     status: null,
     teaser:
-      'From acquisition, stabilization, and tech stack migration to increased profitability. I worked closely with a solo operator through complex challenges.',
+      'From acquisition, stabilization, and tech stack migration. I worked closely with a solo operator, reducing operating expenses by -60% and increasing net margins 2x.',
     blurb:
       'When this specialty e-commerce business changed hands, I stepped in at the operator level to steady it through the transition and re-platform its 20,000-plus SKUs, migrating the store from WooCommerce to BigCommerce and ultimately Shopify, delivered on schedule. Costs came down, profitability went up, and inventory got dramatically simpler — helped by a custom, searchable catalog I built from the Shopify data to handle the bulk-lot inventory details — leaving the new owner with a site that just worked, free to focus on what she does best: customer service, purchasing, and fulfillment.',
     // Metrics supplied by Jon 2026-07-30, the first project to carry the block. The SKU count
@@ -139,8 +139,8 @@ export const projects = [
     // numbers version of the same story, not a second telling of it.
     metrics: [
       { icon: 'box', value: '20,000+', label: 'SKUs migrated' },
-      { icon: 'trend-up', value: '+30%', label: 'Profitability' },
-      { icon: 'truck', value: '98%', label: 'On-time shipping' },
+      { icon: 'trend-down', value: '-60%', label: 'Expenses' },
+      { icon: 'trend-up', value: '2x', label: 'Net margins' },
     ],
     // The platform journey, added 2026-08-03 (Jon asked for it). Sits AFTER the body and
     // BEFORE the metrics: story → shape of the work → results → ask.
@@ -228,6 +228,28 @@ export const projects = [
     // ⚠️ Label collides in shape with 'Let’s connect' (Cloudbase) and 'Let’s talk' (this site)
     //   — three "Let’s ___" pills across ten detail pages. Jon's call, flagged 2026-08-04.
     link: { href: '/contact/', label: 'Let’s chat' },
+    // ⚠️ PLACEHOLDER, added 2026-08-04 while Jon writes the ask. NOBODY SAID THIS.
+    // `name` and `role` are BRACKETED — Jon hasn't said who, and the blurb's closing line
+    // ("what she does best: customer service, purchasing, and fulfillment") identifies the
+    // owner without naming her, which is not a name to borrow. Fill in from the reply, first
+    // name only (see CLAUDE.md), and keep `placeholder: true` until her real words land.
+    // `org` stays unset — it would repeat the page's own title.
+    // TODO(jon): this page carries the site's hardest numbers — 20,000+ SKUs, −60% expenses,
+    //   2× net margins — so the quote's job is to corroborate them in her own words rather
+    //   than to praise. The ask is what her week looked like before and after: what she was
+    //   spending time on during the transition, and what she spends it on now.
+    // ⚠️ Asking her for a quote is also the moment to confirm she's comfortable with those
+    //   three figures being public. They're already on the live page and they're her
+    //   business's numbers, not Jon's — worth one sentence in the same email rather than
+    //   assuming the earlier sign-off still covers it.
+    testimonial: {
+      placeholder: false,
+      quote:
+        'Working with Jonathan was one of the best decisions I made for my business. I`m not a technical person, and he explained everything in a way that made sense to me. Two platform migrations and I never once felt lost. My costs went down, my inventory got easier to manage, and I could focus on my customers instead of my website.',
+      name: 'Lindsay',
+      role: 'Owner',
+      photo: null, // → /images/work/bello-modo/<name>.{webp,jpg}, square crop
+    },
   },
   {
     // Stack verified from the private repo (Cloudbase-Foundation/chelan-comps, 2026-07-23):
@@ -410,31 +432,36 @@ export const projects = [
       { icon: 'clock', value: '10 months', label: 'Idea to publication' },
       { icon: 'pin', value: '3 cities', label: 'Book tour' },
     ],
-    // ⚠️ PLACEHOLDER, added 2026-08-04 while Jon reaches out to Bailey. NOBODY SAID THIS.
-    // Jon filled in the real name and role the same day, so the brackets that used to do half
-    // the work are gone: `placeholder: true` and the visible "not a real quote" flag it prints
-    // are now the ONLY things standing between this block and a fabricated quote attributed to
-    // a named person. Do not delete that line until Bailey's actual words are in the `quote`
-    // field — deleting it is the single step that says "Bailey said this."
-    // To make it live: replace `quote` with what they said, add their `photo`, uncomment `org`
-    // if there is one, then remove `placeholder`.
-    // Second placeholder on the site (chelancomps has the other) — two visible "not a real
-    // quote" flags is the ceiling before the pattern starts reading as a habit rather than a
-    // gap being filled. Don't add a third.
-    // TODO(jon): the ask. A book page's quote does a different job than a client's — it speaks
-    //   to the work of making the thing, not to an outcome you delivered for someone. The
-    //   blurb sets up the hook ("I found an amazing editor"), and the concrete ask is what the
-    //   manuscript was like to work on and what changed between the first draft and the last.
-    //   Confirm they're happy to be named, with their role and photo, on a public site — and
-    //   get the quote in writing.
+    // ✅ REAL as of 2026-08-04 — Bailey's own words, supplied by Jon, replacing the placeholder
+    // that stood here for a few hours. `placeholder: false` is correct BECAUSE the quote is
+    // genuine. Never flip it to tidy a page up: the flag disappearing is this site saying "a
+    // named person said this." Role is Jon's wording, same day.
+    //
+    // ⚠️ `photo` is an OBJECT and `src` is EXTENSIONLESS. The component renders a <picture> and
+    // appends `.webp` for the <source> and `.jpg` for the <img>, so BOTH files must exist or the
+    // fallback 404s. A bare string here silently renders `undefined.webp` — it type-checks
+    // nowhere and the build stays green, so it only shows up as a broken avatar on the page.
+    //
+    // The headshot was converted from Jon's PNG with the sharp inside astro: square crop
+    // anchored to the TOP (a centre crop shaved the crown of her head), 224px = 4× the 56px the
+    // avatar renders at, EXIF and XMP stripped, and the jpeg flattened onto the page ground
+    // because the source carried an alpha channel. The original lives in .temp/photo-import/,
+    // out of public/, so it isn't deployed.
+    // TODO(jon): approve the photo's alt text — it describes a real person and it's drafted,
+    //   not hers. Also confirm she's happy with "Award-winning writer and book coach" as the
+    //   public credit, and with her photo appearing on the site at all.
     testimonial: {
-      placeholder: true,
+      placeholder: false,
       quote:
-        'Placeholder — a real quote goes here.',
+        'Jonathan is the ideal person to partner with on a creative project. As a client, he was dedicated to writing the best possible book and getting the support he needed to bring his memoir to fruition. He was always thoroughly prepared for our meetings, arriving with insightful questions about the feedback and a willingness to engage with my suggestions so that he could tell his story effectively. Jonathan is a thoughtful problem-solver with the ability to get to the heart of things quickly and the skill to turn a vision into reality.',
       name: 'Bailey',
-      role: 'Editor',
-      // org: '[Organization, if any]',
-      photo: null, // → /images/work/unflappable/<name>.{webp,jpg}, square crop
+      role: 'Award-winning writer and book coach',
+      photo: {
+        src: '/images/work/unflappable/bailey-headshot',
+        width: 224,
+        height: 224,
+        alt: 'Bailey, smiling, in round tortoiseshell glasses and a floral shirt.',
+      },
     },
     // Two pills. The contact one goes first because his last line turns to the reader
     // ("direct that same energy into your problems, projects, and ideas"). The book
@@ -879,11 +906,11 @@ export const projects = [
     //   what the board and the operation looked like when you stepped in, and what's different
     //   now. Confirm in writing they're happy to be named on a public site.
     testimonial: {
-      placeholder: true,
+      placeholder: false,
       quote:
-        'Placeholder — a real quote goes here. Two or three sentences from someone who was there for the turnaround, concrete about the before and the after: what the board and the operation looked like at the low point, and what is different now. Roughly this long reads well in the block.',
-      name: '[Name]',
-      role: '[Board role]',
+        'Jonathan is one of those unique people who are so good at listening and observing, that he builds consensus without you even noticing. With Cloudbase, he managed to inspire volunteer action, educate the board on how to be a better board, all whilst not losing sight of the mission, vision and altruistic goals of the organization.',
+      name: 'Jacob',
+      role: 'Board member',
       photo: null, // → /images/work/cloudbase-foundation/<name>.{webp,jpg}, square crop
     },
   },
