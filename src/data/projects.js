@@ -84,6 +84,15 @@
 //     NEVER invent one, and never round a number up into a better story. Every value here comes
 //     from Jonathan directly — record the date he gave it, the way the blurbs do.
 //     Three reads best at the body measure; two or four also lay out.
+//   prompt — optional mid-page invitation on a slugged project: { text, link }. Renders as a
+//     filled box AFTER the journey and BEFORE the metrics, so the question aims the numbers
+//     ("is this you?") and the proof lands before the ask. The answer is the `link` pill at
+//     the foot of the page, which is why `prompt.link` is almost always omitted — a pill
+//     inside the box plus a pill sixty pixels below is the same ask twice.
+//     Split out of the metrics block by Jon on 2026-08-03 (Cloudbase), second consumer
+//     2026-08-04 (Bello Modo). The question is what lets a project keep a contact pill
+//     without its blurb ending in an ask — it does the turning-to-the-reader itself.
+//     ⚠️ The pill label must NOT echo the question. Same rule as the closing-line pills.
 //   journey — optional platform/migration exhibit on a slugged project, rendered inline by
 //     work/[slug].astro AFTER the body and BEFORE the metrics: story → shape → results → ask.
 //     { heading, lead, steps: [{ name, items, note }], branch: { name, items, note } }.
@@ -206,7 +215,19 @@ export const projects = [
         note: 'We kept all of the product inventory data in order to build a browsable static catalog that would sit alongside the remaining bulk product lots available for purchase. The early version of this web app was built in a week.',
       },
     },
-    link: null, // store + catalog repos are private; nothing public to link yet
+    // The ask, added 2026-08-04 (Jon's wording). Same split as Cloudbase: question here,
+    // above the metrics; the pill that answers it at the foot of the page.
+    // Deliberately NOT an outbound link — the live store is the client's business, not
+    // evidence of Jon's, and the catalog repo is private. The question is what makes a
+    // contact pill sit right on a blurb that ends on the owner's outcome rather than an ask.
+    prompt: {
+      text: 'How would you like to improve your online store?',
+    },
+    // Answers the question above. Store + catalog repos are private, so there is nothing
+    // public to point at and the ask is the page's job.
+    // ⚠️ Label collides in shape with 'Let’s connect' (Cloudbase) and 'Let’s talk' (this site)
+    //   — three "Let’s ___" pills across ten detail pages. Jon's call, flagged 2026-08-04.
+    link: { href: '/contact/', label: 'Let’s chat' },
   },
   {
     // Stack verified from the private repo (Cloudbase-Foundation/chelan-comps, 2026-07-23):
@@ -306,10 +327,14 @@ export const projects = [
       { icon: 'clock', value: '~3 weeks', label: 'Idea to production' },
     ],
     link: { href: 'https://chelancomps.org', label: 'Visit the live site' },
-    // ⚠️ PLACEHOLDER, added 2026-07-28 to show the block's design. NOBODY SAID THIS. The name
-    // and role are bracketed and `placeholder: true` prints a visible flag, so it cannot be
-    // mistaken for real on the page. To make it live: replace every field with what the person
-    // actually said, add their `photo`, and delete the `placeholder` line.
+    // ⚠️ PLACEHOLDER, added 2026-07-28 to show the block's design. NOBODY SAID THIS. Jon
+    // filled in the real name, role and org on 2026-08-04, so the brackets that used to do
+    // half the work are gone: `placeholder: true` and the visible "not a real quote" flag it
+    // prints are now the ONLY things standing between this block and a fabricated quote
+    // attributed to a named person. Do not delete that line until Austin's actual words are in
+    // the `quote` field — deleting it is the single step that says "Austin Cox said this."
+    // To make it live: replace `quote` with what he said, add his `photo`, then remove
+    // `placeholder`.
     // TODO(jon): ask a Chelan organizer for a real one. The concrete before/after is the ask —
     //   what their week looked like running the comp on email vs. now. Get it in writing, and
     //   confirm they're happy to be named with their photo on a public site.
@@ -317,9 +342,9 @@ export const projects = [
       placeholder: true,
       quote:
         'Placeholder — a real quote goes here. Two or three sentences in their own words, concrete about what changed: what running the comp used to cost them, and what they do with that time now. Roughly this long reads well in the block.',
-      name: '[Name]',
-      role: '[Role]',
-      org: '[Organization]',
+      name: 'Austin Cox',
+      role: 'Owner / organizer',
+      org: 'Northwest Paragliding',
       photo: null, // → /images/work/chelancomps/<name>.{webp,jpg}, square crop
     },
   },
@@ -350,16 +375,17 @@ export const projects = [
     //   TODO(jon): a higher-res original if the phone still has it — this is a 2× crop away from
     //   being crisp, and it's the most human photo on the site.
     // TODO(jon): approve the alt text — drafted, not yours yet.
-    // TODO(jon): a caption, if you want one. Two facts are already in hand and neither is
-    //   invented: the file's EXIF says it was shot 2025-10-11 at 4:20pm, and the filename says
-    //   Browsers — which would be Browsers Bookshop, Olympia, one of your three tour cities.
-    //   CONFIRM the venue before it goes in copy; a filename is evidence, not a citation.
+    // Caption is Jon's, supplied 2026-08-04 — which also settles the venue the old TODO was
+    // holding out on: Browsers Bookshop, one of the three tour cities in the blurb. The
+    // filename was evidence, not a citation; this is the citation.
+    // Only mechanical changes: the comma before the state and a closing period, matching the
+    // site's other captions.
     hero: {
       src: '/images/work/unflappable/reading-browsers',
       width: 640,
       height: 640,
       alt: 'A seated audience, seen from the back of the room, listening to Jonathan read aloud from Unflappable in a small bookshop lined with shelves.',
-      caption: null,
+      caption: 'Reading at Browsers Bookshop, Olympia, WA.',
     },
     category: 'written work',
     role: 'Author / self-publisher',
@@ -367,7 +393,7 @@ export const projects = [
     teaser:
       'Ten months from concept to on-sale, then a book tour: Olympia, Seattle, Issaquah.',
     blurb: [
-      "A memoir about rare disease, paragliding, and finding healing when a cure isn't on the table. Ten months from concept to on-sale. I wrote it, and then I published it, which turned out to be its own build: the manuscript through editing and production, working closely with an amazing editor and learning a lot along the way; the cover and the interior; distribution through Amazon KDP and IngramSpark; the launch; and then the part most writers skip, which is actually selling it. That part was a book tour — Olympia, Seattle, Issaquah.",
+      "I wrote a memoir about rare disease, paragliding, and finding healing. Ten months from concept to on-sale. I’d been building a solid writing practice for over a year, and then realized that the 2,000 word essays I’d become comfortable producing could take the shape of something else with the right planning and focus. I knew I would need outside help, that I wasn’t an expert at writing books, and that memoir in particular required specialized editorial guidance. Luckily, I found an amazing editor and learned a great deal about the process along the way.",
       'The process of writing this book changed me—I proved to myself in a very personal and tangible way that I can build complex and durable things, that I thrive when a project is daunting, requiring more effort than you can conceptualize before the work begins. And now we are going to direct that same energy into your problems, projects, and ideas.',
     ],
     // Metrics supplied by Jon 2026-07-30. Order is his call and it is NOT the blurb's sequence:
@@ -384,6 +410,32 @@ export const projects = [
       { icon: 'clock', value: '10 months', label: 'Idea to publication' },
       { icon: 'pin', value: '3 cities', label: 'Book tour' },
     ],
+    // ⚠️ PLACEHOLDER, added 2026-08-04 while Jon reaches out to Bailey. NOBODY SAID THIS.
+    // Jon filled in the real name and role the same day, so the brackets that used to do half
+    // the work are gone: `placeholder: true` and the visible "not a real quote" flag it prints
+    // are now the ONLY things standing between this block and a fabricated quote attributed to
+    // a named person. Do not delete that line until Bailey's actual words are in the `quote`
+    // field — deleting it is the single step that says "Bailey Lang said this."
+    // To make it live: replace `quote` with what they said, add their `photo`, uncomment `org`
+    // if there is one, then remove `placeholder`.
+    // Second placeholder on the site (chelancomps has the other) — two visible "not a real
+    // quote" flags is the ceiling before the pattern starts reading as a habit rather than a
+    // gap being filled. Don't add a third.
+    // TODO(jon): the ask. A book page's quote does a different job than a client's — it speaks
+    //   to the work of making the thing, not to an outcome you delivered for someone. The
+    //   blurb sets up the hook ("I found an amazing editor"), and the concrete ask is what the
+    //   manuscript was like to work on and what changed between the first draft and the last.
+    //   Confirm they're happy to be named, with their role and photo, on a public site — and
+    //   get the quote in writing.
+    testimonial: {
+      placeholder: true,
+      quote:
+        'Placeholder — a real quote goes here.',
+      name: 'Bailey Lang',
+      role: 'Editor',
+      // org: '[Organization, if any]',
+      photo: null, // → /images/work/unflappable/<name>.{webp,jpg}, square crop
+    },
     // Two pills. The contact one goes first because his last line turns to the reader
     // ("direct that same energy into your problems, projects, and ideas"). The book
     // cross-link stays as a ghost — CLAUDE.md: the two sites link to each other on purpose.
@@ -478,9 +530,18 @@ export const projects = [
     // The gallery is split into headed groups the same day: this page covers two rooms, and one
     // undifferentiated run of photos read as though the kitchen didn't exist. The Kitchen group
     // is deliberately a `note`, not photos — see below.
+    // 2026-08-04: body is Jon's, from .temp/writing/project-copy.md — the full bathroom narrative
+    // replacing the lone opening paragraph that had been standing in for it. Four paragraphs, his
+    // words. Two mechanical fixes only: "a sliding glass good went in" → "door", and
+    // "floor to ceiling tile" hyphenated as the compound modifier it is.
+    // `link` stays null on purpose. His copy ends on the kitchen rather than turning to the
+    // reader, so per the CTA convention there's nothing here to hang a /contact/ pill on.
+    //
     // TODO(jon): scope/budget line.
-    // TODO(jon): the kitchen copy, which is the thing actually missing — the group is on the page
-    //   now saying "coming soon", so the placeholder is visible and honest rather than a silent gap.
+    // TODO(jon): the kitchen copy, which is the thing actually missing — and the body now points
+    //   straight at it: "the next remodel project would be orders of magnitude larger" is the last
+    //   line a reader sees before a section that says "coming soon". That's a good setup while the
+    //   kitchen is days away and a conspicuous one if it sits for months.
     //   .temp/photo-import/ still has two kitchen BEFORE shots (kitchen-before1/2.jpeg) and no
     //   after; they stay out until there's an after to pair them with. Half a before/after is
     //   worse than none, and that rule doesn't change just because the section now has a heading.
@@ -491,8 +552,12 @@ export const projects = [
     status: null,
     teaser:
       'Full design-through-build of a kitchen and bath remodel — “builder,” taken literally.',
-    blurb:
-      'Full-scope design, planning, and project management of a kitchen and bathroom remodel — from SketchUp design through materials, sequencing, and hands-on execution. Proof that "builder" is literal, not a metaphor.',
+    blurb: [
+      'Our sole bathroom was an artifact from another era, 30-some square feet, with a cutout in the countertop to allow the door to swing in. When I bought the house, I knew it would need remodeling and updating, but it took several years before the design concept came together.',
+      'The bathtub had to go, that was the first thing. Changing the overall footprint of the space was off the table because of the added complexity and cost, which added a helpful constraint to work within. The outcome I wanted was a space that felt larger than it actually was, that was light and open and pleasant to be in, with modern fixtures set against wood grain and organic surfaces.',
+      'The tub came out and a sliding glass door went in, floor-to-ceiling tile behind it. The orientation of the shower head was flipped to allow for any future repair or modification. And in order to give the appearance of roominess, the vanity and toilet would float off of the floor.',
+      'From design through construction to a finished room, the bathroom remodel was involved, but the scope (like the size of the room) was fairly small. The next remodel project would be orders of magnitude larger.',
+    ],
     link: null,
     gallery: [
       {
