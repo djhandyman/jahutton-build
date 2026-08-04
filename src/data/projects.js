@@ -534,8 +534,16 @@ export const projects = [
     // replacing the lone opening paragraph that had been standing in for it. Four paragraphs, his
     // words. Two mechanical fixes only: "a sliding glass good went in" → "door", and
     // "floor to ceiling tile" hyphenated as the compound modifier it is.
-    // `link` stays null on purpose. His copy ends on the kitchen rather than turning to the
-    // reader, so per the CTA convention there's nothing here to hang a /contact/ pill on.
+    // The closing line and the pill are DRAFTED, not Jon's — his copy ended on the kitchen tease
+    // with nothing turning to the reader, and he asked for a CTA (2026-08-04). Chosen from four
+    // options because it returns to the point HE already made two paragraphs up — the footprint
+    // being off the table was a "helpful constraint to work within" — so the invitation lands the
+    // page's own argument instead of importing a new one. Replace it with your own sentence
+    // whenever you'd rather; the pill label is the only part that must not echo it.
+    //
+    // Label had to be new: "Let's chat", "Let's talk", "Let's connect", "Get in touch", "Work with
+    // me" and "Start building together" are all taken by other projects, and identical CTAs across
+    // pages are the tell that nobody wrote them.
     //
     // TODO(jon): scope/budget line.
     // TODO(jon): the kitchen copy, which is the thing actually missing — and the body now points
@@ -557,8 +565,9 @@ export const projects = [
       'The bathtub had to go, that was the first thing. Changing the overall footprint of the space was off the table because of the added complexity and cost, which added a helpful constraint to work within. The outcome I wanted was a space that felt larger than it actually was, that was light and open and pleasant to be in, with modern fixtures set against wood grain and organic surfaces.',
       'The tub came out and a sliding glass door went in, floor-to-ceiling tile behind it. The orientation of the shower head was flipped to allow for any future repair or modification. And in order to give the appearance of roominess, the vanity and toilet would float off of the floor.',
       'From design through construction to a finished room, the bathroom remodel was involved, but the scope (like the size of the room) was fairly small. The next remodel project would be orders of magnitude larger.',
+      'Every project has something you can’t move. Finding it, then designing around it, is most of the work.',
     ],
-    link: null,
+    link: { href: '/contact/', label: 'Tell me about your project' },
     gallery: [
       {
         heading: 'Bathroom',

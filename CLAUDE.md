@@ -217,8 +217,12 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   ({ quote, name, role, org, photo, placeholder }) renders a quote block between the body and the
   CTA — round photo, or an initials monogram when there's no headshot yet. **`placeholder: true`
   prints a visible "not a real quote" flag; never strip it from invented copy.**
-  An optional `logo` ({ src, width, height, alt, note }) puts a brand mark **with the body**, not
-  down in the exhibit zone — where a project carries one, designing it was part of the job.
+  An optional `logo` ({ src, width, height, alt, note }) puts a brand mark **below the
+  testimonial and above the CTA** (Jon's call, 2026-08-04) — the last piece of evidence before
+  the ask. It used to sit with the body, on the reasoning that designing the mark was part of
+  the job; on the one page that carries one it interrupted the narrative mid-story. Position is
+  unconditional, not a `placement` prop: Ascension is the only project with a logo and a second
+  position doesn't exist yet. Add the flag when a second case needs it, not before.
   An optional `gallery` is an array of groups: `{ heading, caption, note, shots: [{ label, img }] }`.
   `shots` is **ordered** and renders as columns in that order — two for a before/after, three where
   the design belongs between them (the bathroom's SketchUp model). `heading` is for a page covering

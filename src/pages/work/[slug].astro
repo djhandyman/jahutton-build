@@ -142,25 +142,6 @@ const initials = quote
         )
       )}
 
-      {/* The brand mark sits with the body, not in the exhibit zone below the CTA: where a
-          project carries a logo, designing it was part of the job being described. */}
-      {project.logo && (
-        <figure class="mark">
-          <picture>
-            <source srcset={`${project.logo.src}.webp`} type="image/webp" />
-            <img
-              src={`${project.logo.src}.jpg`}
-              width={project.logo.width}
-              height={project.logo.height}
-              alt={project.logo.alt}
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-          {project.logo.note && <figcaption class="mark__note">{project.logo.note}</figcaption>}
-        </figure>
-      )}
-
       {/* Proof sits between the story and the ask, so the CTA follows the evidence — the
           outcome numbers and the quote are both part of that zone. */}
       {/* Deliverables as the payoff, after the narrative that sets them up (Cloudbase). */}
@@ -277,6 +258,30 @@ const initials = quote
           {quote.placeholder && (
             <p class="quote__flag">Placeholder — not a real quote</p>
           )}
+        </figure>
+      )}
+
+      {/* The brand mark, BELOW the quote (Jon's call, 2026-08-04). It used to sit up with the
+          body on the reasoning that designing the logo was part of the job — but on the only
+          page that carries one it interrupted the narrative mid-story, and it reads better as
+          the last piece of evidence before the ask.
+          Unconditional rather than a `placement` prop: Ascension is the only project with a
+          logo, and the second position doesn't exist yet. Same rule ProjectParts followed —
+          the flag arrived with the second case, not in anticipation of it. */}
+      {project.logo && (
+        <figure class="mark">
+          <picture>
+            <source srcset={`${project.logo.src}.webp`} type="image/webp" />
+            <img
+              src={`${project.logo.src}.jpg`}
+              width={project.logo.width}
+              height={project.logo.height}
+              alt={project.logo.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          {project.logo.note && <figcaption class="mark__note">{project.logo.note}</figcaption>}
         </figure>
       )}
 
