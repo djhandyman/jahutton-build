@@ -36,7 +36,31 @@ npm run preview  # preview the built dist/
 
 Node 22 is required (`.nvmrc`, `engines.node >=22.12.0`).
 
-There is no test suite, linter, or formatter configured — `npm run build` is the check.
+There is no linter or formatter configured. There **is** a test suite as of 2026-08-05
+(`npm test`), and it adds **zero dependencies** — `node:test` and `node:assert` ship inside Node
+22, which is the only reason it exists at all: a runner in `devDependencies` would falsify the
+four-dependency claim in five places to test three files. Don't "upgrade" it to vitest.
+
+```
+npm test         # everything: the three Functions + the built-output guards
+npm run build    # astro build, then the guards against dist/
+```
+
+- **`tests/*.test.js` import the real Functions.** They export `onRequestPost(context)` and use
+  only Node globals, so the tests call the actual handlers with fabricated `Request` objects and
+  a stubbed `globalThis.fetch` (`tests/helpers.js`). Nothing is reimplemented.
+- **What they mostly pin is the failure-policy table** — contact requires Resend; assessment
+  requires Resend but must survive Supabase and Claude failing; feedback requires the Supabase
+  insert but must survive Claude failing. That inversion is the site's central design idea and
+  the thing a refactor is most likely to break silently. If a test named `REQUIRED:` or
+  `BEST-EFFORT:` fails, you changed the product, not the plumbing.
+- **`tests/build-output.test.js` checks the built HTML**, because the bug that prompted all this
+  lived in how three components' markup combined on a page none of them owns — no unit test could
+  have seen it. It runs on every build and skips cleanly when `dist/` is absent.
+- The test-sitekey guard fails **only when `CF_PAGES` is set**, i.e. during Cloudflare's own
+  build. Locally the test key is the correct value and the guard just prints a note. This means a
+  production build that would ship a dummy sitekey **fails the deploy on purpose** — that is the
+  intent, not a bug to route around.
 
 **npx/npm hang on this machine** unless IPv4 is forced. Prefix network-touching commands with
 `NODE_OPTIONS="--dns-result-order=ipv4first"` (see the `vm-ipv6-broken-force-ipv4` memory).

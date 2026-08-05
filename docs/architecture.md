@@ -97,6 +97,24 @@ them in sync. `global.css` builds on it. No framework, no CSS library.
 Newest first. Superseded entries are kept, marked, and dated — knowing what was tried is most of
 this file's value.
 
+**2026-08-05** — Turnstile was rejecting every Build Assessment submit, found by a beta tester.
+Cause: `FeedbackWidget` (site-wide) loaded `api.js?render=explicit` while `ContactForm` and
+`AssessmentIntake` rely on implicit rendering, and that query parameter disables the auto-scan
+for the whole page — so on shared pages the intake widget often never rendered and posted an
+empty token. Contact carried the identical fault and hid it, being the lenient Function. Fixed by
+dropping the parameter so all three request an identical URL. `turnstileOk()` now logs
+`error-codes`, and logs the no-token case separately, since that path returns before siteverify.
+
+**2026-08-05** — A test suite, with **zero new dependencies** — `node:test` and `node:assert` are
+inside Node 22, and a runner in `devDependencies` would have falsified the four-dependency claim
+in five places. The Functions export `onRequestPost` and use only Node globals, so the tests
+drive the real handlers with a stubbed `fetch`. Most of the value is in pinning the failure-policy
+table; the rest is `tests/build-output.test.js`, which asserts structural facts about the built
+HTML — one Turnstile URL per page, no test sitekey in a production build, still zero JS bundles.
+That file exists because the render-mode bug lived in how three components combined on a page
+none of them owns, where no unit test could reach it. Verified by reintroducing the bug into
+`dist/` and confirming the guard failed.
+
 **2026-08-05** — Work cards gained a category glyph and metric chips. The index was ten text
 boxes in a grid and read as a list of jobs; the feedback was that every card needs something to
 look at. Photo thumbnails and per-project brand marks were both mocked up and both rejected:
@@ -172,7 +190,8 @@ became a full project instead.
 ## Deliberately absent
 
 No framework, CSS library, CMS, form service, or analytics. No TypeScript and no `tsconfig.json`.
-No test suite, linter, or formatter — `npm run build` is the check. No license file, so ordinary
+No linter or formatter. (A test suite arrived 2026-08-05 — `npm test`, zero dependencies, built
+on `node:test`. See the decision log.) No license file, so ordinary
 copyright applies to the content. No in-repo deploy config: production builds come from the
 Cloudflare Pages ↔ GitHub connection, and `wrangler` is only used locally to exercise the
 Functions.
