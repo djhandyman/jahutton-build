@@ -7,6 +7,7 @@
 -- Columns mirror exactly what the Function writes:
 --   insert (durable-first) → situation, description, stage, tried, timeline, budget_band,
 --                            links, name, email, org, referral
+--                            (+ invest_band, added in 0003 — apply migrations in order)
 --   update (Claude triage, may never arrive) → triage_summary, triage_fit, triage_rationale,
 --                            triage_prep
 

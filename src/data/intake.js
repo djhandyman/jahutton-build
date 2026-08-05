@@ -100,6 +100,28 @@ export const intake = {
             'Budgeted and ready to move',
           ],
         },
+        // Added 2026-08-05, alongside the assessment going to $2,500. The question above asks
+        // about READINESS, not SIZE — "budgeted and ready to move" says nothing about whether
+        // that's $4k or $40k. Without this, nothing filters for the $15–30k builds the pricing
+        // is aimed at, so an 8-hour assessment ends up doing all the filtering by itself, which
+        // is the most expensive filter available.
+        // Deliberately phrased as "able to invest" rather than "what's your budget": the named
+        // audience includes nonprofits, and a blunt budget demand before they've seen anything
+        // reads as presumptuous. Optional, like every other qualifier here — a blank answer must
+        // never block a submission, and the first option makes not knowing a legitimate answer
+        // rather than an omission.
+        {
+          name: 'invest_band',
+          type: 'select',
+          label: 'Any sense of what you’re able to invest?',
+          options: [
+            'Not yet — that’s part of what I need help with',
+            'Under $10k',
+            '$10–25k',
+            '$25–50k',
+            'More than $50k',
+          ],
+        },
         {
           name: 'links',
           type: 'text',

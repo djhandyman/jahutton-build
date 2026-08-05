@@ -105,6 +105,17 @@ empty token. Contact carried the identical fault and hid it, being the lenient F
 dropping the parameter so all three request an identical URL. `turnstileOk()` now logs
 `error-codes`, and logs the no-token case separately, since that path returns before siteverify.
 
+**2026-08-05** — The Build Assessment is **$2,500**, up from $1,000, and the last two open copy
+questions on `/services` are closed. The number follows from the build size Jon wants ($15–30k):
+the 10–20% rule puts that behind a $1,500–6,000 diagnostic, so $1,000 sat below the floor and
+silently advertised $5–10k work. Publishing low and raising later was considered and rejected — a
+published price is a signal, a private discount is a favour. The price lives in four rendered
+places (`services.startPrice`, `assessment.price`, the `/assessment` meta description, and
+`PASTE_READY` in `contact.js`) and they move together. The intake gained an optional
+`invest_band` question, because the existing `budget_band` asks about readiness rather than size
+and so couldn't filter for the builds the price is aimed at; migration `0003`. The three
+engagement shapes stay as drafted, now confirmed accurate rather than merely unchallenged.
+
 **2026-08-05** — All three Turnstile widgets now render **explicitly**, retaining their widget id
 so it can be `reset()` between attempts. Tokens are single-use, so `ContactForm` and
 `AssessmentIntake` — which re-enabled Send without refreshing — turned any first failure into a

@@ -89,6 +89,9 @@ async function readFields(request) {
     tried: clip(src.tried, 5000),
     timeline: clip(src.timeline, 80),
     budget_band: clip(src.budget_band, 80),
+    // Size, as opposed to budget_band's readiness — the field that lets the intake filter for
+    // the build size the pricing is aimed at. Added 2026-08-05; see src/data/intake.js.
+    invest_band: clip(src.invest_band, 80),
     links: clip(src.links, 500),
     name: clip(src.name, 120),
     email: clip(src.email, 200),
@@ -169,6 +172,7 @@ async function triage(env, f) {
             `Tried: ${f.tried || '—'}\n` +
             `Timeline: ${f.timeline || '—'}\n` +
             `Budget: ${f.budget_band || '—'}\n` +
+            `Able to invest: ${f.invest_band || '—'}\n` +
             `Links: ${f.links || '—'}\n` +
             `From: ${f.name} <${f.email}>${f.org ? ` · ${f.org}` : ''}\n`,
         },
@@ -233,6 +237,7 @@ function buildEmail(f, t) {
     (f.tried ? `Tried:\n${f.tried}\n` : '') +
     `\nTimeline: ${f.timeline || '—'}\n` +
     `Budget:   ${f.budget_band || '—'}\n` +
+    `Invest:   ${f.invest_band || '—'}\n` +
     (f.links ? `Links:    ${f.links}\n` : '')
   );
 }
@@ -295,6 +300,7 @@ export async function onRequestPost(context) {
         tried: f.tried || null,
         timeline: f.timeline || null,
         budget_band: f.budget_band || null,
+        invest_band: f.invest_band || null,
         links: f.links || null,
         name: f.name,
         email: f.email,

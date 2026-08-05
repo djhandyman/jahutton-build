@@ -22,7 +22,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // all) simply doesn't qualify; it is never an error.
 //
 // The rule is "is this person actually moving", not "do they need it". Someone still exploring
-// gets the plain thank-you: they came to talk, and answering a first message with a $1,000 offer
+// gets the plain thank-you: they came to talk, and answering a first message with a $2,500 offer
 // is the funnel behaviour the assessment copy was written to avoid.
 const QUALIFIED_TIMELINES = new Set(['weeks', 'underway']);
 
@@ -32,7 +32,7 @@ const QUALIFIED_TIMELINES = new Set(['weeks', 'underway']);
 const PASTE_READY =
   'Before we build anything I do a Build Assessment — we talk for an hour, then a week later ' +
   'you get a short written plan: what’s going on, what I’d build and in what order, what it ' +
-  'costs, and what you could do without me. $1,000, and it comes off the price of the work if ' +
+  'costs, and what you could do without me. $2,500, and it comes off the price of the work if ' +
   'we go ahead.';
 
 // Cloudflare Turnstile server-side verification. Returns true when the token checks out.

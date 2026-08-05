@@ -140,15 +140,34 @@ export const contact = {
 //   • "leverage modern technology" — the guide flags "leverage", but he wrote it. His word wins.
 //   • "go forth and build it" — the driest line on the page. Don't soften it.
 //
-// TODO(jon): still open — (1) the $1,000 FIGURE is unchanged pending your call, see
-// .temp/ASSESSMENT-PRICING.md, which argues for $1,500. What the credit *does* is now settled
-// and written down (2026-08-05); what it costs is not. (2) the three shape BODIES are still the
-// one part with no source in your answers ("those are fine for now") — rewrite if they're off.
-// `shapesLead` above is yours as of 2026-08-05; the three bodies under it are not.
+// PRICE: $2,500, decided 2026-08-05. Both long-open questions on this page are now closed.
 //
-// Both of these surfaced again on 2026-08-05 when a beta reader hit exactly these two spots —
-// which is what a TODO in a comment can't do: it sat here for a week and the page shipped
-// unclear anyway. Deferred copy questions belong in docs/roadmap.md where they get read.
+// The number was never really a pricing question — it was "what size of work do you want?", and
+// the assessment price is how a stranger answers that about you. Jon wants $15–30k builds, which
+// the 10–20% rule puts behind a $1,500–6,000 diagnostic. $1,000 sat below that floor and, worse,
+// silently ANNOUNCED $5–10k builds to anyone weighing whether to bring a bigger problem — a cost
+// that is invisible, because nobody writes to say they didn't write. $2,500 is 10% of the middle
+// of the range and reads as "$25k builds". Hour math, comparables and the arguments against are
+// all in .temp/ASSESSMENT-PRICING.md.
+//
+// ⚠️ Do NOT "publish low and raise later". That path was considered and rejected: a published
+// price is a SIGNAL, a private discount is a FAVOUR. Discounting the first one or two people in
+// the flying community costs nothing permanent; raising a public number afterwards, in a small
+// community where people talk, is awkward in a way the favour never is. List the real number and
+// discount quietly.
+//
+// The price appears in FOUR rendered places and they must move together: `services.startPrice`
+// and `assessment.price` below, the meta description in src/pages/assessment.astro, and
+// PASTE_READY in functions/api/contact.js — the paragraph Jon pastes into a reply, which is the
+// version a prospect reads in their inbox rather than on the site.
+//
+// SHAPES: the three bodies stay as drafted. Jon confirmed 2026-08-05 that they describe the work
+// accurately, which closes the older "no source in your answers" flag — they still aren't his
+// sentences, but they are now his call. `shapesLead` is his.
+// "Fractional — roughly a day a week" was queried against the 5–8 hours/week capacity figure in
+// ASSESSMENT-PRICING.md and confirmed real: that figure describes working around a day job Jon
+// intends to leave, and this site is built for the other side of that. Read the capacity math in
+// that doc as the old constraint, not the plan.
 export const services = {
   title: 'How I work',
   // His answer to "someone at a party asks what you do" — verbatim, and it earns the top of
@@ -190,7 +209,7 @@ export const services = {
   // ⚠️ These two sentences are a commitment to a paying customer. Change them in both places or
   // neither.
   startPrice:
-    'It’s $1,000, and it’s the only thing paid up front. If we build together it comes off the price of the work — so if we go ahead, the assessment was free. If we don’t, the plan is still yours: take it to another builder, or build it yourself.',
+    'It’s $2,500, and it’s the only thing paid up front. If we build together it comes off the price of the work — so if we go ahead, the assessment was free. If we don’t, the plan is still yours: take it to another builder, or build it yourself.',
   // 2026-08-02 (Jon): both CTAs on this page now go STRAIGHT to the intake form, not to the
   // /assessment/ explainer. The paragraph above already says what the assessment is, what it
   // costs, and what you get — so sending a reader who just read that to a page explaining it
@@ -264,7 +283,7 @@ export const services = {
 };
 
 // "Build Assessment" — the paid diagnostic (see .temp/PLANNING.md → Go-to-market → The diagnostic
-// offer). Fixed-scope, written deliverable, $1,000 credited toward the build. Copy written as Jon
+// offer). Fixed-scope, written deliverable, $2,500 credited toward the build. Copy written as Jon
 // per .temp/voice-and-style.md. DRAFT: the /assessment page renders but is intentionally NOT in the
 // nav and not linked anywhere yet — pending Jon's sign-off on shape, price, and name.
 export const assessment = {
@@ -296,10 +315,10 @@ export const assessment = {
   priceHeading: 'What it costs',
   // Second sentence added 2026-08-05, matching `services.startPrice` — this page explained what
   // happens when you DO build and said nothing about when you don't, which is the half a reader
-  // deciding whether to spend $1,000 actually needs. ⚠️ Same promise as `services.startPrice`.
+  // deciding whether to spend $2,500 actually needs. ⚠️ Same promise as `services.startPrice`.
   // Change both or neither.
   price:
-    '$1,000, flat. If you decide to build with me, it comes off the price of the work — so if we go ahead, the assessment was free. If you don’t, the plan is still yours: take it to another builder, or build it yourself.',
+    '$2,500, flat. If you decide to build with me, it comes off the price of the work — so if we go ahead, the assessment was free. If you don’t, the plan is still yours: take it to another builder, or build it yourself.',
   forHeading: 'Who it’s for',
   forWhom:
     'Solo operators, small businesses, and nonprofits — people close enough to the work to decide fast. If you already know exactly what you want built, you don’t need this; just say so on the contact page. This is for when you know something’s wrong and want a straight answer about what to do about it.',

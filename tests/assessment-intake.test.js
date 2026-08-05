@@ -167,6 +167,30 @@ test('no Resend key at all is a 500 before any work happens', async () => {
   assert.equal(f.hit(SUPABASE), false);
 });
 
+test('invest_band reaches the email, the triage prompt and the row', async () => {
+  // Added with the $2,500 price (2026-08-05). It's the only field that filters for build SIZE —
+  // budget_band reports readiness — so a refactor that quietly drops it costs the filter the
+  // price change was made to support, and nothing visible would break.
+  const { res, f } = await post({ ...valid, invest_band: '$25–50k' });
+  assert.equal(res.status, 200);
+
+  const email = f.calls.find((c) => c.url.includes(RESEND));
+  assert.match(email.body.text, /\$25–50k/, 'the email Jon actually reads must carry it');
+
+  const claude = f.calls.find((c) => c.url.includes(ANTHROPIC));
+  assert.match(JSON.stringify(claude.body), /\$25–50k/, 'triage should see it too');
+
+  const row = f.calls.find((c) => c.url.includes(SUPABASE));
+  assert.equal(row.body.invest_band, '$25–50k');
+});
+
+test('a blank invest_band is stored as null and never blocks a submit', async () => {
+  const { res, f } = await post();
+  assert.equal(res.status, 200, 'every qualifier on this form is optional');
+  const row = f.calls.find((c) => c.url.includes(SUPABASE));
+  assert.equal(row.body.invest_band, null);
+});
+
 // --- Validation and honeypot --------------------------------------------------------------------
 
 test('honeypot: pretends success, spends nothing', async () => {
