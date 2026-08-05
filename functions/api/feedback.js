@@ -64,7 +64,13 @@ function str(v) {
 // (src/data/site.js) and this secret must be swapped from test → real together.
 async function turnstileOk(env, token, ip) {
   if (!env.TURNSTILE_SECRET_KEY) return true; // not configured — don't block submissions
-  if (!token) return false;
+  if (!token) {
+    // No token reached the server at all — distinct from one Cloudflare rejected, and it returns
+    // BEFORE siteverify, so the error-codes log below never fires for this case. Almost always a
+    // CLIENT problem: the widget never rendered, or its token field was empty at submit.
+    console.error('turnstile: no token in submission (widget did not render, or field was empty)');
+    return false;
+  }
   const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET_KEY, response: token });
   if (ip) body.set('remoteip', ip);
   try {

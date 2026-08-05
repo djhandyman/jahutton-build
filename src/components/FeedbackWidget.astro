@@ -66,7 +66,22 @@ import { site } from '../data/site.js';
 </div>
 
 <!-- Turnstile loader (explicit render). is:inline so Astro ships it verbatim; async so it never blocks. -->
-<script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+<!-- ⚠️ NO `?render=explicit` on this URL, and that omission is load-bearing (2026-08-05).
+     This widget renders site-wide from BaseLayout, so on /contact/ and /assessment/intake/ its
+     script tag sits on the same page as the one ContactForm and AssessmentIntake load. Those two
+     use IMPLICIT rendering — a `.cf-turnstile` div that Turnstile auto-scans for on load — and
+     `?render=explicit` switches that auto-scan OFF for the whole page. Two different URLs meant
+     two script loads racing to set the mode; whichever won decided whether the intake form got a
+     widget at all. When explicit won, the div never rendered, no `cf-turnstile-response` field
+     was created, an empty token was posted, and assessment-intake (which is strict) rejected
+     every submit with "That spam check didn't pass." Contact hid the same fault because it's
+     lenient and falls back to the honeypot.
+     The plain URL costs this component nothing: `turnstile.render()` is on the global API either
+     way, the query param only suppresses the auto-scan, and this widget's container is
+     `fw__turnstile` — deliberately NOT `cf-turnstile` — so the scan ignores it.
+     All three components must now request the IDENTICAL URL. Adding a query param to any one of
+     them re-opens this. -->
+<script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 
 <script>
   const root = document.querySelector('[data-feedback-widget]');

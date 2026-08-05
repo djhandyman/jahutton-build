@@ -11,7 +11,7 @@ Newest first.
 
 ---
 
-## Turnstile rejects every intake submit — open
+## Turnstile rejected every intake submit — found, fixed 2026-08-05
 
 **Status: launch blocker, not a roadmap item.** Recorded here because a beta reader found it and
 the failure mode is worth writing down: it is silent, and it looks like something it isn't.
@@ -26,33 +26,52 @@ The request reached the Function and the Function rejected it. It also rules out
 `TURNSTILE_SECRET_KEY` is unset, so a deployment with no secret cannot produce this error at
 all. The secret is set, and Cloudflare actively rejected the token.
 
-**What's been checked.** Production ships a site key in the page source, so the obvious
-candidate — `PUBLIC_TURNSTILE_SITE_KEY` falling back to Cloudflare's always-pass **test** key
-(`1x00000000000000000000AA`) while the secret is real — is not it, provided the key on the page
-begins `0x`. A key beginning `1x`, `2x` or `3x` is still a test key and puts that candidate back
-on the table.
+**What it wasn't.** The obvious candidate was `PUBLIC_TURNSTILE_SITE_KEY` falling back to
+Cloudflare's always-pass **test** key while the secret was real. Ruled out — production ships a
+genuine site key, verified by its `0x4…` prefix. (Test keys begin `1x`, `2x` or `3x`; the
+distinction is invisible unless you read the prefix, which is why "the key is there" wasn't the
+same answer as "the right key is there".)
 
-**Still open, in the order the evidence favours.**
+**The actual cause: two Turnstile script tags in conflicting modes on one page.**
 
-1. **Single-use token.** Turnstile tokens are spent on first verification. On a failed submit
-   the form re-enables Send without refreshing the widget, so pressing Send again resubmits a
-   consumed token and fails permanently. Whatever caused the first failure, every retry after it
-   is guaranteed.
-2. **Widget hostname allowlist** missing the domain under test — a `*.pages.dev` preview URL
-   rather than the apex.
-3. **Mismatched pair** — a secret from a different Turnstile widget than the site key on the
-   page. Same failure as the test-key mismatch, without the tell-tale `1x` prefix.
-4. **Expired token.** Tokens live 300 seconds. This is a multi-step form with a review step that
-   invites people to take their time, and the widget renders once on page load.
+`ContactForm` and `AssessmentIntake` use **implicit** rendering — a `<div class="cf-turnstile">`
+that Turnstile finds by scanning the page on load, then injects a hidden `cf-turnstile-response`
+field into the surrounding form. `FeedbackWidget` uses **explicit** rendering and was loading
+`api.js?render=explicit`.
 
-**How it gets settled.** `turnstileOk()` used to discard `data['error-codes']`, so a rejected
-submit was indistinguishable from any other. It now logs them (all three Functions, which carry
-byte-identical copies of that helper). One more submit and the Pages function log says which of
-the above it is: `invalid-input-secret`, `invalid-input-response`, or `timeout-or-duplicate`.
+That query parameter turns the auto-scan off **for the whole page**, and the feedback widget
+renders site-wide from `BaseLayout` — so on `/contact/` and `/assessment/intake/` both script
+tags were present, two different URLs, both `async defer`, racing to decide the page's mode.
+When the explicit one won, the intake form's div was never rendered, no token field was created,
+an empty token was posted, and the strict Function rejected it with exactly the message the
+tester saw.
 
-**Worth keeping after it's fixed.** The site key and the secret have to move from test to real
-*together* and nothing in the build enforces that. A pre-launch check belongs somewhere: grep
-the built HTML for `1x00000000000000000000AA` and fail if a production build still ships it.
+Every observation fits: `feedback` was unaffected because it renders explicitly and its
+container is `fw__turnstile`, deliberately not `cf-turnstile`. `contact` carried the identical
+fault and hid it, because it's the lenient one — a missing token falls back to the honeypot and
+the mail still sends. So the bug was live on two forms and visible on one.
+
+**The fix** was to drop `?render=explicit` from the feedback widget's script tag. The parameter
+only suppresses the auto-scan; `turnstile.render()` is on the global API either way, and that
+widget's container is ignored by the scan regardless. All three components now request the
+identical URL. **Adding a query param to any one of them re-opens this**, which is why the
+omission is commented in place rather than left to look like an oversight.
+
+**Two things kept from the hunt.**
+
+- `turnstileOk()` discarded `data['error-codes']`, so a rejected submit was indistinguishable
+  from any other and there was nothing to look at. It now logs them, and logs the no-token case
+  separately — that path returns before siteverify, so it would otherwise still be silent. All
+  three Functions carry byte-identical copies of that helper by design.
+- **Still worth doing:** a pre-launch check that greps the built HTML for
+  `1x00000000000000000000AA` and fails if a production build ships the test key. The site key and
+  the secret have to move from test to real together, and nothing enforces that.
+
+**Not fixed, and separate:** Turnstile tokens are single-use. `FeedbackWidget` calls
+`turnstile.reset()` after a submit; `AssessmentIntake` and `ContactForm` do not, so after any
+failed submit, pressing Send again reuses a spent token and fails permanently. The message tells
+the visitor to reload, which is correct, but nothing makes them. Four lines each, once the fix
+above is confirmed in production.
 
 ---
 
