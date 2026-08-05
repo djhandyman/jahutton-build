@@ -11,38 +11,48 @@ Newest first.
 
 ---
 
-## Turnstile is running on test keys in production
+## Turnstile rejects every intake submit — open
 
-**Status: launch blocker, not a roadmap item.** Recorded here because it was found by a beta
-reader and the failure mode is worth writing down — it's silent, and it looks like something
-else.
+**Status: launch blocker, not a roadmap item.** Recorded here because a beta reader found it and
+the failure mode is worth writing down: it is silent, and it looks like something it isn't.
 
-**What happened.** A tester submitted the Build Assessment intake and got *"That spam check
-didn't pass — please reload the page and try again."* That string is this site's own, from
-`functions/api/assessment-intake.js` — not a Cloudflare Access page and not a dead deployment.
-The request reached the Function and the Function rejected it.
+**The symptom.** A tester submitted the Build Assessment intake and got *"That spam check didn't
+pass — please reload the page and try again."*
 
-**What that proves.** `turnstileOk()` returns `true` immediately when `TURNSTILE_SECRET_KEY` is
-unset, so an unconfigured deployment can't produce this error at all. Seeing it means the secret
-**is** set and Cloudflare actively rejected the token. Meanwhile `src/data/site.js` falls back to
-Cloudflare's always-pass **test** site key when `PUBLIC_TURNSTILE_SITE_KEY` is unset at build
-time. A test site key issues a dummy token; a dummy token checked against a real secret fails
-every time. Real secret + test site key = every submit blocked.
+**What that string rules out.** It is this site's own message, from
+`functions/api/assessment-intake.js` — not a Cloudflare Access login and not a dead deployment.
+The request reached the Function and the Function rejected it. It also rules out an
+*unconfigured* deployment: `turnstileOk()` returns `true` immediately when
+`TURNSTILE_SECRET_KEY` is unset, so a deployment with no secret cannot produce this error at
+all. The secret is set, and Cloudflare actively rejected the token.
 
-**Blast radius.** Two of the three forms, not one. `assessment-intake` and `feedback` are both
-strict, and the feedback widget renders site-wide from `BaseLayout`, so it has been failing on
-every page. `contact` is the lenient one — token verified when present, honeypot fallback — which
-is why contact kept working and nothing looked wrong.
+**What's been checked.** Production ships a site key in the page source, so the obvious
+candidate — `PUBLIC_TURNSTILE_SITE_KEY` falling back to Cloudflare's always-pass **test** key
+(`1x00000000000000000000AA`) while the secret is real — is not it, provided the key on the page
+begins `0x`. A key beginning `1x`, `2x` or `3x` is still a test key and puts that candidate back
+on the table.
 
-**The fix.** Set `PUBLIC_TURNSTILE_SITE_KEY` to the real widget's site key in the Pages build
-settings, confirm `TURNSTILE_SECRET_KEY` is that same widget's secret, and **redeploy** — the
-site key is compiled into the HTML at build time, so changing the variable alone does nothing
-until a rebuild. Check the widget's allowed hostnames cover the `*.pages.dev` preview domain as
-well as the apex, or preview-URL testing fails identically.
+**Still open, in the order the evidence favours.**
 
-**Why this is worth keeping after it's fixed.** The two keys have to move from test to real
-*together*, and nothing in the build enforces that. A pre-launch check belongs somewhere: grep
-the built HTML for `1x00000000000000000000AA` and fail if the production build still ships it.
+1. **Single-use token.** Turnstile tokens are spent on first verification. On a failed submit
+   the form re-enables Send without refreshing the widget, so pressing Send again resubmits a
+   consumed token and fails permanently. Whatever caused the first failure, every retry after it
+   is guaranteed.
+2. **Widget hostname allowlist** missing the domain under test — a `*.pages.dev` preview URL
+   rather than the apex.
+3. **Mismatched pair** — a secret from a different Turnstile widget than the site key on the
+   page. Same failure as the test-key mismatch, without the tell-tale `1x` prefix.
+4. **Expired token.** Tokens live 300 seconds. This is a multi-step form with a review step that
+   invites people to take their time, and the widget renders once on page load.
+
+**How it gets settled.** `turnstileOk()` used to discard `data['error-codes']`, so a rejected
+submit was indistinguishable from any other. It now logs them (all three Functions, which carry
+byte-identical copies of that helper). One more submit and the Pages function log says which of
+the above it is: `invalid-input-secret`, `invalid-input-response`, or `timeout-or-duplicate`.
+
+**Worth keeping after it's fixed.** The site key and the secret have to move from test to real
+*together* and nothing in the build enforces that. A pre-launch check belongs somewhere: grep
+the built HTML for `1x00000000000000000000AA` and fail if a production build still ships it.
 
 ---
 

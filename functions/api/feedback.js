@@ -73,6 +73,20 @@ async function turnstileOk(env, token, ip) {
       body,
     });
     const data = await r.json();
+    // Log WHY on failure. Cloudflare returns the reason in `error-codes` and this function used
+    // to discard it, which made a rejected submit indistinguishable from any other — a beta
+    // tester hit one on 2026-08-05 and there was nothing to look at. The codes are the whole
+    // diagnosis and they are not subtle:
+    //   invalid-input-secret   → the secret is wrong or belongs to a different widget
+    //   invalid-input-response → token is malformed, or came from a DIFFERENT site key than
+    //                            this secret pairs with (the test-key/real-secret mismatch), or
+    //                            was issued for a hostname the widget doesn't allow
+    //   timeout-or-duplicate   → token already spent, or older than 300s. Tokens are SINGLE
+    //                            USE, so pressing Send twice always fails the second time.
+    // No token content is logged — only the codes. Visible in the Pages function log stream.
+    if (data.success !== true) {
+      console.error('turnstile rejected:', (data['error-codes'] || []).join(',') || 'no error-codes');
+    }
     return data.success === true;
   } catch {
     return false; // verifier unreachable — fail closed
