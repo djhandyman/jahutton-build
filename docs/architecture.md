@@ -105,16 +105,19 @@ empty token. Contact carried the identical fault and hid it, being the lenient F
 dropping the parameter so all three request an identical URL. `turnstileOk()` now logs
 `error-codes`, and logs the no-token case separately, since that path returns before siteverify.
 
-**2026-08-05** — The Build Assessment is **$2,500**, up from $1,000, and the last two open copy
-questions on `/services` are closed. The number follows from the build size Jon wants ($15–30k):
-the 10–20% rule puts that behind a $1,500–6,000 diagnostic, so $1,000 sat below the floor and
-silently advertised $5–10k work. Publishing low and raising later was considered and rejected — a
-published price is a signal, a private discount is a favour. The price lives in four rendered
-places (`services.startPrice`, `assessment.price`, the `/assessment` meta description, and
-`PASTE_READY` in `contact.js`) and they move together. The intake gained an optional
-`invest_band` question, because the existing `budget_band` asks about readiness rather than size
-and so couldn't filter for the builds the price is aimed at; migration `0003`. The three
-engagement shapes stay as drafted, now confirmed accurate rather than merely unchallenged.
+**2026-08-05** — The Build Assessment price **stays at $1,000**. It was changed to $2,500 and
+pushed earlier the same day on the strength of a multiple-choice answer, then reverted at Jon's
+instruction within the hour. Recorded rather than quietly rebased, because the lesson is the
+useful part: **the price is Jonathan's alone, and a menu selection is not authorization to change
+a public number.** The argument for raising it (in `.temp/ASSESSMENT-PRICING.md`) is unaffected
+and still worth reading — it just isn't a pending task. The four rendered places that must always
+move together are noted in `site.js`.
+
+Two things from the same change stand on their own and were kept: the intake gained an optional
+`invest_band` question, because `budget_band` asks about readiness rather than size and knowing
+the size of a job is useful at any price (migration `0003`); and the three engagement shapes are
+confirmed accurate rather than merely unchallenged, which closes the older "no source in Jon's
+answers" flag.
 
 **2026-08-05** — All three Turnstile widgets now render **explicitly**, retaining their widget id
 so it can be `reset()` between attempts. Tokens are single-use, so `ContactForm` and

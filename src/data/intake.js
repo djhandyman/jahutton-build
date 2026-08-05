@@ -100,11 +100,12 @@ export const intake = {
             'Budgeted and ready to move',
           ],
         },
-        // Added 2026-08-05, alongside the assessment going to $2,500. The question above asks
+        // Added 2026-08-05. The question above asks
         // about READINESS, not SIZE — "budgeted and ready to move" says nothing about whether
         // that's $4k or $40k. Without this, nothing filters for the $15–30k builds the pricing
         // is aimed at, so an 8-hour assessment ends up doing all the filtering by itself, which
-        // is the most expensive filter available.
+        // is the most expensive filter available. Independent of what the assessment costs —
+        // knowing the size of the job is useful at any price.
         // Deliberately phrased as "able to invest" rather than "what's your budget": the named
         // audience includes nonprofits, and a blunt budget demand before they've seen anything
         // reads as presumptuous. Optional, like every other qualifier here — a blank answer must
