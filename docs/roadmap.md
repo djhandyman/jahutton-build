@@ -11,6 +11,41 @@ Newest first.
 
 ---
 
+## Turnstile is running on test keys in production
+
+**Status: launch blocker, not a roadmap item.** Recorded here because it was found by a beta
+reader and the failure mode is worth writing down — it's silent, and it looks like something
+else.
+
+**What happened.** A tester submitted the Build Assessment intake and got *"That spam check
+didn't pass — please reload the page and try again."* That string is this site's own, from
+`functions/api/assessment-intake.js` — not a Cloudflare Access page and not a dead deployment.
+The request reached the Function and the Function rejected it.
+
+**What that proves.** `turnstileOk()` returns `true` immediately when `TURNSTILE_SECRET_KEY` is
+unset, so an unconfigured deployment can't produce this error at all. Seeing it means the secret
+**is** set and Cloudflare actively rejected the token. Meanwhile `src/data/site.js` falls back to
+Cloudflare's always-pass **test** site key when `PUBLIC_TURNSTILE_SITE_KEY` is unset at build
+time. A test site key issues a dummy token; a dummy token checked against a real secret fails
+every time. Real secret + test site key = every submit blocked.
+
+**Blast radius.** Two of the three forms, not one. `assessment-intake` and `feedback` are both
+strict, and the feedback widget renders site-wide from `BaseLayout`, so it has been failing on
+every page. `contact` is the lenient one — token verified when present, honeypot fallback — which
+is why contact kept working and nothing looked wrong.
+
+**The fix.** Set `PUBLIC_TURNSTILE_SITE_KEY` to the real widget's site key in the Pages build
+settings, confirm `TURNSTILE_SECRET_KEY` is that same widget's secret, and **redeploy** — the
+site key is compiled into the HTML at build time, so changing the variable alone does nothing
+until a rebuild. Check the widget's allowed hostnames cover the `*.pages.dev` preview domain as
+well as the apex, or preview-URL testing fails identically.
+
+**Why this is worth keeping after it's fixed.** The two keys have to move from test to real
+*together*, and nothing in the build enforces that. A pre-launch check belongs somewhere: grep
+the built HTML for `1x00000000000000000000AA` and fail if the production build still ships it.
+
+---
+
 ## Filtering on /work
 
 **What.** Filter the work index by the kind of work — pill row, click to narrow, live count of

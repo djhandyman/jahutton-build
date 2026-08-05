@@ -140,9 +140,15 @@ export const contact = {
 //   • "leverage modern technology" — the guide flags "leverage", but he wrote it. His word wins.
 //   • "go forth and build it" — the driest line on the page. Don't soften it.
 //
-// TODO(jon): still open — (1) the $1,000 below is unchanged pending your call, see
-// .temp/ASSESSMENT-PRICING.md; (2) the three shapes are the one part with no source in your
-// answers ("those are fine for now"), so the bodies are still mine — rewrite if they're off.
+// TODO(jon): still open — (1) the $1,000 FIGURE is unchanged pending your call, see
+// .temp/ASSESSMENT-PRICING.md, which argues for $1,500. What the credit *does* is now settled
+// and written down (2026-08-05); what it costs is not. (2) the three shape BODIES are still the
+// one part with no source in your answers ("those are fine for now") — rewrite if they're off.
+// `shapesLead` above is yours as of 2026-08-05; the three bodies under it are not.
+//
+// Both of these surfaced again on 2026-08-05 when a beta reader hit exactly these two spots —
+// which is what a TODO in a comment can't do: it sat here for a week and the page shipped
+// unclear anyway. Deferred copy questions belong in docs/roadmap.md where they get read.
 export const services = {
   title: 'How I work',
   // His answer to "someone at a party asks what you do" — verbatim, and it earns the top of
@@ -169,8 +175,22 @@ export const services = {
   ],
 
   startHeading: 'Start here',
+  // SPLIT into two paragraphs 2026-08-05, after a beta reader said he didn't understand the
+  // credit. He was right, and the reason was structural: the price and the credit were the last
+  // clause of a 45-word sentence about something else, and "How I price" then explained the same
+  // mechanic again further down. A reader met it twice and understood it neither time. The money
+  // now gets its own paragraph — the one thing on this page a reader has to be certain about
+  // shouldn't be riding on the back of the deliverables list.
   start:
-    'We talk for an hour, and a week later you get a short written plan: what’s going on, what I’d build and in what order, what it costs, and which parts you could handle without me. $1,000, credited toward your project if we build together.',
+    'We talk for an hour, and a week later you get a short written plan: what’s going on, what I’d build and in what order, what it costs, and which parts you could handle without me.',
+  // The other half of what he couldn't tell: what happens to the money if he DOESN'T build with
+  // Jon. The page had never answered it. Full credit, no time limit, and the plan is his either
+  // way (Jon's call, 2026-08-05). The credit clause is worded to match `assessment.price`
+  // verbatim — same promise on both pages, so a reader who lands on either gets the same answer.
+  // ⚠️ These two sentences are a commitment to a paying customer. Change them in both places or
+  // neither.
+  startPrice:
+    'It’s $1,000, and it’s the only thing paid up front. If we build together it comes off the price of the work — so if we go ahead, the assessment was free. If we don’t, the plan is still yours: take it to another builder, or build it yourself.',
   // 2026-08-02 (Jon): both CTAs on this page now go STRAIGHT to the intake form, not to the
   // /assessment/ explainer. The paragraph above already says what the assessment is, what it
   // costs, and what you get — so sending a reader who just read that to a page explaining it
@@ -182,6 +202,15 @@ export const services = {
   startHref: '/assessment/intake/',
 
   shapesHeading: 'Three shapes the work takes',
+  // Added 2026-08-05. The same beta reader asked whether naming three shapes meant Jon accepts
+  // all three, and how that changed the price — and the section couldn't answer, because the
+  // cards carry a name, a when, and a body, and no price signal at all. So a reader can't tell
+  // whether these are three products with three prices or three descriptions of one custom
+  // engagement. They're the second thing (Jon, 2026-08-05): one path in, scope decided by the
+  // assessment. One line says so, which is cheaper than putting a number on each card that would
+  // then have to be true.
+  shapesLead:
+    'All three start the same way — the assessment is where we work out which one you need and what it costs.',
   shapes: [
     {
       name: 'Zero-to-one',
@@ -205,8 +234,11 @@ export const services = {
   // the same thing better by tying the pricing to the writing.
   price:
     'I like to be as clear in my pricing as I am in my writing, and a fixed model works better than an hourly rate.',
+  // "and when it lands" added 2026-08-05 — the beta reader's suggestion, and a fair one: this
+  // sentence is where the deal gets defined, and the timeline is part of the deal. Everything
+  // else here is Jon's, near-verbatim.
   priceDetail:
-    'First, we agree on what’s being built and what it costs. The assessment is the one thing paid up front, and it comes off the price of the build.',
+    'First, we agree on what’s being built, what it costs, and when it lands. The assessment is the one thing paid up front, and it comes off the price of the build.',
 
   notHeading: 'What I’m not the right person for',
   notItems:
@@ -262,8 +294,12 @@ export const assessment = {
     },
   ],
   priceHeading: 'What it costs',
+  // Second sentence added 2026-08-05, matching `services.startPrice` — this page explained what
+  // happens when you DO build and said nothing about when you don't, which is the half a reader
+  // deciding whether to spend $1,000 actually needs. ⚠️ Same promise as `services.startPrice`.
+  // Change both or neither.
   price:
-    '$1,000, flat. If you decide to build with me, it comes off the price of the work — so if we go ahead, the assessment was free.',
+    '$1,000, flat. If you decide to build with me, it comes off the price of the work — so if we go ahead, the assessment was free. If you don’t, the plan is still yours: take it to another builder, or build it yourself.',
   forHeading: 'Who it’s for',
   forWhom:
     'Solo operators, small businesses, and nonprofits — people close enough to the work to decide fast. If you already know exactly what you want built, you don’t need this; just say so on the contact page. This is for when you know something’s wrong and want a straight answer about what to do about it.',

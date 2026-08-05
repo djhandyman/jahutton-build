@@ -31,10 +31,14 @@ const asSegments = (p) => (Array.isArray(p) ? p : [p]);
       <div class="services__start">
         <h2>{services.startHeading}</h2>
         <p>{services.start}</p>
+        {/* The money gets its own paragraph — see the comment on `startPrice` in site.js. It is
+            the sentence a reader has to be certain about, and it was buried. */}
+        <p>{services.startPrice}</p>
         <p><a class="btn" href={services.startHref}>{services.startCtaLabel}</a></p>
       </div>
 
       <h2>{services.shapesHeading}</h2>
+      <p>{services.shapesLead}</p>
       <ul class="services__shapes">
         {services.shapes.map((s) => (
           <li class="shape">
