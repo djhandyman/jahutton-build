@@ -105,6 +105,16 @@ empty token. Contact carried the identical fault and hid it, being the lenient F
 dropping the parameter so all three request an identical URL. `turnstileOk()` now logs
 `error-codes`, and logs the no-token case separately, since that path returns before siteverify.
 
+**2026-08-05** — All three Turnstile widgets now render **explicitly**, retaining their widget id
+so it can be `reset()` between attempts. Tokens are single-use, so `ContactForm` and
+`AssessmentIntake` — which re-enabled Send without refreshing — turned any first failure into a
+permanent one. This is Cloudflare's documented requirement for a page that stays active after a
+submit, and the pattern `FeedbackWidget` already used. No component depends on the page-wide
+auto-scan any more, which removes the coupling behind the render-mode bug entirely. Side effect:
+the added code pushed the intake script past Vite's 4 kB `assetsInlineLimit`, Astro emitted a JS
+bundle, and the "0 JavaScript bundles" claim briefly went false — caught by the build guard, and
+now held by explicit config rather than luck.
+
 **2026-08-05** — A test suite, with **zero new dependencies** — `node:test` and `node:assert` are
 inside Node 22, and a runner in `devDependencies` would have falsified the four-dependency claim
 in five places. The Functions export `onRequestPost` and use only Node globals, so the tests

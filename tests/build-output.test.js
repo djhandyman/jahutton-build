@@ -35,8 +35,18 @@ function htmlFiles(dir, acc = []) {
   return acc;
 }
 
+// HTML comments are stripped before any check. Astro ships them to the output, and several of
+// them quote the very markup these guards forbid — the `class="cf-turnstile"` warning in
+// ContactForm.astro tripped its own guard the first time this ran.
+const stripComments = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
+
 const built = existsSync(DIST);
-const pages = built ? htmlFiles(DIST).map((f) => ({ path: relative(DIST, f), html: readFileSync(f, 'utf8') })) : [];
+const pages = built
+  ? htmlFiles(DIST).map((f) => ({
+      path: relative(DIST, f),
+      html: stripComments(readFileSync(f, 'utf8')),
+    }))
+  : [];
 
 describe('built output', { skip: built ? false : 'no dist/ — run `npm run build` first' }, () => {
   test('every page loads the Turnstile API at most once, and always the same way', () => {
@@ -57,19 +67,31 @@ describe('built output', { skip: built ? false : 'no dist/ — run `npm run buil
     }
   });
 
-  test('every implicit widget sits inside a form, so its token field has somewhere to land', () => {
-    // Turnstile injects <input name="cf-turnstile-response"> into the ENCLOSING form. A
-    // .cf-turnstile div outside one renders happily and produces a token nothing ever submits.
+  test('nothing renders implicitly any more', () => {
+    // As of 2026-08-05 all three widgets render EXPLICITLY, so their ids can be retained and
+    // reset between attempts (tokens are single-use; without that, every retry fails). A
+    // `cf-turnstile` class reappearing means either a widget that gets double-rendered, or a
+    // component that once again depends on the page-wide auto-scan — the exact coupling that
+    // broke the intake form.
     for (const { path, html } of pages) {
-      if (!html.includes('cf-turnstile')) continue;
-      const formless = html
-        .split(/<form\b/i)
-        .slice(0, 1) // everything before the first <form>
-        .join('');
       assert.ok(
-        !/class="[^"]*\bcf-turnstile\b/.test(formless),
-        `${path} has a .cf-turnstile element before any <form> — its token field would be orphaned`,
+        !/class="[^"]*\bcf-turnstile\b/.test(html),
+        `${path} contains a .cf-turnstile element. Every widget on this site renders explicitly ` +
+          'via turnstile.render() — see ContactForm.astro. Implicit rendering reintroduces the ' +
+          'page-wide render-mode coupling and loses the widget id needed to reset it.',
       );
+    }
+  });
+
+  test('each form page still carries its widget container', () => {
+    // The flip side: having removed the class the auto-scan keyed on, make sure the explicit
+    // containers themselves didn't get dropped in some later tidy-up. A form with no widget
+    // silently posts an empty token, which the strict Functions reject.
+    for (const required of ['contact/index.html', 'assessment/intake/index.html']) {
+      const page = pages.find((p) => p.path === required);
+      assert.ok(page, `missing built page: ${required}`);
+      const containers = [...page.html.matchAll(/data-turnstile\b/g)].length;
+      assert.ok(containers >= 1, `${required} has no [data-turnstile] container`);
     }
   });
 

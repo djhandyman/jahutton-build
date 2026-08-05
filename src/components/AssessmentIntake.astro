@@ -115,10 +115,13 @@ const optionLabel = (o) => (typeof o === 'string' ? o : o.label);
        intake costs a Claude call + a Supabase row per submit, so a token-less (no-JS) POST is rejected. -->
   <!-- appearance="interaction-only": invisible unless this visitor actually has to solve
        something. The challenge still runs, and the token is still required server-side. -->
+  <!-- ⚠️ NOT class="cf-turnstile" as of 2026-08-05 — rendered EXPLICITLY by the script below so
+       its widget id can be kept and reset between attempts. An explicit container must not carry
+       that class, or the auto-scan would render a second widget on top of it. -->
   <div
-    class="cf-turnstile intake__turnstile"
+    class="intake__turnstile"
+    data-turnstile
     data-sitekey={site.turnstileSiteKey}
-    data-appearance="interaction-only"
   ></div>
 
   <div class="intake__nav">
@@ -135,7 +138,11 @@ const optionLabel = (o) => (typeof o === 'string' ? o : o.label);
   <p>{intake.confirm.body}</p>
 </div>
 
-<!-- Turnstile loader — is:inline so Astro ships it verbatim, async so it never blocks the wizard. -->
+<!-- Turnstile loader — is:inline so Astro ships it verbatim, async so it never blocks the wizard.
+     ⚠️ The URL must stay IDENTICAL to the one in ContactForm.astro and FeedbackWidget.astro. A
+     query parameter on any one of them (`?render=explicit`) switches the render mode for the
+     whole page, and these components share pages — that is precisely what broke every submit on
+     this form on 2026-08-05. tests/build-output.test.js fails the build if they ever diverge. -->
 <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 
 <script>
@@ -156,6 +163,34 @@ const optionLabel = (o) => (typeof o === 'string' ? o : o.label);
     const DRAFT_KEY = 'assessment-intake-draft-v1';
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     let current = 0;
+
+    // --- Turnstile: explicit render, id retained, reset between attempts. ---
+    // Cloudflare's documented requirement for a page that stays active after a submit: tokens
+    // are single-use, so without a reset the second press of Send reuses a spent one and is
+    // rejected — permanently, whatever went wrong the first time. This Function is the STRICT
+    // one, so that dead end was absolute here. Added 2026-08-05.
+    // This form makes the problem worse than most: it is a multi-step wizard with a review step
+    // that invites people to take their time, and a token expires after 300 seconds. Resetting
+    // on every attempt covers expiry as well as reuse.
+    const tsEl = form.querySelector('[data-turnstile]');
+    let tsId = null;
+    function mountTurnstile() {
+      if (tsId !== null || !tsEl) return;
+      if (!window.turnstile) return void setTimeout(mountTurnstile, 200);
+      // appearance:'interaction-only' — invisible unless Cloudflare decides this visitor has to
+      // solve something. Never swap for display:none: an interactive challenge would render
+      // where nobody can reach it and no token would ever be issued.
+      tsId = window.turnstile.render(tsEl, {
+        sitekey: tsEl.dataset.sitekey,
+        appearance: 'interaction-only',
+      });
+    }
+    mountTurnstile();
+    const tsToken = () =>
+      window.turnstile && tsId !== null ? window.turnstile.getResponse(tsId) || '' : '';
+    const tsReset = () => {
+      if (window.turnstile && tsId !== null) window.turnstile.reset(tsId);
+    };
 
     // --- Progressive enhancement: reveal the wizard chrome. ---
     progress.hidden = false;
@@ -312,13 +347,26 @@ const optionLabel = (o) => (typeof o === 'string' ? o : o.label);
       }
       status.textContent = '';
       status.classList.remove('is-error');
+
+      // Don't post without a token. This Function is strict, so an empty one is a guaranteed
+      // 403 — and the generic "that spam check didn't pass" would be actively misleading, since
+      // nothing failed a check: one never ran. Happens for a beat after a reset, and
+      // indefinitely if the widget couldn't render at all, so the message has to serve both.
+      const ts = tsToken();
+      if (!ts) {
+        status.textContent =
+          'The spam check hasn’t finished — give it a moment and press Send again. If it keeps ' +
+          'happening, reload the page.';
+        status.classList.add('is-error');
+        return;
+      }
+
       const label = submitBtn.textContent;
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
       const payload = collect();
       payload.website = form.querySelector('[name="website"]').value;
-      const tsField = form.querySelector('[name="cf-turnstile-response"]');
-      payload.turnstile = tsField ? tsField.value : '';
+      payload.turnstile = ts;
       try {
         const res = await fetch(form.action, {
           method: 'POST',
@@ -346,6 +394,12 @@ const optionLabel = (o) => (typeof o === 'string' ? o : o.label);
         status.classList.add('is-error');
         submitBtn.disabled = false;
         submitBtn.textContent = label;
+      } finally {
+        // The token just posted is spent whatever the outcome, so a fresh challenge starts now
+        // rather than when the visitor next presses Send. On success the form is already hidden
+        // and this costs nothing; on failure it is the difference between a retry that can work
+        // and one that is guaranteed to fail.
+        tsReset();
       }
     });
 

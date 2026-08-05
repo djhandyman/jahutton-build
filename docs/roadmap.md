@@ -67,11 +67,18 @@ omission is commented in place rather than left to look like an oversight.
   `1x00000000000000000000AA` and fails if a production build ships the test key. The site key and
   the secret have to move from test to real together, and nothing enforces that.
 
-**Not fixed, and separate:** Turnstile tokens are single-use. `FeedbackWidget` calls
-`turnstile.reset()` after a submit; `AssessmentIntake` and `ContactForm` do not, so after any
-failed submit, pressing Send again reuses a spent token and fails permanently. The message tells
-the visitor to reload, which is correct, but nothing makes them. Four lines each, once the fix
-above is confirmed in production.
+**The retry loop, fixed the same day.** Turnstile tokens are single-use, and `AssessmentIntake`
+and `ContactForm` re-enabled Send without refreshing the widget — so whatever caused a first
+failure, every retry after it was guaranteed to fail too. Both now follow Cloudflare's own
+guidance for a page that stays active after a submit, and the pattern `FeedbackWidget` already
+used: render **explicitly**, retain the widget id, and `reset()` after each attempt. The intake
+form additionally refuses to post an empty token, because on the strict Function that is a
+certain 403 and "that spam check didn't pass" would be a lie — nothing failed a check; none ran.
+
+That change also raised `vite.build.assetsInlineLimit` to 16 kB. The extra code pushed the intake
+wizard's script past Vite's 4 kB default, Astro emitted `dist/_astro/*.js`, and the **0
+JavaScript bundles** claim was false for about a minute. The build guard caught it. Worth noting
+the claim had been true only by accident until then; it is now enforced by config and by a test.
 
 ---
 

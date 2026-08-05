@@ -40,10 +40,13 @@ import { site, contact } from '../data/site.js';
        for `display: none`: a Managed widget that needs interaction would render where nobody can
        reach it, no token would be issued, and the submit would fail with nothing the visitor
        could do about it. -->
+  <!-- ⚠️ NOT class="cf-turnstile" as of 2026-08-05 — this widget is rendered EXPLICITLY by the
+       script below, and an explicit container must not carry that class or the auto-scan would
+       render it a second time. See the block comment on the loader for the whole story. -->
   <div
-    class="cf-turnstile contact-form__turnstile"
+    class="contact-form__turnstile"
+    data-turnstile
     data-sitekey={site.turnstileSiteKey}
-    data-appearance="interaction-only"
   ></div>
   <button class="btn" type="submit">Send</button>
   <p class="contact-form__status" role="status" aria-live="polite"></p>
@@ -54,7 +57,11 @@ import { site, contact } from '../data/site.js';
      answers `next: "assessment"`. Outside the <form> so form.reset() can't touch it. -->
 <NextStepCard hidden id="contact-next-step" />
 
-<!-- Turnstile loader — is:inline so Astro ships it verbatim, async so it never blocks the form. -->
+<!-- Turnstile loader — is:inline so Astro ships it verbatim, async so it never blocks the form.
+     ⚠️ The URL must stay IDENTICAL to the one in AssessmentIntake.astro and FeedbackWidget.astro.
+     A query parameter on any one of them (`?render=explicit`) switches the render mode for the
+     whole page, and these components share pages. That cost the intake form every submission on
+     2026-08-05. tests/build-output.test.js fails the build if the URLs ever diverge again. -->
 <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 
 <script>
@@ -63,6 +70,32 @@ import { site, contact } from '../data/site.js';
     const status = form.querySelector('.contact-form__status');
     const button = form.querySelector('button[type="submit"]');
     const nextStep = document.getElementById('contact-next-step');
+    const tsEl = form.querySelector('[data-turnstile]');
+    let tsId = null;
+
+    // EXPLICIT render, keeping the widget id — Cloudflare's documented requirement for a page
+    // that stays active after a submit: "render the widget explicitly, retain its widget ID, and
+    // call turnstile.reset(widgetId) after the request completes before allowing a retry."
+    // Tokens are single-use, so without that reset the second press of Send always fails, no
+    // matter what went wrong the first time. Added 2026-08-05; FeedbackWidget has always done
+    // this and is why it was the one form that never got stuck.
+    // Poll for the library: it loads async, and a visitor filling in a form gives it ample time.
+    // appearance:'interaction-only' keeps the widget invisible unless Cloudflare decides this
+    // visitor has to solve something. Do NOT swap it for display:none — an interactive challenge
+    // would render where nobody can reach it and no token would ever be issued.
+    function mountTurnstile() {
+      if (tsId !== null || !tsEl) return;
+      if (!window.turnstile) return void setTimeout(mountTurnstile, 200);
+      tsId = window.turnstile.render(tsEl, {
+        sitekey: tsEl.dataset.sitekey,
+        appearance: 'interaction-only',
+      });
+    }
+    mountTurnstile();
+
+    const token = () =>
+      window.turnstile && tsId !== null ? window.turnstile.getResponse(tsId) || '' : '';
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.textContent = '';
@@ -81,7 +114,10 @@ import { site, contact } from '../data/site.js';
             message: fd.get('message'),
             timeline: fd.get('timeline'),
             website: fd.get('website'),
-            turnstile: fd.get('cf-turnstile-response'),
+            // Read from the widget, not from the form field: form.reset() below wipes the
+            // injected input on a successful send, so a second message would post an empty
+            // token even though the widget holds a good one.
+            turnstile: token(),
           }),
         });
         const data = await res.json().catch(() => ({}));
@@ -103,6 +139,11 @@ import { site, contact } from '../data/site.js';
       } finally {
         button.disabled = false;
         button.textContent = label;
+        // Unconditional, on success as well as failure: the token just posted is spent either
+        // way, so a retry AND a second message both need a fresh one. Contact is the lenient
+        // Function, so even if the visitor beats the new token this still sends — but it must
+        // never send a KNOWN-spent one, which is rejected outright.
+        if (window.turnstile && tsId !== null) window.turnstile.reset(tsId);
       }
     });
   }

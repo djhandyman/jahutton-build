@@ -34,6 +34,22 @@ export default defineConfig({
     }),
   ],
 
+  // "0 JavaScript bundles" is a metrics card on /work/this-site, repeated in the README, both
+  // next to a link to this public repo. It has always been true — but until 2026-08-05 it was
+  // true by ACCIDENT: Vite emits a script as an external file once it exceeds
+  // assetsInlineLimit (4 kB by default), and the intake wizard's script sat just under that.
+  // Adding the Turnstile reset logic pushed it to 4,259 bytes and dist/_astro/ gained its first
+  // .js file — caught by tests/build-output.test.js, which is exactly why that guard exists.
+  //
+  // Raising the limit makes the intent explicit: scripts on this site are inline, deliberately,
+  // and a routine edit to a form must not silently falsify a public claim. 16 kB leaves real
+  // headroom over the largest script (the intake wizard) without being an invitation to ship a
+  // framework. If something ever genuinely needs more than this, the honest move is to change
+  // the claim, not to raise the number again.
+  vite: {
+    build: { assetsInlineLimit: 16384 },
+  },
+
   markdown: {
     // Astro's default Shiki theme is github-dark, which drops a black slab into a
     // #faf7f1 paper page — confirmed in the build output of the kitchen-sink note.
