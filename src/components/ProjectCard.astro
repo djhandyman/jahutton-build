@@ -1,14 +1,84 @@
 ---
-const { title, category, role, status, teaser, blurb, slug } = Astro.props;
+const { title, category, role, status, teaser, blurb, slug, metrics = [] } = Astro.props;
 // Slugged projects link to their detail page and show the short teaser + "Read more".
 // Teaser-only projects render the full blurb inline with no link.
 const href = slug ? `/work/${slug}` : null;
 // `blurb` may be a string, or an array of paragraphs and list blocks — normalize either way.
 const body = href ? teaser : blurb;
 const blocks = Array.isArray(body) ? body : [body];
+
+// A glyph for the KIND of work, added 2026-08-04. The index was ten text boxes in a grid and
+// read as a list of jobs rather than a body of work; the note back was that every card needs
+// something to look at. Chosen over thumbnails because seven of ten projects have a usable
+// photo, one has a real logo and two have nothing — a mark keyed on data every project already
+// carries is the only version that can't fail on the eleventh project.
+//
+// ⚠️ Keyed on the FIRST segment of `category`, not the whole string: the categories are written
+// most-important-first ('physical spaces · design', 'software · systems · design'), so the head
+// of the list is already the primary discipline and a compound category resolves without a
+// second field. Add a key here when a new category head appears — an unknown or missing one
+// renders the label with no glyph rather than breaking the row, same as ProjectMetrics.
+//
+// Same conventions as that component: 24px viewBox, bare path data (so it renders through
+// Astro's normal escaping, no set:html), stroked not filled.
+const GLYPHS = {
+  // Angle brackets — code, and the systems built out of it.
+  software: ['M9 6 4 12l5 6', 'm15 6 5 6-5 6'],
+  // Three nodes on a stem — an org chart, deliberately not a building: these engagements are
+  // about how a group is wired together, not the premises it sits in.
+  organizations: [
+    'M9.6 5a2.4 2.4 0 1 0 4.8 0 2.4 2.4 0 1 0-4.8 0',
+    'M2.6 18a2.4 2.4 0 1 0 4.8 0 2.4 2.4 0 1 0-4.8 0',
+    'M16.6 18a2.4 2.4 0 1 0 4.8 0 2.4 2.4 0 1 0-4.8 0',
+    'M12 7.4v4',
+    'M6.4 16.2 12 11.4l5.6 4.8',
+  ],
+  // Two figures, one behind the other — people. Close cousin of ProjectMetrics' `users` glyph
+  // and that's deliberate: the same idea should look the same wherever it appears on the site.
+  teams: [
+    'M6 8a3 3 0 1 0 6 0 3 3 0 1 0-6 0',
+    'M3.5 19a5.5 5.5 0 0 1 11 0',
+    'M16 5.6a3 3 0 0 1 0 5.8',
+    'M17.6 14.3A5.5 5.5 0 0 1 20.5 19',
+  ],
+  // Roofline over a floor plan — the remodel, the server closet, the park signage. A literal
+  // structure, because these are the projects where "builder" is meant literally.
+  'physical spaces': ['M3 10.5 12 4l9 6.5', 'M5.5 9.5V20h13V9.5', 'M10 20v-5h4v5'],
+  // Open book on its spine — the writing.
+  'written work': ['M4 19V6.5A1.5 1.5 0 0 1 5.5 5H19v14', 'M4 19a1.5 1.5 0 0 1 1.5-1.5H19', 'M8 5v12.5'],
+};
+const glyph = category ? GLYPHS[category.split('·')[0].trim()] : null;
+
+// The card shows at most three chips; the detail page renders the full set through
+// ProjectMetrics.astro. Capped 2026-08-05 (Jon's call) because Cloudbase carries five, which
+// wrapped to four rows of chips beside neighbours showing two and made one card twice the
+// height of the rest for no editorial reason.
+// ⚠️ This is a PREVIEW of `metrics`, not a filter — so the ORDER of the array in projects.js
+// decides what a card shows. Reordering metrics is an editorial change to the index page, not
+// a cosmetic one. Nothing here is dropped silently: the fourth and fifth are one click away.
+const chips = metrics.slice(0, 3);
 ---
 <article class="card">
-  <p class="card__category">{category}</p>
+  <p class="card__category">
+    {glyph && (
+      <svg
+        class="card__glyph"
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        {glyph.map((d) => <path d={d} />)}
+      </svg>
+    )}
+    {category}
+  </p>
   <h2 class="card__title">
     {href ? <a href={href}>{title}</a> : title}
     {status && <span class="card__status">{status}</span>}
@@ -43,6 +113,19 @@ const blocks = Array.isArray(body) ? body : [body];
       </div>
     )
   )}
+  {/* The same `metrics` the detail page renders as cards, reduced to chips. Added 2026-08-04
+      with the glyph: the glyph says what kind of work it was, the chips say how it went, and
+      both come from data that already existed — no new field, nothing to keep in sync, and a
+      project without metrics simply has no row.
+      ⚠️ Same bar as the detail page: every value here is a public claim about a real client
+      that Jonathan supplied. Never add one to make a card look fuller. */}
+  {chips.length > 0 && (
+    <ul class="card__chips">
+      {chips.map((m) => (
+        <li><b>{m.value}</b> {m.label}</li>
+      ))}
+    </ul>
+  )}
   {href && <p class="card__more"><a href={href}>Read more →</a></p>}
 </article>
 
@@ -63,13 +146,24 @@ const blocks = Array.isArray(body) ? body : [body];
     box-shadow: var(--shadow);
     border-color: var(--color-accent);
   }
+  /* The category line does double duty since 2026-08-04: it carries the glyph, and its rule
+     gives the card a top edge, so a text-only card still has structure above the title. */
   .card__category {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-size: var(--text-sm);
     color: var(--color-text-muted);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
   }
+  /* Rust, matching ProjectMetrics — every mark that stands for evidence on this site is the
+     accent, and the muted label beside it stays muted so the glyph leads. `flex: none` keeps
+     the square from being squeezed by a long compound category on a narrow card. */
+  .card__glyph { flex: none; color: var(--color-accent); }
   .card__title { font-size: var(--text-xl); line-height: 1.2; margin-bottom: var(--space-2); }
   .card__title a { text-decoration: none; color: inherit; }
   .card__title a:hover { color: var(--color-accent); }
@@ -87,6 +181,33 @@ const blocks = Array.isArray(body) ? body : [body];
   .card__list { margin-top: var(--space-3); }
   .card__list-head { font-weight: 600; margin-bottom: var(--space-2); }
   .card__list ul { margin: 0; padding-left: 1.25em; }
+  /* Outlined pills on the card's own ground, not filled: the card is already --color-surface,
+     and a filled chip on a filled card reads as one smudge. Same reasoning as the outlined
+     metric cards on the detail page — separation by object class, not by another tint. */
+  .card__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .card__chips li {
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: var(--space-1) var(--space-3);
+  }
+  /* The number is the point, so it takes the accent and the weight; the label stays quiet.
+     tabular-nums keeps a column of chips from jittering as the digits change. */
+  .card__chips b {
+    color: var(--color-accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
   /* Push the read-more affordance to the bottom so mixed-length cards align. */
   .card__more { margin: var(--space-4) 0 0; }
   .card__more a {

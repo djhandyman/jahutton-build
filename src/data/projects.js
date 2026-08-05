@@ -138,9 +138,12 @@ export const projects = [
     // not claiming revenue growth. Don't restate these three in the blurb — they're the
     // numbers version of the same story, not a second telling of it.
     metrics: [
+      // Typographic minus (U+2212) and multiplication sign (U+00D7), matching chelancomps'
+      // '−80%'. Normalized 2026-08-05, when the work-card chips put these values next to that
+      // one on the index and the hyphen showed. Glyphs only — no digit here has ever changed.
       { icon: 'box', value: '20,000+', label: 'SKUs migrated' },
-      { icon: 'trend-down', value: '-60%', label: 'Expenses' },
-      { icon: 'trend-up', value: '2x', label: 'Net margins' },
+      { icon: 'trend-down', value: '−60%', label: 'Expenses' },
+      { icon: 'trend-up', value: '2×', label: 'Net margins' },
     ],
     // The platform journey, added 2026-08-03 (Jon asked for it). Sits AFTER the body and
     // BEFORE the metrics: story → shape of the work → results → ask.

@@ -136,6 +136,7 @@ src/       pages · layouts · components (14) · content/notes/*.md
 functions/api/  contact · assessment-intake · feedback
 supabase/migrations/
 docs/architecture.md  ← current shape and the dated decision log
+    roadmap.md       ← what it isn't yet, and why not
 ```
 
 `tokens.css` is shared verbatim with **[unflappable.press](https://unflappable.press)**, the

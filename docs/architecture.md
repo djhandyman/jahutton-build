@@ -97,6 +97,19 @@ them in sync. `global.css` builds on it. No framework, no CSS library.
 Newest first. Superseded entries are kept, marked, and dated — knowing what was tried is most of
 this file's value.
 
+**2026-08-05** — Work cards gained a category glyph and metric chips. The index was ten text
+boxes in a grid and read as a list of jobs; the feedback was that every card needs something to
+look at. Photo thumbnails and per-project brand marks were both mocked up and both rejected:
+seven of ten projects have a usable photo, one has a real logo and two have nothing, so either
+route fails on some card and invites inventing marks for real clients — the visual version of a
+fabricated testimonial. A glyph keyed on `category` plus chips read from `metrics` uses only
+data every project already carries, so it can't fail on the eleventh project. Keyed on the
+*first* segment of `category`, since those strings are written most-important-first and a
+compound category resolves without a second field. Cards cap at three chips; the detail page
+still renders the full set, so the order of `metrics` now decides what the index shows.
+`docs/roadmap.md` started in the same change — a standing home for feedback that shouldn't
+block launch, beginning with filtering on `/work`.
+
 **2026-08-04** — Docs refactor. README cut to about half its length; this file rewritten from
 stale plan to current reference.
 

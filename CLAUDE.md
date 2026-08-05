@@ -380,7 +380,7 @@ finished, working structure." When editing any site copy:
   the rust underline had never rendered in production. Now a prefix match, which also keeps
   a section lit on its detail pages. If nav hrefs ever gain trailing slashes, `isActive()`
   already strips them.
-- **Three docs, three jobs — keep them in their lanes.** `README.md` is for a visiting hiring
+- **Four docs, four jobs — keep them in their lanes.** `README.md` is for a visiting hiring
   manager: short, and its claims (four dependencies, fourteen components, ten detail pages, what
   talks to what) are checkable against the repo, so a change to the architecture is a change to
   the README. **This file** is the working rules — every convention and the reason for it.
@@ -388,7 +388,12 @@ finished, working structure." When editing any site copy:
   superseded decisions; add an entry there when a decision changes, rather than only editing the
   prose around it. It was rewritten 2026-08-04 after being stale since ~2026-07-23 (it described
   Formspree, Groundcrew, and "no detail pages"); it is accurate now, so don't carry the old
-  "treat it as stale" warning forward. Source wins over all three.
+  "treat it as stale" warning forward. **`docs/roadmap.md`** (added 2026-08-05) is the inverse of
+  `architecture.md`: that file is what the site *is* and why, this one is what it **isn't yet and
+  why not** — feedback and known gaps that shouldn't block launch, newest first, each entry
+  saying what it is, why it's not done, and what it would take. It is public and held to the same
+  bar as the rest: no speculative feature lists, no dates. Put a deferred idea there rather than
+  in a `// TODO` nobody reads. Source wins over all four.
 - **`.claude/` is gitignored and holds worktrees** — full untracked copies of the repo including
   `node_modules/` and `dist/`. Repo-wide greps/finds will return duplicate hits; scope searches to
   `src/`, `functions/`, `supabase/`, and `docs/`.
