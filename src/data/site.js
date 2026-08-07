@@ -64,6 +64,61 @@ export const banner = {
   dismissLabel: 'Dismiss',
 };
 
+// The splash page at /welcome/ — the ONE page a stranger can reach while Cloudflare Access
+// guards the rest of the site (added 2026-08-06).
+//
+// Why it exists: Access intercepts before the request reaches this origin, so a locked-out
+// visitor sees Cloudflare's login screen and nothing you can author. The only way to show them
+// anything is to hand them a page Access doesn't guard. This is that page: it teases the site,
+// tells a beta tester how to get in, and gives everyone else somewhere to go.
+//
+// ⚠️ It is only reachable once /welcome/ is BYPASSED in the Access application. Until that's
+//   configured in the Zero Trust dashboard this page builds and deploys and still 302s to the
+//   login screen like everything else. The page is half the fix; the bypass is the other half.
+//
+// It renders through BaseLayout's `bare` mode — no header, no footer, no feedback widget —
+// because every one of those links somewhere gated. A nav bar whose every item is a login wall
+// is worse than no nav bar, and the feedback widget would POST to /api/feedback, which Access
+// blocks too.
+//
+// AT LAUNCH: delete this object, delete src/pages/welcome.astro, drop the /welcome sitemap
+// exclusion in astro.config.mjs, and remove the Access application entirely. Four things, and
+// they all go together — this whole surface exists only while the door is locked.
+//
+// TODO(jon): approve this copy — it's drafted, not yours yet. The tease especially: it reuses
+//   the real headline, which may be the right call (consistency) or may burn the reveal.
+export const splash = {
+  label: 'Private beta',
+  // The tease. Deliberately the same headline the real home page opens with — a stranger who
+  // comes back at launch should recognize the place, not meet a different site.
+  headline: 'Design, build, and ship.',
+  lead: 'A new site for the work I do — software, systems, teams, and the structure that holds them together. It opens soon.',
+
+  // For the people Jon actually invited.
+  beta: {
+    heading: 'If you’re here to look it over',
+    // Cloudflare Access one-time PIN: the visitor types the email the invitation went to and
+    // Cloudflare emails a six-digit code. There is no password and no account to create — which
+    // is worth saying plainly, because "sign in" makes people brace for a signup.
+    text: 'Thanks — genuinely. Use the email address your invitation went to. You’ll get a six-digit code by email: no password, no account to make.',
+    ctaLabel: 'Enter the site',
+    // Points at the guarded site. Clicking it is what triggers the Access prompt — this page
+    // can't do the authenticating itself, and shouldn't pretend to.
+    ctaHref: '/',
+    // Shown under the button, small. The honest caveat: codes go to invited addresses only.
+    note: 'The code only goes to addresses on the invite list. If yours bounces, tell me and I’ll add it.',
+  },
+
+  // For everyone else who typed the domain in. No contact form here — /contact is guarded too,
+  // so the only honest outbound link is one that already lives in this file.
+  public: {
+    heading: 'Everyone else',
+    text: 'Nothing to see yet, but it won’t be long. Find me in the meantime:',
+    linkLabel: 'LinkedIn',
+    linkHref: 'https://www.linkedin.com/in/jahutton/',
+  },
+};
+
 // Contact page copy. The `prompts` list is the CTA's real work: it lets a visitor
 // recognize their own situation instead of decoding category language ("fractional",
 // "zero-to-one"). Each line is anchored to work that actually exists on /work —

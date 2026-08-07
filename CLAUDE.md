@@ -116,9 +116,21 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 
 - **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
   `notes`, `notes/[slug]`, `assessment`, `assessment/intake`, `privacy`, `thanks`,
-  `thanks/build-assessment`, `404`. Each is
+  `thanks/build-assessment`, `welcome`, `404`. Each is
   a thin `.astro` file wrapping `BaseLayout` and rendering data. `rss.xml.js` is the site's
   **only endpoint** — a `.js` file exporting `GET`, prerendered to `dist/rss.xml`.
+  **`/welcome` is the splash, and it is temporary** (2026-08-06). The site is behind a Cloudflare
+  Access application on the apex — every URL, including `robots.txt` and the sitemap, 302s to a
+  login screen — and Access intercepts *before* the request reaches this origin, so a locked-out
+  visitor can't be shown anything this repo authors. `/welcome` is the one page Access is meant
+  to let through: the tease, how an invited tester gets in, a LinkedIn link for everyone else.
+  Copy and the full reasoning live in `site.js` → `splash`.
+  **It does nothing until `/welcome` is bypassed in the Zero Trust dashboard** — until then it
+  ships and 302s like every other page. Four things are deleted together at launch: the `splash`
+  object, the page, the sitemap exclusion, and the Access application.
+  ⚠️ **The gate currently contradicts a decision on record.** `site.js` says the site stays
+  crawlable through the beta (2026-07-27, Jon) so early indexing accumulates — Access has been
+  preventing exactly that the whole time. Don't quietly "fix" either side; they're Jon's call.
   **`/notes` is currently hidden** (2026-08-03), by the same two switches as `/now` and for a
   related reason: the surface shipped before the writing exists, and pointing the nav at
   "Nothing here yet" advertises an empty room. The commented-out nav entry in `src/data/site.js`
@@ -178,7 +190,7 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   `blurb` is either a string or an **array**; both the card and the detail page normalize it and
   render one `<p>` per entry. It's plain text through Astro's escaping — no markdown, no HTML (use
   curly quotes, not `_italics_`). An array entry may also be a **list block** — `{ heading, items }`
-  — rendering as a small heading plus a `<ul>` (WAHBE's two inventories). Use it only where the copy
+  — rendering as a small heading plus a `<ul>` (the state agency's two inventories). Use it only where the copy
   is genuinely a list; prose that's been bulleted for looks is worse than the paragraph it came from.
   A detail page has two link slots and they
   do different jobs: `link` is the CTA pill under the body, `source` is a muted GitHub icon link
@@ -186,17 +198,21 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   (first = solid pill, rest = ghost) and drops `rel="noopener"` for internal hrefs. The convention:
   a project links to **the live thing** where one exists (chelancomps, and Unflappable's
   unflappable.press as its ghost second link); where none does, the pill is `/contact/`. **Seven
-  of ten** carry a contact pill — Bello Modo, Unflappable, server closet, the remodel, Cloudbase,
-  Ascension, this site. Four of those close by turning to the reader, which is the clearest case;
-  Bello Modo and Cloudbase end on the client's outcome and carry one anyway, because there's
-  nothing live to point at. Don't read the "ends by asking" pattern as the gate — it correlates,
-  it doesn't decide.
+  of the nine live projects** carry a contact pill — Bello Modo, Unflappable, server closet, the
+  remodel, Cloudbase, Ascension, this site. Four of those close by turning to the reader, which is
+  the clearest case; Bello Modo and Cloudbase end on the client's outcome and carry one anyway,
+  because there's nothing live to point at. Don't read the "ends by asking" pattern as the gate —
+  it correlates, it doesn't decide. The hidden state-agency project is the case that shows why the
+  gate isn't editorial at all: it had no pill until 2026-08-06, which left its **placeholder
+  testimonial as the last thing on the page**. A page with a quote block and no CTA closes on the
+  quote — so if that quote is flagged "not a real quote," the CTA is what fixes it.
   **The label must NOT echo the closing line it sits under** — Jon rejected exactly that on
   2026-07-28 as cheesy; quoting his own sentence back at him reads as a template. Keep labels plain,
-  and **keep them different from each other** — with seven in play the generic ones are spent
-  ("Let's chat", "Let's talk", "Let's connect", "Get in touch", "Work with me", "Start building
-  together"), so an eighth needs a genuinely new one. Identical CTAs across pages are the tell
-  that nobody wrote them.
+  and **keep them different from each other** — eight labels have been written and the generic ones
+  are spent ("Let's chat", "Let's talk", "Let's connect", "Get in touch", "Work with me", "Start
+  building together", "Tell me about your project"), so a ninth needs a genuinely new one — count
+  the hidden project's "Bring me the messy part" as taken, since uncommenting it brings the label
+  back. Identical CTAs across pages are the tell that nobody wrote them.
   An optional `diagram: true` renders the **stack exhibit** (`StackDiagram.astro`, data in
   `colophon.js` → `stack`) under an **"Under the hood"** heading below the CTA — the heading
   fences the technical material off as an appendix so it doesn't read as the page's headline.
@@ -255,6 +271,15 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   words to one specific, findable person. A surname goes in when that person has seen the quote
   and agreed to be named — same gate as adding their `photo`. Don't "complete" one from the
   source comments or a git message.
+  **`quote` is a string or an array of paragraphs** (added 2026-08-06, for Austin's). The array
+  form folds everything past the first paragraph into a native `<details>` — no JS, because this
+  is a static build and the disclosure semantics, keyboard handling and in-page find come free
+  with the element. `expandAfter: n` keeps `n` paragraphs open instead of one. It exists so a
+  long, specific quote ships **whole**: the concrete before/after is what earns the block, so
+  trimming to fit is the wrong fix. Quotation marks go on the **outside of the whole quote only**
+  — the print convention of an opening mark per paragraph was tried and Jon rejected it
+  (2026-08-06) as reading like a typo on screen — so the collapsed state ends unclosed, with a
+  `:has()`-driven ellipsis marking the fold.
   **`placement: 'after-cta'`** flips the block below the CTA. Default is quote-then-CTA — proof
   between the story and the ask. Ascension is the only page that inverts it (Jon, 2026-08-04),
   because its quote is a placeholder and a block flagged "not a real quote" shouldn't stand
@@ -286,6 +311,12 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   and so does the **`/rss.xml` autodiscovery `<link>`** — site-wide because the layout has no
   `<head>` slot for a page to add one. The `ogType`/`publishedTime`/`modifiedTime` props exist
   for `/notes/<slug>` only; their defaults leave every other page's `<head>` byte-identical.
+  Two more props, added 2026-08-06 for `/welcome/` and used by nothing else: **`bare`** drops
+  `Banner`/`Header`/`Footer`/`FeedbackWidget` while keeping the head, fonts and styles — for a
+  page rendering *outside* the guarded site, where every piece of furniture links somewhere the
+  visitor can't reach and the widget would POST to a blocked endpoint; and **`noindex`** emits
+  the robots meta tag, for a page that's temporary rather than private (it pairs with a sitemap
+  exclusion — neither does the job alone). Both default false and change no other page's output.
 
 - **Styling** is two plain CSS files, no framework:
   - `src/styles/tokens.css` — the design system: color roles, the Fraunces/Inter type scale, spacing,
@@ -294,8 +325,8 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
     **`.prose-md`** block for markdown output (`/notes` bodies). Three things about it:
     it is deliberately **not** `.prose` (that class is used on `/about`, `/now` and every
     `/work/<slug>`, each defining its own rules in a scoped block — redefining it globally
-    would restyle twelve pages); **every selector is scoped under `.prose-md`**, because a
-    bare `blockquote` would hit the testimonial on ten project pages and a bare `ul` would
+    would restyle eleven pages); **every selector is scoped under `.prose-md`**, because a
+    bare `blockquote` would hit the testimonial on nine project pages and a bare `ul` would
     hit `/privacy`, `/services` and the footer; and it can't live in a page's scoped
     `<style>` because **Astro's scoping can't reach markdown output** — generated HTML
     carries no `data-astro-cid` attribute, so a scoped rule silently does nothing.
@@ -405,9 +436,11 @@ finished, working structure." When editing any site copy:
   a section lit on its detail pages. If nav hrefs ever gain trailing slashes, `isActive()`
   already strips them.
 - **Four docs, four jobs — keep them in their lanes.** `README.md` is for a visiting hiring
-  manager: short, and its claims (four dependencies, fourteen components, ten detail pages, what
-  talks to what) are checkable against the repo, so a change to the architecture is a change to
-  the README. **This file** is the working rules — every convention and the reason for it.
+  manager: short, and its claims (four dependencies, fourteen components, what talks to what) are
+  checkable against the repo, so a change to the architecture is a change to the README. It
+  deliberately states **no project or detail-page count** — that number moves whenever a card is
+  added or hidden, and a stale count in the one doc written for a stranger is the worst place for
+  one. Don't add it. **This file** is the working rules — every convention and the reason for it.
   `docs/architecture.md` is the current shape plus the **dated decision log**, including
   superseded decisions; add an entry there when a decision changes, rather than only editing the
   prose around it. It was rewritten 2026-08-04 after being stale since ~2026-07-23 (it described

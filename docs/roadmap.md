@@ -164,6 +164,6 @@ site actually builds on. Two standing rules apply: **check for GPS before publis
 shot in a private place**, and convert with the `sharp` that already ships inside Astro — it
 strips EXIF by default and it isn't a new dependency.
 
-Note what the gap does *not* justify: inventing a logo or a monogram for Bello Modo, Cloudbase
-or WAHBE. Those are real organizations with real identities, and a mark I made up for one of
-them is the visual version of a fabricated testimonial.
+Note what the gap does *not* justify: inventing a logo or a monogram for Bello Modo or Cloudbase.
+Those are real organizations with real identities, and a mark I made up for one of them is the
+visual version of a fabricated testimonial.

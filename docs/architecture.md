@@ -11,7 +11,7 @@ shape of the thing and the dated decision log. When they disagree, the source wi
 
 ## Shape
 
-Astro static build → `dist/` → Cloudflare Pages, plus three Pages Functions. 23 prerendered
+Astro static build → `dist/` → Cloudflare Pages, plus three Pages Functions. 24 prerendered
 pages and one endpoint.
 
 | Route | What it is |
@@ -27,6 +27,7 @@ pages and one endpoint.
 | `/notes`, `/notes/<slug>` | The writing surface. **Built but hidden** — see below. |
 | `/now` | **Built but hidden** — see below. |
 | `/privacy` | What the forms collect, checked against the Functions. |
+| `/welcome` | Splash for anyone who reaches the site while Cloudflare Access guards it. **Temporary** — deleted at launch. |
 | `/404` | |
 | `/rss.xml` | The only endpoint. Hand-written RSS 2.0, summary only. |
 
@@ -37,9 +38,15 @@ dropping its exclusion from `astro.config.mjs`. Both files say so at the line.
 
 ## Projects
 
-Ten, all with detail pages: Bello Modo · chelancomps.org · Unflappable · LAN & Server Closet ·
-Kitchen & Bathroom Remodel · WAHBE Org Development · Cloudbase Foundation · Chelan Falls Park
-Signage · Ascension Medicines · This Website.
+Nine, all with detail pages: Bello Modo · chelancomps.org · Unflappable · LAN & Server Closet ·
+Kitchen & Bathroom Remodel · Cloudbase Foundation · Chelan Falls Park Signage · Ascension
+Medicines · This Website.
+
+A tenth is **hidden** (2026-08-07): the state-agency project is commented out in
+`src/data/projects.js` rather than deleted. Unlike `/now` and `/notes` this takes one switch, not
+two — the array feeds both the `/work` cards and `getStaticPaths()`, so the card and the page go
+together and there's no sitemap rule to move. The entry states the reasoning and what would bring
+it back.
 
 A project's `slug` is the switch between two tiers — with one it gets a detail page and its card
 shows a teaser; without one the card renders the full write-up inline and there's no page. Every
@@ -96,6 +103,50 @@ them in sync. `global.css` builds on it. No framework, no CSS library.
 
 Newest first. Superseded entries are kept, marked, and dated — knowing what was tried is most of
 this file's value.
+
+**2026-08-07** — The state-agency project is **hidden** — commented out in `src/data/projects.js`,
+not deleted, taking the site from ten detail pages to nine. It was a career summary in a container
+that promises a case study: no org name (anonymized the day before), no live link, no `source`,
+and a placeholder testimonial, so it asked a reader to take twelve years on faith next to nine
+cards that point at something checkable. This extends the 08-06 call one level up — that day's
+note filed the Confluence achievements doc as "résumé material, not portfolio material," and the
+card had the same problem. The anonymization had been a compromise between publishing it and not;
+this resolves it. **The cost is real and currently unpaid**: it was the only card carrying
+organizational scale (12 years, 7 analysts, exec-facing, a progression framework), which is the
+ballast under the fractional and build-with-you offers on `/services`. That belongs on `/about`,
+where an unlinkable career fact is native — explicitly **not** `/now`, which is itself hidden for
+reading as job-search copy. That About section is not written yet. A real testimonial from the
+mentored analyst is what would bring the card back; hiding it parks that ask, since quotes render
+only on project cards.
+
+**2026-08-06** — `/welcome`, a splash page, plus `bare` and `noindex` on `BaseLayout`. The site
+sits behind a Cloudflare Access application on the apex, and a check that day found every URL —
+including `/robots.txt`, `/sitemap-index.xml` and `/rss.xml` — 302ing to a login screen. Two
+consequences. First, the **2026-07-27 decision to stay crawlable through the beta has not been in
+effect**: no crawler can reach any page, so no early indexing has accumulated. That decision and
+the gate contradict each other and one of them has to give. Second, Access intercepts before the
+request reaches this origin, so a locked-out visitor cannot be shown anything this repo authors —
+the only fix is a page Access doesn't guard.
+
+`/welcome` is that page: the tease, how an invited tester gets in (Access one-time PIN — an
+emailed six-digit code, which is what "email auth" and "access code" both resolve to here), and a
+LinkedIn link for everyone else. It renders `bare` — no header, footer or feedback widget —
+because each of those points somewhere gated, and a nav whose every link is a login wall is worse
+than no nav. `noindex` plus a sitemap exclusion because the page is *temporary*, not private.
+**It does nothing until `/welcome` is bypassed in the Access application**; the page is half the
+fix and the dashboard is the other half. Four things get deleted at launch and they go together:
+the `splash` object, the page, the sitemap exclusion, and the Access application itself.
+
+**2026-08-06** — A testimonial `quote` may now be an **array of paragraphs**, with everything past
+the first folded into a native `<details>` inside `ProjectTestimonial`. Austin's quote is long and
+specific, and the specificity is the point — the alternative fixes were trimming it (which throws
+away the concrete before/after that earns the block) or letting a wall of text push the CTA off
+the screen. A `<details>` element rather than a JS toggle: static build, no dependencies, and the
+expanded/collapsed semantics, keyboard handling and in-page find are already in the platform.
+`expandAfter` sets how many paragraphs stay open. Quotation marks sit on the outside of the whole
+quote only: the print convention of an opening mark on every paragraph shipped first and was
+rejected the same day — on screen it reads as a stray character rather than as continuation. The
+collapsed state therefore ends unclosed, with an ellipsis marking the fold.
 
 **2026-08-05** — Turnstile was rejecting every Build Assessment submit, found by a beta tester.
 Cause: `FeedbackWidget` (site-wide) loaded `api.js?render=explicit` while `ContactForm` and

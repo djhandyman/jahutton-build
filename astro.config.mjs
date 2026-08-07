@@ -22,6 +22,12 @@ export default defineConfig({
   // Drop this exclusion and uncomment the nav entry in src/data/site.js together, on the
   // day the first note publishes. Both say so.
   //
+  // /welcome IS excluded (2026-08-06) — the splash shown to anyone who reaches the site while
+  // Cloudflare Access guards it. Excluded because it's TEMPORARY, not because it's private: a
+  // "coming soon" page is the thin result that sits in front of the real home page for weeks
+  // after launch. The page also carries a `noindex` meta tag; that and this move together, and
+  // both are deleted on the day the Access application comes off. See `splash` in site.js.
+  //
   // Individual notes never needed a rule: a draft has no page, so there is nothing to
   // crawl and nothing to exclude. /rss.xml can't appear either — it's a route of type
   // "endpoint", and @astrojs/sitemap only ever lists routes of type "page".
@@ -30,7 +36,7 @@ export default defineConfig({
       // Anchored to the PATH, not tested against the whole URL. The old form matched
       // anywhere in the href, so a note published at /notes/now/ or /notes/thanks/ would
       // have been silently dropped from the sitemap.
-      filter: (page) => !/^\/(thanks|now|notes)(\/|$)/.test(new URL(page).pathname),
+      filter: (page) => !/^\/(thanks|now|notes|welcome)(\/|$)/.test(new URL(page).pathname),
     }),
   ],
 

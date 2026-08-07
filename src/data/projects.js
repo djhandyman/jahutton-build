@@ -26,9 +26,9 @@
 //     Reach for it only when the link belongs INSIDE the sentence that earns it — a link that
 //     can stand on its own is a `link` CTA pill or a `source`, both of which read better.
 //     An entry may also be a LIST BLOCK — { heading, items: [...] } — rendering as a small
-//     heading plus a <ul>. Added 2026-07-29 for WAHBE, where Jon's own copy is two labelled
-//     inventories ("I supported" / "I innovated by"); flattening those into prose would have
-//     been a rewrite, not an edit. Use it only where the copy is genuinely a list.
+//     heading plus a <ul>. Added 2026-07-29 for the state-agency project, where Jon's own copy
+//     is two labelled inventories ("I supported" / "I innovated by"); flattening those into
+//     prose would have been a rewrite, not an edit. Use it only where the copy is genuinely a list.
 //   link   — optional CTA pill(s) on the detail page: one { href, label }, or an ARRAY of them
 //     (first renders as the solid pill, the rest as ghosts). Usually just the live thing
 //     (chelancomps.org). Where the blurb ENDS BY ASKING THE READER FOR SOMETHING — Unflappable,
@@ -352,21 +352,26 @@ export const projects = [
       { icon: 'clock', value: '~3 weeks', label: 'Idea to production' },
     ],
     link: { href: 'https://chelancomps.org', label: 'Visit the live site' },
-    // ⚠️ PLACEHOLDER, added 2026-07-28 to show the block's design. NOBODY SAID THIS. Jon
-    // filled in the real name, role and org on 2026-08-04, so the brackets that used to do
-    // half the work are gone: `placeholder: true` and the visible "not a real quote" flag it
-    // prints are now the ONLY things standing between this block and a fabricated quote
-    // attributed to a named person. Do not delete that line until Austin's actual words are in
-    // the `quote` field — deleting it is the single step that says "Austin said this."
-    // To make it live: replace `quote` with what he said, add his `photo`, then remove
-    // `placeholder`.
-    // TODO(jon): ask a Chelan organizer for a real one. The concrete before/after is the ask —
-    //   what their week looked like running the comp on email vs. now. Get it in writing, and
-    //   confirm they're happy to be named with their photo on a public site.
+    // REAL, as of 2026-08-06. Austin's own words, supplied by Jon verbatim — the placeholder
+    // that stood here from 2026-07-28 is gone and so is the `placeholder: true` flag with it.
+    // Don't edit, tighten, or re-order these sentences: they're a named person's, and the whole
+    // reason the expander exists (see below) is that the answer to "it's long" is never to
+    // rewrite someone else's quote.
+    // It's four paragraphs, so `quote` is an ARRAY — the first stays open above the CTA and the
+    // rest fold into the <details> in ProjectTestimonial.astro. The break is editorial: para 1
+    // is the complete before/after (email + spreadsheets → a system) and stands alone, which is
+    // the bar for what sits above the fold. Raise `expandAfter` to 2 to open the impact
+    // paragraph as well.
+    // TODO(jon): his headshot, if he's up for it — /images/work/chelancomps/austin.{webp,jpg},
+    //   square crop. Until then the block draws an initials monogram, which is fine.
+    // TODO(jon): surname, if he's happy to be named in full on a public site. Ask; don't guess.
     testimonial: {
-      placeholder: true,
-      quote:
-        'Placeholder — a real quote goes here. Two or three sentences in their own words, concrete about what changed: what running the comp used to cost them, and what they do with that time now. Roughly this long reads well in the block.',
+      quote: [
+        'Working with Jonathan on our Chelan paragliding competition platform was a game changer. Before, we managed everything through emails and spreadsheets, which created a huge amount of administrative work every year. The system he built transformed the way we organize our events, making the entire volunteer application and management process far more efficient and organized.',
+        'The impact was immediate. It dramatically reduced our administrative workload, streamlined communication, and gave us a centralized system that we can build on year after year instead of starting from scratch. It’s saved us countless hours and allowed us to focus on running the competition rather than managing paperwork.',
+        'Beyond the technical quality of his work, he was incredibly easy to collaborate with. He was responsive, flexible, and happy to make changes as our needs evolved, often implementing new ideas on the fly. It felt like he was invested in building the right solution rather than just delivering software.',
+        'I wouldn’t hesitate to recommend him to anyone looking for someone who can understand a real operational problem, build an elegant solution, and be a pleasure to work with throughout the process.',
+      ],
       name: 'Austin',
       role: 'Owner / organizer',
       org: 'Northwest Paragliding',
@@ -638,11 +643,44 @@ export const projects = [
       },
     ],
   },
+  // ═══ HIDDEN 2026-08-07 (Jon's call). The state-agency card is commented out, not deleted.
+  //
+  // WHY: it's a career summary in a container that promises a case study. Every other card on
+  // this site points at a thing you can check — chelancomps.org, the book, the catalog, a
+  // finished bathroom. This one has no org name (anonymized 08-06), no live link, no `source`,
+  // and a placeholder testimonial, so it asks a reader to take twelve years on faith while
+  // sitting next to nine cards that don't. That contrast reads worse than its absence.
+  // It's the same call already made one level down on 08-06: the Rovo achievements doc is
+  // "résumé material, not portfolio material" and belongs on the career-ops side of
+  // two-front-doors. The anonymization was a compromise between publishing this and not;
+  // hiding it resolves that compromise in the direction Jon had already chosen.
+  //
+  // WHAT IT COSTS: this was the only card carrying organizational scale — 12 years, 7 analysts,
+  // exec-facing, a career-progression framework — which is the credibility ballast under the
+  // fractional and build-with-you offers on /services. The plan is to carry that on /about
+  // instead, where an unlinkable career fact is native and nobody expects evidence. NOT on
+  // /now: that page is itself hidden for reading as job-search copy, and twelve years of
+  // employment history is the most job-search-shaped thing on the site.
+  // ⚠️ As of this commit that About section does NOT exist yet, so the scale claim is currently
+  //   nowhere on the site. Either write it or accept the gap knowingly — don't let it just lapse.
+  //
+  // WHAT BRINGS IT BACK: a real testimonial. The strongest version is the analyst Jon mentored
+  // and promoted (see the TODO on the testimonial below) — the blurb already claims that, and a
+  // quote turns his claim into their account of it. Uncommenting is the whole reversal.
+  // Note that hiding this PARKS that ask: quotes only render on project cards.
+  //
+  // WHAT ELSE MOVED WITH IT: docs/architecture.md's list of project titles. Nothing in README.md
+  // — it carries no project or detail-page count, only the 4-dependency and 14-component claims.
+  // The hero image stays in public/images/work/state-agency-org-development/, unused.
+  //
+  // STILL UNRESOLVED IN HERE, if it ever comes back: the title, the alt text and the CTA label
+  // are all unapproved microcopy, and the "165 voices" metric came from Rovo reading Confluence
+  // rather than from Jon. Don't restore this card without settling those first.
+  /*
   {
     // Outcome drafted from Jon's facts (2026-07-23): 4 promotions along the progression
     // (2 associate PM → PM, 2 BSA → BSA II); every product staffer now has a clear advancement
-    // path — unique in the org. (Note: this card's "teams"/people-mgmt framing is a P3 post-pivot
-    // decision — see .temp/CONTENT-TODO.md §6.)
+    // path — unique in the org.
     //
     // 2026-07-29: body replaced with Jon's own copy (.temp/project-copy.md) — his "supporting and
     // innovating" framing and the two inventories under it, verbatim, using the list-block shape
@@ -652,15 +690,57 @@ export const projects = [
     // previous blurb, kept because it's the only citable result on this project and his copy
     // doesn't include it. It sits last so it lands as the payoff to the progression-framework
     // bullet. Delete it if you'd rather the page be your words end to end.
-    slug: 'wahbe-org-development',
-    title: 'WAHBE — Org Development',
-    category: 'teams',
+    //
+    // ═══ REFRAMED 2026-08-06 (Jon's call), after Rovo extracted a full record of the twelve years
+    // from Confluence (the achievements doc in `.temp/writing/`). The decision that shapes
+    // everything below: **that doc is résumé material, not portfolio material** — it says so in
+    // its own "suggested next use" section. Pouring the inventory in would have made this card
+    // more of a CV, not more of a case study. So it contributed exactly ONE story (the listening
+    // sessions) and the rest is parked; per two-front-doors it belongs on the career-ops side,
+    // not here.
+    // ⚠️ Do NOT mine that doc again without re-reading these three: it files Jon's BOOK under the
+    //   agency's 2025 accomplishments (that's Unflappable, its own card); it credits the BELLO
+    //   MODO migration to the agency (it isn't the agency's work at all); and every link in it is
+    //   an internal Confluence or personal-OneDrive URL, several in Jon's personal space — none
+    //   can ever be evidence on a public page.
+    //
+    // THE ORGANIZATION IS DELIBERATELY UNNAMED (Jon, 2026-08-06). The agency's name and acronym
+    // are gone from the title, the slug, the image path and the body; "a state health-benefit
+    // exchange" carries it instead. Two reasons, and the second is much the bigger one:
+    //   · Restraint, NOT a disclosure requirement. Jon checked the outside-employment rule on
+    //     2026-08-03 and it does not constrain him (PLANNING.md decisions log; the two GTM
+    //     checkboxes stayed stale until 08-06, which is why this looked open). He still works
+    //     there, and a card that reads as a consulting case study, built on internal Confluence
+    //     detail, is worth keeping quiet about — a choice, not a rule.
+    //   · READABILITY, which is why this is right regardless of the disclosure question.
+    //     The old title was the acronym plus "Org Development" — the one project title on the site
+    //     that told a stranger nothing, next to "Bello Modo", "chelancomps.org", "Kitchen &
+    //     Bathroom Remodel". The acronym means something to a few hundred people in one state.
+    //   Don't "restore" the name for specificity: a buyer doesn't care about the acronym, they
+    //   care about the scale, and the body states the scale.
+    // ⚠️ THE SCRUB REACHES THE COMMENTS AND THE DOCS, NOT JUST THE RENDERED PAGE — **this repo is
+    //   public**, and the README invites a reader to check it. Anonymizing the page while the
+    //   source file next to it named the employer nine times would be a fig leaf, not a decision.
+    //   So `docs/roadmap.md` lost it from its no-invented-logos note, and these comments say "the
+    //   agency" throughout. None of the reasoning was removed — only the name. Keep it that way
+    //   when you edit here: the decision record is the point, the acronym never was.
+    // ⚠️ TODO(jon): approve the title — it's new microcopy. Alternates that were on the table:
+    //   "A State Health Exchange", "Public-Sector Product & Org Development".
+    //
+    // CATEGORY was 'teams' until 2026-08-06. That framing was flagged in .temp/CONTENT-TODO.md §6
+    // as out of step post-pivot — "teams" reads as people-management, which /now says Jon is
+    // moving away from — and it sat unresolved for six weeks. 'organizations' matches Bello Modo
+    // and Cloudbase and describes the work at least as well. 'teams' now has no user; that's
+    // fine, `category` is a free string and not an enum.
+    slug: 'state-agency-org-development',
+    title: 'Twelve Years Inside a State Agency',
+    category: 'organizations',
     role: 'Org development, innovation',
     status: null,
     teaser:
       'Built the progression and coaching that advanced four people and gave the team a real ladder.',
-    // Scene-setter, added 2026-08-03. Jon running sound at the WAHBE all-staff picnic.
-    // Source `.temp/photo-import/wahbe-picnic-me-audio.jpg`, 5392×3592 (exactly 1.5, same as
+    // Scene-setter, added 2026-08-03. Jon running sound at the agency's all-staff picnic.
+    // Source: the picnic/audio original in `.temp/photo-import/`, 5392×3592 (exactly 1.5, same as
     // the Cloudbase hero), downsized to 1440 = 2× the 720px slot. EXIF/XMP/IPTC stripped; no
     // GPS in the original.
     //
@@ -688,7 +768,7 @@ export const projects = [
     //   someone who can't see it and deliberately doesn't mention playlists: the caption
     //   beneath already says that, and alt shouldn't repeat what's about to be read aloud.
     hero: {
-      src: '/images/work/wahbe-org-development/picnic-sound',
+      src: '/images/work/state-agency-org-development/picnic-sound',
       width: 1440,
       height: 959,
       alt: 'A man in a T-shirt leans over a folding table outdoors, connecting cables to a small audio mixer beside a laptop, with a microphone stand in front of him and a parking lot behind.',
@@ -696,7 +776,11 @@ export const projects = [
       credit: { label: 'Aaseby Photography', href: 'https://aasebyphotography.smugmug.com/' },
     },
     blurb: [
-      'It’s difficult to distill 12 years at an organization down to a few paragraphs, but the work I’m most proud of follows two key themes: supporting and innovating.',
+      // Jon's opening line, verbatim except for ONE phrase: "an organization" → "a state
+      // health-benefit exchange" (2026-08-06). That's where the anonymized naming lands, and it's
+      // deliberately the only edit to his words — it also reads more concretely than the original.
+      // TODO(jon): approve it.
+      'It’s difficult to distill 12 years at a state health-benefit exchange down to a few paragraphs, but the work I’m most proud of follows two key themes: supporting and innovating.',
       {
         heading: 'I supported',
         items: [
@@ -717,15 +801,44 @@ export const projects = [
           'Experimenting with running a business architecture practice within the organization',
         ],
       },
+      // ⚠️ CLAUDE'S DRAFT, added 2026-08-06 — the one thing the Rovo doc contributed. It's here
+      // because PLANNING.md asked to "broaden out beyond the four-promotions specifics," and this
+      // is the best-shaped story in twelve years of record: a mess in, a structure out, and
+      // leadership acted on it. That's the site's through-line stated once, at organizational
+      // scale, with numbers — which nothing else on the site does.
+      // Placed AFTER the two inventories and BEFORE the closer on purpose: the sweep, then one
+      // thing with depth, then the outcome. It must not go between the progression-framework
+      // bullet and the four-promotions paragraph — that pairing is the payoff and inserting
+      // anything there breaks it.
+      // TODO(jon): approve the paragraph, and CONFIRM THE NUMBERS. They came from Rovo reading
+      //   Confluence, not from you. Same bar as a metric or a testimonial.
+      'One example: eleven listening sessions, about 165 people, forty-odd pages of raw notes and survey responses. I read all of it and came back with nine themes. Leadership used them to set priorities.',
       'Four people have since advanced along that progression — two associate PMs to PM, two BSAs to BSA II — every member of the product staff has a clear, concrete view of what advancement takes.',
     ],
-    link: null,
+    // Added 2026-08-06. The first two values are already stated in Jon's own copy above, so they
+    // are his facts. ⚠️ TODO(jon): confirm 165 — it's the one figure sourced from Rovo rather than
+    // from you; per CLAUDE.md a metric is a public claim held to the testimonial's bar. If it
+    // doesn't check out, ship the first two and delete the third.
+    metrics: [
+      { icon: 'medal', value: '4', label: 'Promotions along the ladder' },
+      { icon: 'users', value: '7', label: 'Analysts led' },
+      { icon: 'users', value: '165', label: 'Voices synthesized' },
+    ],
+    // Added 2026-08-06, and it does a second job beyond the ask: until now this was the only
+    // project with `link: null`, which meant the PLACEHOLDER TESTIMONIAL was the last thing on
+    // the page — a block flagged "not a real quote" as the note the page closed on. The default
+    // quote-then-CTA order fixes that on its own, with no `placement` flag.
+    // TODO(jon): pick the label. Plainer alternate: 'Talk it through'. The seven already in use
+    //   are spent, and per the rule above a label must not echo the closing line it sits under —
+    //   which is why this one points at the mess rather than at the ladder.
+    link: { href: '/contact/', label: 'Bring me the messy part' },
     // ⚠️ PLACEHOLDER, added 2026-08-04 while Jon writes to former colleagues. NOBODY SAID THIS.
     // `name` and `role` are BRACKETED because he hasn't said who yet, and no name has been
     // guessed from the blurb. Fill them in from the reply, first name only (see CLAUDE.md),
     // and keep `placeholder: true` until the real words land.
-    // ⚠️ This page has NO CTA (`link: null`), so the quote is the last thing on it. That makes
-    // it the note the page closes on — worth weighting when choosing whose it is.
+    // (This page had NO CTA until 2026-08-06, which made the placeholder the last thing on it.
+    // A CTA was added above; the default quote-then-CTA order means the page now closes on the
+    // ask, so this block no longer needs `placement` and shouldn't get one.)
     // TODO(jon): the strongest version of this one is the analyst you mentored and promoted —
     //   the blurb already claims that, and a quote from them turns your claim into their
     //   account of it. An exec or a scrum-team peer speaks to the delivery work instead.
@@ -737,9 +850,10 @@ export const projects = [
         'Placeholder — a real quote goes here. Two or three sentences in their own words, concrete about what changed: what the team or the career path looked like before this work existed, and what it made possible for them. Roughly this long reads well in the block.',
       name: '[Name]',
       role: '[Role]',
-      photo: null, // → /images/work/wahbe-org-development/<name>.{webp,jpg}, square crop
+      photo: null, // → /images/work/state-agency-org-development/<name>.{webp,jpg}, square crop
     },
   },
+  */
   {
     // REWRITTEN 2026-08-03 from Jon's own narrative (.temp/cbf-project-narrative.md). The two
     // body paragraphs are his, verbatim except for mechanical fixes: `--` → a spaced em dash to
@@ -961,7 +1075,8 @@ export const projects = [
     ],
   },
   {
-    // Added 2026-07-24 (Jon): swapped in for the old "WAHBE — AI Enablement" card. Facts sourced
+    // Added 2026-07-24 (Jon): swapped in for a deleted "AI Enablement" card (the day-job agency's,
+    // now unnamed site-wide — see the state-agency project above). Facts sourced
     // from Jon's LinkedIn (.temp/linkedin-refresh.md:136): "IT Consultant (2021–2022) — stood up
     // branding, web presence, and SaaS systems/integrations end to end for a start-up medical
     // practice."

@@ -12,6 +12,29 @@
 // component, so a `.quote` rule left in the page would no longer reach this markup.
 const { quote } = Astro.props;
 
+// `quote.quote` is a string OR an array of paragraphs — same normalize-to-array move `blurb`
+// makes in [slug].astro, and for the same reason: one shape at the top, one loop below.
+//
+// The array form exists for a quote too long to sit in full above the CTA (Austin's, 2026-08-06).
+// Cutting it would be the easy fix and the wrong one — the concrete before/after is what earns
+// the block, so the whole thing ships and the page folds the tail away instead. The first
+// paragraph (or `expandAfter` of them) stays open; the rest go inside a <details>.
+//
+// <details>/<summary>, NOT a JS toggle: this is a static build and progressive enhancement is
+// real here (see the Functions' dual-mode rule). Native disclosure gets the expanded/collapsed
+// semantics, keyboard handling and in-page find for free, works with JS off, and adds no bytes.
+const paragraphs = (Array.isArray(quote.quote) ? quote.quote : [quote.quote]).filter(Boolean);
+const openCount = Math.max(1, quote.expandAfter ?? 1);
+const lead = paragraphs.slice(0, openCount);
+const rest = paragraphs.slice(openCount);
+
+// Marks on the OUTSIDE of the whole quote only — one opening, one closing. The print convention
+// (an opening mark on every paragraph) was tried first and Jon rejected it 2026-08-06: on screen
+// a stray “ at the top of paragraphs two, three and four reads as a typo, not as continuation.
+// The collapsed state therefore ends unclosed, which is what the ellipsis is for.
+const openMark = '“';
+const closeMark = '”';
+
 // Monogram stand-in while there's no headshot. Two initials max, so "Austin" gives A and a
 // full name would give two — placeholders currently carry first names only (see CLAUDE.md).
 const initials = quote.name
@@ -24,7 +47,22 @@ const initials = quote.name
 ---
 
 <figure class="quote">
-  <blockquote class="quote__text"><p>“{quote.quote}”</p></blockquote>
+  <blockquote class="quote__text">
+    {lead.map((p, i) => (
+      <p>{i === 0 ? openMark : ''}{p}{rest.length === 0 && i === lead.length - 1 ? closeMark : ''}</p>
+    ))}
+    {rest.length > 0 && (
+      <details class="quote__more">
+        <summary class="quote__more-toggle">
+          <span class="quote__more-label quote__more-label--more">Continue reading</span>
+          <span class="quote__more-label quote__more-label--less">Show less</span>
+        </summary>
+        {rest.map((p, i) => (
+          <p>{p}{i === rest.length - 1 ? closeMark : ''}</p>
+        ))}
+      </details>
+    )}
+  </blockquote>
   <figcaption class="quote__who">
     {quote.photo ? (
       <picture>
@@ -73,6 +111,33 @@ const initials = quote.name
     font-size: var(--text-lg);
     line-height: 1.5;
   }
+  .quote__text p + p,
+  .quote__more p { margin-top: var(--space-4); }
+
+  /* The disclosure. No marker — the label is the affordance, and a triangle next to a pull
+     quote reads as file-tree furniture. Body font and small, so the toggle is plainly the
+     page talking rather than part of what Austin said. */
+  .quote__more { margin-top: var(--space-4); }
+  .quote__more-toggle {
+    display: inline-flex;
+    gap: var(--space-2);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    list-style: none; /* Firefox */
+  }
+  .quote__more-toggle::-webkit-details-marker { display: none; }
+  .quote__more-toggle:hover .quote__more-label { text-decoration: underline; text-underline-offset: 3px; }
+  .quote__more-toggle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  .quote__more:not([open]) .quote__more-label--less,
+  .quote__more[open] .quote__more-label--more { display: none; }
+
+  /* Ellipsis on the last OPEN paragraph while the rest is folded away, so the cut reads as a
+     fold and not as a quote that stops mid-thought. The revealed paragraphs live inside
+     <details>, so `> p:last-of-type` can only ever be the last visible one. :has() carries it;
+     where that's missing the quote simply ends without the ellipsis. */
+  .quote__text:has(> .quote__more:not([open])) > p:last-of-type::after { content: '…'; }
   .quote__who {
     display: flex;
     align-items: center;

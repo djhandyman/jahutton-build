@@ -1,0 +1,139 @@
+---
+// The splash page — the one page a stranger can reach while Cloudflare Access guards the site.
+// All copy lives in src/data/site.js → `splash`, including the reasoning and the launch-day
+// teardown list. This file is presentation only.
+//
+// `bare` on BaseLayout is doing real work here: no header, no footer, no feedback widget.
+// Everything they link to is behind the gate this page exists because of.
+//
+// noindex, and NOT because the page is secret — because it's temporary. A "coming soon" page is
+// exactly the thin result that outranks the real home page for a while after launch, and this
+// one has a deletion date. It's also excluded from the sitemap in astro.config.mjs; the two go
+// together, same as every other hidden surface here.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, splash } from '../data/site.js';
+---
+
+<BaseLayout
+  bare
+  noindex
+  title={`${site.name} — ${splash.label}`}
+  description={splash.lead}
+>
+  <div class="splash">
+    <p class="splash__brand">{site.domain}</p>
+
+    <p class="splash__label">{splash.label}</p>
+    <h1 class="splash__headline">{splash.headline}</h1>
+    <p class="splash__lead">{splash.lead}</p>
+
+    <div class="splash__panel">
+      <h2 class="splash__panel-heading">{splash.beta.heading}</h2>
+      <p class="splash__panel-text">{splash.beta.text}</p>
+      <a class="splash__cta" href={splash.beta.ctaHref}>{splash.beta.ctaLabel}</a>
+      <p class="splash__note">{splash.beta.note}</p>
+    </div>
+
+    <div class="splash__public">
+      <h2 class="splash__public-heading">{splash.public.heading}</h2>
+      <p class="splash__public-text">
+        {splash.public.text}{' '}
+        <a href={splash.public.linkHref} rel="noopener">{splash.public.linkLabel}</a>
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Centred column, vertically settled — this page has one job and no scroll. `min-height` uses
+     svh so mobile browser chrome doesn't push the button below the fold. */
+  .splash {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4);
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-6);
+  }
+
+  .splash__brand {
+    margin: 0 0 var(--space-8);
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+
+  .splash__label {
+    margin: 0;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .splash__headline {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    line-height: var(--leading-heading);
+  }
+
+  .splash__lead {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  /* The tester panel — the only boxed thing on the page, because it's the only thing most
+     visitors here are meant to act on. Rust left edge, matching the quote block's language. */
+  .splash__panel {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius);
+  }
+
+  .splash__panel-heading {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+  }
+
+  .splash__panel-text { margin: 0 0 var(--space-4); }
+
+  .splash__cta {
+    display: inline-block;
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .splash__cta:hover { background: var(--color-text); color: var(--color-bg); }
+  .splash__cta:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+  .splash__note {
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .splash__public {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+  .splash__public-heading {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+  .splash__public-text { margin: 0; color: var(--color-text-muted); }
+</style>
