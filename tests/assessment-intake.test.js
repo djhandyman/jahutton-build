@@ -118,6 +118,63 @@ test('BEST-EFFORT: an unreachable Supabase must not cost the lead', async () => 
   assert.equal(f.count(RESEND), 1);
 });
 
+// --- The save banner ---------------------------------------------------------------------------
+//
+// Added 2026-08-07 after a beta tester's intake was lost silently on 08-06: the insert 400'd on a
+// column the remote database didn't have, the swallow worked exactly as designed, and the email
+// gave no sign. These tests pin the *visibility* of a best-effort failure, not the policy — the
+// policy is already covered above and must not change. If one of these fails, a lost row has gone
+// back to being invisible.
+
+test('a failed insert is reported in the email, with the reason', async () => {
+  const { f } = await post(valid, env.full(), [
+    [SITEVERIFY, turnstilePass],
+    [SUPABASE, fail(400, `{"code":"PGRST204","message":"Could not find the 'invest_band' column"}`)],
+    [ANTHROPIC, triageReply],
+    [RESEND, ok()],
+  ]);
+  const email = f.calls.find((c) => c.url.includes(RESEND));
+  assert.match(email.body.text, /NOT SAVED/, 'the email Jon reads must say the row is missing');
+  // The PostgREST body is the whole diagnosis — without it the banner says "something broke".
+  assert.match(email.body.text, /PGRST204/, 'and must carry enough to diagnose it');
+  assert.match(email.body.text, /invest_band/);
+  // The banner is an alert about the email, not part of the lead: it goes above the triage.
+  assert.ok(
+    email.body.text.indexOf('NOT SAVED') < email.body.text.indexOf('TRIAGE'),
+    'banner sits above the triage block',
+  );
+});
+
+test('an unreachable Supabase is reported too, not just a rejected one', async () => {
+  const { f } = await post(valid, env.full(), [
+    [SITEVERIFY, turnstilePass],
+    [SUPABASE, boom],
+    [ANTHROPIC, triageReply],
+    [RESEND, ok()],
+  ]);
+  const email = f.calls.find((c) => c.url.includes(RESEND));
+  assert.match(email.body.text, /NOT SAVED/);
+});
+
+test('an unconfigured Supabase says so rather than looking like a failure', async () => {
+  // Distinct from a broken insert: nothing is wrong, there's just no database on this deploy.
+  const { res, f } = await post(valid, env.minimal({ TURNSTILE_SECRET_KEY: 'test-secret' }), [
+    [SITEVERIFY, turnstilePass],
+    [RESEND, ok()],
+  ]);
+  assert.equal(res.status, 200);
+  assert.equal(f.hit(SUPABASE), false);
+  const email = f.calls.find((c) => c.url.includes(RESEND));
+  assert.match(email.body.text, /not configured/i);
+});
+
+test('a saved row adds no banner at all', async () => {
+  const { f } = await post();
+  const email = f.calls.find((c) => c.url.includes(RESEND));
+  assert.doesNotMatch(email.body.text, /NOT SAVED/, 'the normal case must stay clean');
+  assert.doesNotMatch(email.body.text, /not configured/i);
+});
+
 test('BEST-EFFORT: a failed triage still emails, just without the verdict', async () => {
   const { res, f } = await post(valid, env.full(), [
     [SITEVERIFY, turnstilePass],

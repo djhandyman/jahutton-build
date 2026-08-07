@@ -216,7 +216,24 @@ async function triage(env, f) {
   };
 }
 
-function buildEmail(f, t) {
+// `saveError` is null when the row landed in Supabase, and a reason string when it didn't.
+//
+// WHY THIS BANNER EXISTS (2026-08-07). The Supabase insert is best-effort by design — the email is
+// the lead, so a dead database must never cost one. That policy is right and isn't changing. What
+// was wrong is that the swallow left no mark anywhere Jon looks: on 2026-08-06 a beta tester's
+// intake 400'd on a column that existed in supabase/migrations/0003 but had never been applied to
+// the remote project, and the notification email arrived looking completely normal. The only trace
+// was a console.error in the Pages log stream, which nobody watches, so it surfaced two days later
+// when Jon happened to open the table and found it empty.
+// The failure is silent BY DESIGN; the fix is to make it visible in the one artifact that is
+// guaranteed to be read. Banner goes above the triage block on purpose — it's an operational
+// alert about this email, not part of the lead.
+function buildEmail(f, t, saveError) {
+  const saveBlock = saveError
+    ? `⚠️  NOT SAVED — this intake is not in the database. You have it here only.\n` +
+      `    ${saveError}\n\n`
+    : '';
+
   const triageBlock = t
     ? `TRIAGE (Claude)\n` +
       `  Fit: ${t.fit}\n` +
@@ -227,6 +244,7 @@ function buildEmail(f, t) {
 
   return (
     `NEW BUILD ASSESSMENT INTAKE\n\n` +
+    saveBlock +
     triageBlock +
     `\n— — —\n` +
     `From:     ${f.name} <${f.email}>${f.org ? ` · ${f.org}` : ''}\n` +
@@ -290,7 +308,11 @@ export async function onRequestPost(context) {
 
   // 1) Save to Supabase — best-effort. A paused/unconfigured project must not lose the lead;
   //    the email below is the real notification.
+  //    Whatever goes wrong here is recorded in `saveError` and reported in the email — see
+  //    buildEmail. The request outcome is unaffected either way; this is a note to Jon, not a
+  //    change of policy.
   let savedId = null;
+  let saveError = null;
   if (env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY) {
     try {
       const saved = await insertIntake(env, {
@@ -308,9 +330,16 @@ export async function onRequestPost(context) {
         referral: f.referral || null,
       });
       savedId = saved?.id ?? null;
+      // A 2xx that somehow carried no row back still means there's nothing to go and look at.
+      if (!savedId) saveError = 'The insert succeeded but returned no row id.';
     } catch (e) {
       console.error('intake insert failed (continuing to email):', e);
+      // The message carries the PostgREST body, which is the whole diagnosis — a missing column
+      // reads as `PGRST204 ... 'invest_band' column`. Clipped: it goes in an email, not a log.
+      saveError = clip(e?.message || String(e), 400);
     }
+  } else {
+    saveError = 'Supabase is not configured for this deploy — email only.';
   }
 
   // 2) Triage — best-effort. Any failure is swallowed; the email still goes with a note.
@@ -345,7 +374,7 @@ export async function onRequestPost(context) {
         to: env.CONTACT_TO || DEFAULT_TO,
         reply_to: f.email,
         subject: `Build Assessment intake — ${f.name}${t ? ` [${t.fit}]` : ''}`,
-        text: buildEmail(f, t),
+        text: buildEmail(f, t, saveError),
       }),
     });
     if (!r.ok) {
