@@ -151,5 +151,30 @@ export const about = {
         ],
       ],
     },
+    // Added 2026-08-09. JON'S WORDS — he rewrote two Claude drafts down to these two sentences,
+    // which is the note worth keeping: the register here is a stated position and nothing else.
+    // Both drafts failed the same way. They ran to three paragraphs, they narrated why he wants
+    // this ("Working alone suits me... It's also a limit"), and they got specific about a thing
+    // he hasn't decided — naming the kinds of people and the ownership split. "Creative and
+    // business partnerships" is deliberately open, because the intention is. Don't sharpen it.
+    // Don't lengthen it. The second draft also deleted the closing ask, on the theory that it
+    // competed with /services; he put one back. It stays, and "reach out" links to /contact/
+    // (Jon, 2026-08-09) — an inline link, not a CTA pill, so the page keeps exactly one button.
+    //
+    // ⚠️ Mechanical fix to his text, logged per the convention at the top of this file:
+    //   · "There`s" → "There’s". A BACKTICK, which renders literally on the live page. Third
+    //     time this has been caught in the data files — see the same warning in site.js.
+    // It sits last in `sections`: a forward-looking note shouldn't outrank the built things.
+    {
+      heading: 'Looking ahead',
+      body: [
+        'I am open to discussions about creative and business partnerships aligned with the work I do.',
+        [
+          'There’s no timeline currently, but if you have an idea or are starting something new that might be a good fit, please ',
+          { href: '/contact/', text: 'reach out' },
+          '.',
+        ],
+      ],
+    },
   ],
 };
