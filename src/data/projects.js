@@ -1121,33 +1121,43 @@ export const projects = [
     // His last line turns to the reader, so the pill is the ask. Label kept plain and distinct
     // from the other contact pills per the rule above.
     link: { href: '/contact/', label: 'Get in touch' },
-    // ⚠️ PLACEHOLDER, added 2026-08-04 at Jon's request to show the block on this page.
-    // NOBODY SAID THIS. Jon supplied the attribution — "Timothy, Physician", one of the two
-    // Atlanta founders the blurb opens with — so `placeholder: true` and the visible "not a
-    // real quote" flag it prints are the ONLY things standing between this block and a
-    // fabricated quote attributed to a named, identifiable doctor. Do not delete that line
-    // until Timothy's actual words are in the `quote` field. Deleting it is the single step
-    // that says "Timothy said this."
+    // ✅ REAL as of 2026-08-09 — Timothy's own words, supplied by Jon, replacing the placeholder
+    // that stood here since 2026-08-04. `placeholder: false` is correct BECAUSE the quote is
+    // genuine; the flag disappearing is this site saying "a named person said this." Never flip
+    // it back to tidy the page up.
+    // Two things went with the flag, both per the notes that stood here:
+    //   · `placement: 'after-cta'` deleted. It existed only so a block marked "not a real quote"
+    //     wouldn't stand between the reader and the ask, and its own comment said to remove it
+    //     the day the real words landed. The page is back to the site-wide quote-then-CTA order.
+    //   · `photo` added 2026-08-10. Permission is direct: Timothy is Jon's younger brother and
+    //     Jon confirmed he has the right to use it. That also settles the old open question of
+    //     whether a named physician is comfortable being quoted about a COVID-era venture that
+    //     shut down in 2022 — a surname is still his to offer, and stays off until he does.
     // `org` is deliberately unset: the org is the page's own title, and "Physician, Ascension
     // Medicines" under a heading that already says Ascension Medicines just repeats itself.
-    // To make it live: replace `quote` with what he said, add his `photo`, then remove
-    // `placeholder`.
-    // TODO(jon): get the real one, and note this is a harder ask than the Chelan quote — the
-    //   business shut down in 2022 and he's a named physician being quoted about a COVID-era
-    //   treatment venture. Worth asking whether he wants a surname, and confirming in writing
-    //   that he's happy to be named on a public site before this goes live.
+    // The em dash in "broad—from coding" is closed up because that is how HE typed it; the
+    // spaced/closed inconsistency across this file is Jon's open call, not something to
+    // normalise inside a real person's quotation.
+    // TODO(jon): approve the photo's alt text — it describes a real person and it's drafted,
+    //   not his.
     testimonial: {
-      placeholder: true,
-      // Puts the CTA ABOVE this block — the only page that inverts the default (Jon,
-      // 2026-08-04). While the quote is a placeholder it shouldn't stand between the reader
-      // and the ask; delete this line when Timothy's real words land and the page returns to
-      // the site-wide order with no other change.
-      placement: 'after-cta',
+      placeholder: false,
       quote:
-        'Placeholder — a real quote goes here. Two or three sentences in his own words, concrete about what changed: what standing up the practice looked like from the clinical side, and what it meant to be seeing patients in under three months. Roughly this long reads well in the block.',
+        'I enthusiastically recommend Jonathan Hutton for your building and consulting needs. He is gifted at looking at projects holistically, while also noting all the small details. His skillset is broad—from coding to carpentry to consumer marketing. His attention to workflows was especially helpful to my start-up. I am certain that, regardless your project, Jonathan can help move the needle.',
       name: 'Timothy',
       role: 'Physician',
-      photo: null, // → /images/work/ascension-medicines/<name>.{webp,jpg}, square crop
+      // ⚠️ `src` is EXTENSIONLESS and both files must exist — the component appends `.webp` for
+      // the <source> and `.jpg` for the <img>, so a missing pair 404s the fallback with a green
+      // build. Converted from `.temp/photo-import/tim-headshot.jpeg` with the sharp inside astro:
+      // the source was already square at 800×800 and carried no EXIF at all (nothing to strip,
+      // no GPS to check), so this is a straight resize to 224px = 4× the 56px the avatar renders
+      // at. The original stays out of public/ and isn't deployed.
+      photo: {
+        src: '/images/work/ascension-medicines/tim-headshot',
+        width: 224,
+        height: 224,
+        alt: 'Timothy, smiling, in round wire-rimmed glasses, a brown tweed jacket and an open-collared white shirt.',
+      },
     },
   },
   {
