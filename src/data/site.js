@@ -51,7 +51,12 @@ export const site = {
 //
 // TODO(jon): approve this copy — it's drafted, not yours yet.
 export const banner = {
-  enabled: import.meta.env.PUBLIC_BETA_BANNER !== 'false',
+  // OFF as of 2026-09-02 (Jon): the Cloudflare Access policies were removed so the site could
+  // be submitted with an Anthropic application. A strip announcing a private beta on a site
+  // anyone can now reach reads as unfinished, and it points at a feedback widget that is also
+  // off. Previous value, to restore the beta: `import.meta.env.PUBLIC_BETA_BANNER !== 'false'`
+  // — the PUBLIC_BETA_BANNER Pages env var can no longer force it on while this is a literal.
+  enabled: false,
   label: 'Private beta',
   // Kept to two sentences: the fact, then the ask. Any longer and it stops being a banner.
   text: 'This site isn’t public yet — thanks for agreeing to test it out. Please use the feedback button below to provide any inputs you have.',
@@ -64,59 +69,15 @@ export const banner = {
   dismissLabel: 'Dismiss',
 };
 
-// The splash page at /welcome/ — the ONE page a stranger can reach while Cloudflare Access
-// guards the rest of the site (added 2026-08-06).
+// The site-wide feedback widget — the floating tab bottom-right, rendered from BaseLayout so
+// it is reachable from every page. Content is data, so its on/off switch lives here too.
 //
-// Why it exists: Access intercepts before the request reaches this origin, so a locked-out
-// visitor sees Cloudflare's login screen and nothing you can author. The only way to show them
-// anything is to hand them a page Access doesn't guard. This is that page: it teases the site,
-// tells a beta tester how to get in, and gives everyone else somewhere to go.
-//
-// ⚠️ It is only reachable once /welcome/ is BYPASSED in the Access application. Until that's
-//   configured in the Zero Trust dashboard this page builds and deploys and still 302s to the
-//   login screen like everything else. The page is half the fix; the bypass is the other half.
-//
-// It renders through BaseLayout's `bare` mode — no header, no footer, no feedback widget —
-// because every one of those links somewhere gated. A nav bar whose every item is a login wall
-// is worse than no nav bar, and the feedback widget would POST to /api/feedback, which Access
-// blocks too.
-//
-// AT LAUNCH: delete this object, delete src/pages/welcome.astro, drop the /welcome sitemap
-// exclusion in astro.config.mjs, and remove the Access application entirely. Four things, and
-// they all go together — this whole surface exists only while the door is locked.
-//
-// TODO(jon): approve this copy — it's drafted, not yours yet. The tease especially: it reuses
-//   the real headline, which may be the right call (consistency) or may burn the reveal.
-export const splash = {
-  label: 'Private beta',
-  // The tease. Deliberately the same headline the real home page opens with — a stranger who
-  // comes back at launch should recognize the place, not meet a different site.
-  headline: 'Design, build, and ship.',
-  lead: 'A new site for the work I do — software, systems, teams, and the structure that holds them together. It opens soon.',
-
-  // For the people Jon actually invited.
-  beta: {
-    heading: 'If you’re here to look it over',
-    // Cloudflare Access one-time PIN: the visitor types the email the invitation went to and
-    // Cloudflare emails a six-digit code. There is no password and no account to create — which
-    // is worth saying plainly, because "sign in" makes people brace for a signup.
-    text: 'Thanks — genuinely. Use the email address your invitation went to. You’ll get a six-digit code by email: no password, no account to make.',
-    ctaLabel: 'Enter the site',
-    // Points at the guarded site. Clicking it is what triggers the Access prompt — this page
-    // can't do the authenticating itself, and shouldn't pretend to.
-    ctaHref: '/',
-    // Shown under the button, small. The honest caveat: codes go to invited addresses only.
-    note: 'The code only goes to addresses on the invite list. If yours bounces, tell me and I’ll add it.',
-  },
-
-  // For everyone else who typed the domain in. No contact form here — /contact is guarded too,
-  // so the only honest outbound link is one that already lives in this file.
-  public: {
-    heading: 'Everyone else',
-    text: 'Nothing to see yet, but it won’t be long. Find me in the meantime:',
-    linkLabel: 'LinkedIn',
-    linkHref: 'https://www.linkedin.com/in/jahutton/',
-  },
+// OFF as of 2026-09-02 (Jon), same reason as the beta banner above: with Access removed the
+// site is open to anyone, and the widget exists to collect notes from a handful of invited
+// testers, not from the general public. Flip `enabled` back to true to bring it back — the
+// component and the /api/feedback Function are untouched.
+export const feedback = {
+  enabled: false,
 };
 
 // Contact page copy. The `prompts` list is the CTA's real work: it lets a visitor

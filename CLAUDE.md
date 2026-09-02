@@ -116,21 +116,17 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 
 - **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
   `notes`, `notes/[slug]`, `assessment`, `assessment/intake`, `privacy`, `thanks`,
-  `thanks/build-assessment`, `welcome`, `404`. Each is
+  `thanks/build-assessment`, `404`. Each is
   a thin `.astro` file wrapping `BaseLayout` and rendering data. `rss.xml.js` is the site's
   **only endpoint** — a `.js` file exporting `GET`, prerendered to `dist/rss.xml`.
-  **`/welcome` is the splash, and it is temporary** (2026-08-06). The site is behind a Cloudflare
-  Access application on the apex — every URL, including `robots.txt` and the sitemap, 302s to a
-  login screen — and Access intercepts *before* the request reaches this origin, so a locked-out
-  visitor can't be shown anything this repo authors. `/welcome` is the one page Access is meant
-  to let through: the tease, how an invited tester gets in, a LinkedIn link for everyone else.
-  Copy and the full reasoning live in `site.js` → `splash`.
-  **It does nothing until `/welcome` is bypassed in the Zero Trust dashboard** — until then it
-  ships and 302s like every other page. Four things are deleted together at launch: the `splash`
-  object, the page, the sitemap exclusion, and the Access application.
-  ⚠️ **The gate currently contradicts a decision on record.** `site.js` says the site stays
-  crawlable through the beta (2026-07-27, Jon) so early indexing accumulates — Access has been
-  preventing exactly that the whole time. Don't quietly "fix" either side; they're Jon's call.
+  **The site is public as of 2026-09-02.** Jon removed the Cloudflare Access application so the
+  site could go out with an Anthropic application. `/welcome` — the splash that existed only to
+  give a locked-out visitor something to read — is deleted, along with the `splash` object, the
+  sitemap exclusion, and `BaseLayout`'s `bare`/`noindex` props, whose only consumer it was. All
+  of it is in git history if a temporary page is ever needed again. The 2026-07-27 decision to
+  stay crawlable through the beta is now actually in effect, which it never was while the gate
+  was up. **The private-beta banner and the feedback widget are off** in the same change, by
+  `banner.enabled` and the new `feedback.enabled` in `src/data/site.js`.
   **`/notes` is currently hidden** (2026-08-03), by the same two switches as `/now` and for a
   related reason: the surface shipped before the writing exists, and pointing the nav at
   "Nothing here yet" advertises an empty room. The commented-out nav entry in `src/data/site.js`
@@ -307,16 +303,14 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 - **`BaseLayout.astro`** wraps every page: imports fonts + global CSS, renders `Banner`/`Header`/
   `Footer`, sets `<title>`/description/canonical/OG tags (overridable via props), skip link.
   Two things that are easy to miss because no page opts into them: **`FeedbackWidget` renders
-  site-wide** from here (so the feedback Function is reachable from every page, not just one),
-  and so does the **`/rss.xml` autodiscovery `<link>`** — site-wide because the layout has no
-  `<head>` slot for a page to add one. The `ogType`/`publishedTime`/`modifiedTime` props exist
+  site-wide** from here when `feedback.enabled` is true (so the feedback Function is reachable
+  from every page, not just one — it is **off** as of 2026-09-02), and so does the **`/rss.xml`
+  autodiscovery `<link>`** — site-wide because the layout has no `<head>` slot for a page to
+  add one. The `ogType`/`publishedTime`/`modifiedTime` props exist
   for `/notes/<slug>` only; their defaults leave every other page's `<head>` byte-identical.
-  Two more props, added 2026-08-06 for `/welcome/` and used by nothing else: **`bare`** drops
-  `Banner`/`Header`/`Footer`/`FeedbackWidget` while keeping the head, fonts and styles — for a
-  page rendering *outside* the guarded site, where every piece of furniture links somewhere the
-  visitor can't reach and the widget would POST to a blocked endpoint; and **`noindex`** emits
-  the robots meta tag, for a page that's temporary rather than private (it pairs with a sitemap
-  exclusion — neither does the job alone). Both default false and change no other page's output.
+  The `bare` and `noindex` props were deleted with `/welcome` on 2026-09-02; nothing passes them
+  now. Recover them from git history rather than rewriting them if a page ever again needs to
+  render without furniture or out of the index.
 
 - **Styling** is two plain CSS files, no framework:
   - `src/styles/tokens.css` — the design system: color roles, the Fraunces/Inter type scale, spacing,

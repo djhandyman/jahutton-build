@@ -6,7 +6,7 @@ import Banner from '../components/Banner.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FeedbackWidget from '../components/FeedbackWidget.astro';
-import { site } from '../data/site.js';
+import { site, feedback } from '../data/site.js';
 
 const {
   title = `${site.name} — Builder`,
@@ -22,17 +22,6 @@ const {
   ogType = 'website',
   publishedTime = null,
   modifiedTime = null,
-  // Bare mode: head, styles and fonts as normal, but none of the furniture (2026-08-06, for
-  // /welcome/). It exists for a page that renders OUTSIDE the guarded site, where every piece
-  // of furniture points somewhere the visitor can't go — the nav links are login walls, the
-  // footer repeats them, and FeedbackWidget POSTs to /api/feedback, which Access blocks.
-  // Default false, so every other page's output is byte-identical.
-  bare = false,
-  // Emits <meta name="robots" content="noindex">. For a page that is temporary rather than
-  // secret — /welcome/ is a coming-soon splash with a deletion date, and a thin page like that
-  // is exactly what lingers in results next to the real home page after launch. Pairs with the
-  // sitemap exclusion in astro.config.mjs; neither works alone.
-  noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -46,7 +35,6 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -83,12 +71,12 @@ const ogImageUrl = new URL(ogImage, Astro.site).href;
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    {!bare && <Banner />}
-    {!bare && <Header />}
+    <Banner />
+    <Header />
     <main id="main">
       <slot />
     </main>
-    {!bare && <Footer />}
-    {!bare && <FeedbackWidget />}
+    <Footer />
+    {feedback.enabled && <FeedbackWidget />}
   </body>
 </html>

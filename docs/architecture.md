@@ -27,7 +27,6 @@ pages and one endpoint.
 | `/notes`, `/notes/<slug>` | The writing surface. **Built but hidden** — see below. |
 | `/now` | **Built but hidden** — see below. |
 | `/privacy` | What the forms collect, checked against the Functions. |
-| `/welcome` | Splash for anyone who reaches the site while Cloudflare Access guards it. **Temporary** — deleted at launch. |
 | `/404` | |
 | `/rss.xml` | The only endpoint. Hand-written RSS 2.0, summary only. |
 
@@ -104,6 +103,22 @@ them in sync. `global.css` builds on it. No framework, no CSS library.
 Newest first. Superseded entries are kept, marked, and dated — knowing what was tried is most of
 this file's value.
 
+**2026-09-02** — **The Cloudflare Access gate came off**, and `/welcome` went with it. Jon removed
+the Access policies so the site could be submitted with an Anthropic application, which makes the
+site public and resolves the contradiction logged on 2026-08-06: the 2026-07-27 decision to stay
+crawlable is now actually in effect. Three of that entry's four deletions are done here — the
+`splash` object, `src/pages/welcome.astro`, and the `/welcome` sitemap exclusion — the fourth was
+the Access application itself, which Jon deleted in the dashboard. `bare` and `noindex` on
+`BaseLayout` went too: `/welcome` was their only consumer, and a prop nothing passes is a prop
+that drifts. Both are recoverable from git history if a second temporary page ever needs them.
+
+**2026-09-02** — The **private-beta banner and the feedback widget are off**, same cause. The
+banner announces a beta to an audience that no longer exists, and the widget collects notes from
+invited testers, not from the public. `banner.enabled` is now a literal `false`, so the
+`PUBLIC_BETA_BANNER` build var no longer controls it; the widget gained a matching
+`feedback.enabled` switch in `site.js` and a guard in `BaseLayout`, rather than a commented-out
+line in the layout. Neither component nor `/api/feedback` was touched — this is two booleans.
+
 **2026-08-07** — The state-agency project is **hidden** — commented out in `src/data/projects.js`,
 not deleted, taking the site from ten detail pages to nine. It was a career summary in a container
 that promises a case study: no org name (anonymized the day before), no live link, no `source`,
@@ -133,9 +148,9 @@ emailed six-digit code, which is what "email auth" and "access code" both resolv
 LinkedIn link for everyone else. It renders `bare` — no header, footer or feedback widget —
 because each of those points somewhere gated, and a nav whose every link is a login wall is worse
 than no nav. `noindex` plus a sitemap exclusion because the page is *temporary*, not private.
-**It does nothing until `/welcome` is bypassed in the Access application**; the page is half the
-fix and the dashboard is the other half. Four things get deleted at launch and they go together:
-the `splash` object, the page, the sitemap exclusion, and the Access application itself.
+**It did nothing until `/welcome` was bypassed in the Access application**; the page was half the
+fix and the dashboard was the other half. Four things were to be deleted at launch, and they were,
+on 2026-09-02 — see the top of this log. **Superseded.**
 
 **2026-08-06** — A testimonial `quote` may now be an **array of paragraphs**, with everything past
 the first folded into a native `<details>` inside `ProjectTestimonial`. Austin's quote is long and
