@@ -55,6 +55,9 @@
 //       note    — optional muted line INSTEAD of shots, for a group that's real work but has
 //                 nothing shippable to show yet. Say plainly that it's coming; don't dress up
 //                 an empty section with half a before/after.
+//       link    — optional { href, label } alongside a `note`, for a group whose work lives on
+//                 another page (the kitchen → /kitchen, 2026-11-12). Renders as a filled box with
+//                 a ghost pill instead of the dashed "pending" note.
 //     `img` is { src, width, height, alt } where `src` is the EXTENSIONLESS public path — the
 //     page appends .webp for the <source> and .jpg for the <img>, matching the headshot/hero
 //     convention. width/height are the real pixel dims (they reserve layout space so the page
@@ -637,9 +640,15 @@ export const projects = [
           },
         ],
       },
+      // 2026-11-12: the kitchen got its own page at /kitchen (eleven stages, too big for this
+      // gallery), so the "coming soon" note became a pointer to it. Jon chose to keep ONE remodel
+      // card on /work rather than add a second. Note + link copy is DRAFTED — needs his sign-off.
+      // The label must not echo "orders of magnitude larger" in the body above — same rule as
+      // the CTA pills.
       {
         heading: 'Kitchen',
-        note: 'Kitchen details coming soon.',
+        note: 'Eleven stages, from demo to the reveal, on a page of its own.',
+        link: { href: '/kitchen/', label: 'See the kitchen' },
       },
     ],
   },

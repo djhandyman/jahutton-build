@@ -132,7 +132,24 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   The public reason is "spam, and the offer is being reworked." Anything more personal than that
   stays out of the repo — comments, docs and commit messages included.
 
-- **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
+- **`/kitchen`** (added 2026-11-12) is the one page that isn't a thin wrapper over a shared
+  shape: the kitchen remodel in eleven stages, for people who missed the reveal party and as the
+  kitchen half of the remodel case study. Copy in `src/data/kitchen.js`; photos and captions are
+  **generated** — `npm run kitchen:images` (`scripts/kitchen-images.mjs`) reads the gitignored
+  `source-assets/kitchen-reveal/` and writes `public/images/kitchen/` plus
+  `src/data/kitchen-photos.js`. **Never hand-edit kitchen-photos.js**; captions come verbatim from
+  the party CSV. **Held items** (`heldPhotos`, `hold:` fields) stay off the page, and the script
+  keeps held photos out of `public/` entirely. Release one by deleting its line and re-running the
+  script; never by copying a file in by hand. **Jon released everything that had been withheld
+  for privacy on 2026-11-13** (people, the panel, the permit number, listing and exterior photos,
+  window views, the $75 window, the cost-share chart) after reviewing it in a local build — don't
+  re-hold any of it on your own judgement. One photo (04-07) is still held: his editorial cut.
+  **Regenerating wipes `public/images/kitchen/`, and a running dev server then 404s every photo
+  until it is restarted.** The "Reveal" showcase slots and the before/after "afters" are
+  placeholders until the staged photos exist. **`extraPhotos`** adds unprinted stills (converted
+  to JPEG in `Extras/`); their id is their position in the story, and their captions are Claude's
+  drafts — the CSV's are Jon's.
+- **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `kitchen`, `services`, `about`, `now`, `contact`,
   `notes`, `notes/[slug]`, `assessment`, `assessment/intake`, `privacy`, `thanks`,
   `thanks/build-assessment`, `404`. Each is
   a thin `.astro` file wrapping `BaseLayout` and rendering data. `rss.xml.js` is the site's
