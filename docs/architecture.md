@@ -104,6 +104,21 @@ them in sync. `global.css` builds on it. No framework, no CSS library.
 Newest first. Superseded entries are kept, marked, and dated — knowing what was tried is most of
 this file's value.
 
+**2026-11-13** — **The forms and the offer pages are off.** Two reasons, one change. The
+contact form had delivered nothing but bot spam since 2026-10-18, and the offer on `/services`
+and `/assessment` is being reworked. So: `contact.formEnabled` is false and `/contact` shows a
+LinkedIn link where the form was; `/services`, `/assessment`, `/assessment/intake` and both
+`/thanks` pages are parked under a leading underscore in `src/pages/`, which keeps them out of
+the build without deleting them (`services.enabled` drops the links that pointed at them, and
+the Services nav entry is commented out). Those URLs 404 — unlike `/now` and `/notes`, which
+stay built and are only unlinked — because a hidden page that still resolves would have kept
+the offer live for anyone arriving from a search result. `functions/api/_middleware.js` closes
+all three form endpoints (503 to a fetch, 303 to `/contact/` for a native post), since the spam
+was arriving at the URL and never needed the page. The Functions and their tests are untouched;
+the route table and Functions section above describe the site with everything switched on.
+Reopening is: rename the pages back, flip the two flags, restore the nav line, and take the
+endpoint out of `CLOSED` — `tests/build-output.test.js` fails if a form is built over a closed
+endpoint.
 **2026-11-13** — **Turnstile is strict on contact too.** It had been lenient (verify a token only
 when present) so the form still sent with JavaScript off, with the honeypot as the fallback. Once
 the site went public, bots used exactly that path: all 14 contact emails from 2026-10-18 to

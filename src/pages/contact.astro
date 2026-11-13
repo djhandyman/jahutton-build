@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactForm from '../components/ContactForm.astro';
-import { socials, contact } from '../data/site.js';
+import { socials, contact, services } from '../data/site.js';
 ---
 <BaseLayout
   title="Contact — Jonathan A. Hutton"
@@ -20,13 +20,25 @@ import { socials, contact } from '../data/site.js';
         <p class="contact__soft">{contact.promptsFooter}</p>
         {/* Sits after promptsFooter on purpose: the free door ("you just want to talk")
             is the one the reader meets first. This is a signpost, not a pitch. */}
-        <p class="contact__soft contact__assessment">
-          {contact.assessmentNudge.text}{' '}
-          <a href={contact.assessmentNudge.href}>{contact.assessmentNudge.linkLabel}</a>{' '}
-          {contact.assessmentNudge.tail}
-        </p>
+        {services.enabled && (
+          <p class="contact__soft contact__assessment">
+            {contact.assessmentNudge.text}{' '}
+            <a href={contact.assessmentNudge.href}>{contact.assessmentNudge.linkLabel}</a>{' '}
+            {contact.assessmentNudge.tail}
+          </p>
+        )}
 
-        <ContactForm />
+        {/* The form is behind `contact.formEnabled` (src/data/site.js). While it's off, one
+            line says so and gives the visitor somewhere to go — a contact page with nothing
+            to act on reads as broken. */}
+        {contact.formEnabled ? (
+          <ContactForm />
+        ) : (
+          <p class="contact__form-off">
+            {contact.formOffNote.text}{' '}
+            <a href={contact.formOffNote.href} rel="noopener">{contact.formOffNote.linkLabel}</a>.
+          </p>
+        )}
       </div>
 
       <aside class="contact__aside">
@@ -80,6 +92,10 @@ import { socials, contact } from '../data/site.js';
     height: 1px;
     background: var(--color-accent);
   }
+
+  /* Stands where the form stood, so it gets the form's room above it rather than sitting
+     tight under the prompt list like one more muted footnote. */
+  .contact__form-off { max-width: var(--measure); margin-top: var(--space-8); }
 
   .contact__availability {
     margin-top: var(--space-6);

@@ -85,6 +85,19 @@ export const feedback = {
 // "zero-to-one"). Each line is anchored to work that actually exists on /work —
 // keep it that way, and keep the list short enough to scan in one pass.
 export const contact = {
+  // OFF as of 2026-11-13 (Jon). Every message the form delivered from 2026-10-18 to 2026-11-12
+  // was bot spam, so it is off the page until a stronger spam check is in place. While this is
+  // false, /contact renders `formOffNote` where the form was, and nothing else on the page
+  // changes. ⚠️ Moves together with CLOSED in functions/api/_middleware.js — the endpoint is
+  // shut there, because a bot posts to the URL and never needed the page.
+  formEnabled: false,
+  // What /contact shows in place of the form. Same three-part shape as `assessmentNudge`.
+  // TODO(jon): approve — drafted, not yours yet.
+  formOffNote: {
+    text: 'The contact form is offline for now. You can reach me on',
+    linkLabel: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/jahutton/',
+  },
   lead: "Tell me what you're stuck on. I'll tell you whether I'm the right person to help.",
   promptsHeading: 'You might be here because:',
   prompts: [
@@ -196,6 +209,15 @@ export const contact = {
 // intends to leave, and this site is built for the other side of that. Read the capacity math in
 // that doc as the old constraint, not the plan.
 export const services = {
+  // OFF as of 2026-11-13 (Jon): the offer is being reworked, so /services, /assessment and
+  // /assessment/intake are not built. The pages are PARKED, not deleted — src/pages/_services.astro,
+  // _assessment.astro and _assessment/ carry a leading underscore, which is Astro's own way of
+  // keeping a file out of the router (the same convention as _TEMPLATE.md in the notes folder).
+  // This flag is the other half: it drops the links that pointed at them (today, the assessment
+  // line on /contact). To bring the offer back: rename the three, set this to true, uncomment the
+  // Services nav entry below, and take /api/assessment-intake out of CLOSED in
+  // functions/api/_middleware.js. All of the copy in this object and in `assessment` is untouched.
+  enabled: false,
   title: 'How I work',
   // His answer to "someone at a party asks what you do" — verbatim, and it earns the top of
   // the page for the same reason it worked at the party: no jargon, and it covers wires and
@@ -368,6 +390,9 @@ export const assessment = {
 
 // Post-submit confirmation copy. Lives here rather than in the page because there are now two
 // thanks pages rendering it — /thanks/ and /thanks/build-assessment/ (see those files for why).
+// Both are parked as of 2026-11-13 (src/pages/_thanks/): they are where a no-JS form post lands,
+// and with the forms off nothing can land there. They come back with the contact form — and only
+// if the form that comes back still has a path that works without JavaScript.
 export const thanks = {
   title: 'Thanks',
   body: 'Your message is on its way — I’ll get back to you soon.',
@@ -383,7 +408,10 @@ export const nav = [
   // Uncomment this line and drop the matching /notes exclusion from astro.config.mjs
   // together, on the day the first note publishes. Both say so.
   // { label: 'Notes', href: '/notes' },
-  { label: 'Services', href: '/services' },
+  // Pulled 2026-11-13 (Jon) with the page itself — see `services.enabled` above. Unlike /now
+  // and /notes, /services is not built at all while it's off, so there is no sitemap rule to pair
+  // with this line.
+  // { label: 'Services', href: '/services' },
   { label: 'About', href: '/about' },
   // Pulled from the nav 2026-07-29 (Jon). The page still builds and still works at /now/ —
   // it's unlinked and out of the sitemap, not deleted. Reason: its "Exploring next" section

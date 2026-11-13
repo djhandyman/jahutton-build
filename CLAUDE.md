@@ -114,6 +114,24 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   to this public repo, so a reader can check it in a minute. Adding a package to this feature
   falsifies all five at once.
 
+- **The forms and the offer are OFF as of 2026-11-13** (Jon). Everything below about
+  `/services`, `/assessment`, `/thanks` and the contact form describes machinery that is parked,
+  not deleted. Four things moved together, and they move back together:
+  1. `contact.formEnabled: false` in `site.js` — `/contact` renders `contact.formOffNote` (a
+     LinkedIn link) where `ContactForm` was.
+  2. `services.enabled: false` in `site.js` drops links to the offer, and the Services nav entry
+     is commented out.
+  3. `src/pages/_services.astro`, `_assessment.astro`, `_assessment/`, `_thanks/` — a leading
+     underscore keeps a page out of Astro's router, so these URLs **404**. Deliberately not the
+     `/now` pattern (built but unlinked): an indexed page that still resolves keeps the offer live.
+  4. `functions/api/_middleware.js` — `CLOSED` lists all three form endpoints; they answer 503
+     (fetch) or 303 to `/contact/` (native post) and the handlers are never reached. Removing a
+     form from a page doesn't stop a bot that posts to the URL. The handlers and their tests are
+     untouched; `tests/middleware.test.js` pins the switch, and `tests/build-output.test.js`
+     fails if a form is built over a closed endpoint or a parked page starts building.
+  The public reason is "spam, and the offer is being reworked." Anything more personal than that
+  stays out of the repo — comments, docs and commit messages included.
+
 - **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
   `notes`, `notes/[slug]`, `assessment`, `assessment/intake`, `privacy`, `thanks`,
   `thanks/build-assessment`, `404`. Each is
