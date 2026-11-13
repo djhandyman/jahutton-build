@@ -192,7 +192,9 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 - **Two thanks pages, not a query param.** `/thanks/` is the default no-JS redirect target;
   `/thanks/build-assessment/` is the same page plus the Build Assessment offer. They're separate
   prerendered pages because this is a **static build** — `?next=assessment` could only be read by
-  client-side JS, and the no-JS submitter is precisely who gets redirected. A JS submit never
+  client-side JS, and the no-JS submitter is precisely who gets redirected. (Since 2026-11-13
+  a no-JS post can't succeed where `TURNSTILE_SECRET_KEY` is set, so in production these are
+  reached only if that changes; they're kept because the Function still answers in both modes.) A JS submit never
   navigates at all: it reveals the same `NextStepCard` inline on `/contact`. Don't "simplify" this
   into one page with a query string; it silently breaks the case it exists for.
 
@@ -366,9 +368,10 @@ row** is the product, so the insert happens first and enrichment failure is invi
 Shared conventions across all three:
 
 - **Dual-mode responses.** JSON for `fetch` submits, a 303 redirect (`/thanks/` or
-  `?error=1`) for native no-JS form posts. Progressive enhancement is real here — don't
-  regress it by making a form JS-only. Every visitor-facing decision has to be expressible
-  in *both* modes: `contact.js` answers `{ next: 'assessment' }` to a fetch and 303s to
+  `?error=1`) for native form posts. **A send needs JavaScript as of 2026-11-13** — Turnstile
+  does, and all three Functions require a token — so the native path now mostly carries
+  rejections back to the form. Keep both modes anyway: every visitor-facing decision has to be
+  expressible in *both*: `contact.js` answers `{ next: 'assessment' }` to a fetch and 303s to
   `/thanks/build-assessment/` for the same case on a native post.
 - **The contact form's timeline `<select>` submits `key|label`.** The stable key drives
   `QUALIFIED_TIMELINES` (who gets offered the Build Assessment after sending); the label is
@@ -379,9 +382,15 @@ Shared conventions across all three:
 - **Every key is server-side.** The browser only ever talks to this origin; no third-party
   service is reached from the visitor's device. `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS and
   must never reach the client.
-- **Turnstile** (`turnstileOk()`, duplicated in each Function): strict on `assessment-intake`
-  and `feedback` (both spend money per submit), lenient on `contact` (verified when present,
-  honeypot fallback so no-JS still works). **If `TURNSTILE_SECRET_KEY` is unset, verification
+- **Turnstile** (`turnstileOk()`, duplicated in each Function): strict on all three. `contact`
+  was lenient (verified only when present, so no-JS still sent) until 2026-11-13, when bots
+  were found using the token-less path; a `<noscript>` note now covers no-JS visitors. `contact.js` layers
+  three checks in order — **same-origin** (the `Origin` header must be the request's own host;
+  cheap, forgeable, and the only one that holds with no secret set), **honeypot**, **Turnstile** —
+  and every rejection returns the same `BLOCKED` message while logging its real reason.
+  `ContactForm` **waits for a token** before posting (`waitForToken`), and tells a visitor whose
+  browser blocks the check to use LinkedIn instead of "reload". Tests send an `Origin` by default
+  (`tests/helpers.js`); pass `{ origin: null }` to drop it. **If `TURNSTILE_SECRET_KEY` is unset, verification
   is skipped entirely** — forms work, nothing is enforced. The public site key
   (`PUBLIC_TURNSTILE_SITE_KEY`, defaulting to Cloudflare's always-pass test key) and the server
   secret must be swapped from test → real *together*; a mismatch blocks every submit.

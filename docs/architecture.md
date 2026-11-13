@@ -85,9 +85,10 @@ deliberately opposite failure policies:
 Whatever *is* the product for that form is the required step. Everything else is enrichment, and
 enrichment failure is invisible to the visitor.
 
-Shared: every Function answers JSON to a `fetch` and a 303 redirect to a native form post, so the
-forms work with JavaScript off. Every key is server-side — the browser only ever talks to this
-origin. Turnstile is strict on the two Functions that spend money per submit, lenient on contact.
+Shared: every Function answers JSON to a `fetch` and a 303 redirect to a native form post. That
+no longer means a form sends with JavaScript off — Turnstile needs it, and all three require a
+token. Every key is server-side — the browser only ever talks to this
+origin. Turnstile is strict on all three Functions (contact since 2026-11-13; see below).
 
 `supabase/migrations/` is the source of truth for both tables. RLS on, no policies, reached only
 via PostgREST with the service-role key.
@@ -118,6 +119,28 @@ the route table and Functions section above describe the site with everything sw
 Reopening is: rename the pages back, flip the two flags, restore the nav line, and take the
 endpoint out of `CLOSED` — `tests/build-output.test.js` fails if a form is built over a closed
 endpoint.
+**2026-11-13** — **Turnstile is strict on contact too.** It had been lenient (verify a token only
+when present) so the form still sent with JavaScript off, with the honeypot as the fallback. Once
+the site went public, bots used exactly that path: all 14 contact emails from 2026-10-18 to
+2026-11-12 were spam, posted with no token and the honeypot left empty. Contact now rejects a
+token-less submit like the other two Functions, and `ContactForm` carries a `<noscript>` note
+(`contact.noJsNote` in `site.js`) sending no-JS visitors to LinkedIn. The gate still no-ops when
+`TURNSTILE_SECRET_KEY` is unset, so it only bites in production if that secret is set there.
+Three things went in around it, the same day. **A same-origin check** runs first in `contact.js`:
+the `Origin` header has to be this site's own host. It is forgeable and it is not the strong
+layer, but it costs nothing, it turns away a script before a siteverify call is spent, and it is
+the one check that still holds if the secret is ever unset. **The form waits for its token**
+(up to eight seconds) instead of posting an empty one, which strictness would otherwise turn
+into a spurious "reload and try again" for anyone who presses Send within a second of the page
+loading or straight after a first message. **And when no token ever arrives** — a content
+blocker, a network that blocks the challenge — the form says the check couldn't load and points
+to LinkedIn, rather than sending the visitor round a reload that cannot work. Every rejection
+gives the sender the same message and logs its real reason to the Pages function log.
+Considered and left out: a minimum-time trap (anything that passes Turnstile has already waited
+longer), keyword or language filtering (the cost of a false positive is a lost message from a
+real person, and there is no spam yet that gets past the token to tune it on), and an in-repo
+rate limit (it needs a KV or rate-limit binding, which is infrastructure this repo doesn't
+otherwise have — the WAF rule does that job).
 
 **2026-09-02** — **The Cloudflare Access gate came off**, and `/welcome` went with it. Jon removed
 the Access policies so the site could be submitted with an Anthropic application, which makes the
