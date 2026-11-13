@@ -34,7 +34,8 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
 # The Functions verify each form's Turnstile token against this secret:
 #   • assessment-intake: STRICT — a missing/invalid token is rejected before any Claude/Supabase spend.
 #   • feedback:          STRICT — initial submit (the Claude path) requires a valid token; JS-only widget.
-#   • contact:           LENIENT — verified when present; no-JS submits fall back to the honeypot.
+#   • contact:           STRICT since 2026-11-13 — it was lenient (verified only when present) and
+#                        bots used the token-less path. Also checks the Origin header first.
 # If this is UNSET, verification is skipped entirely (forms still work) — so it MUST be set in
 # production to actually enforce anything. The site key and this secret must be swapped from
 # Cloudflare's test keys to your real widget's keys TOGETHER (a mismatch blocks every submit).

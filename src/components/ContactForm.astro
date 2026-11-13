@@ -103,6 +103,22 @@ import { site, contact } from '../data/site.js';
     const token = () =>
       window.turnstile && tsId !== null ? window.turnstile.getResponse(tsId) || '' : '';
 
+    // The Function rejects a send without a token (strict since 2026-11-13), so pressing Send
+    // before one exists has to WAIT rather than post an empty one. That happens in two ordinary
+    // cases: a visitor whose browser autofills the form within a second of the page loading,
+    // and a second message sent straight after the first, while the reset widget is still
+    // fetching its new token. Polls for up to `ms`, then gives up and resolves ''.
+    function waitForToken(ms = 8000) {
+      return new Promise((resolve) => {
+        const deadline = Date.now() + ms;
+        (function poll() {
+          const t = token();
+          if (t || Date.now() > deadline) return resolve(t);
+          setTimeout(poll, 200);
+        })();
+      });
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.textContent = '';
@@ -112,6 +128,17 @@ import { site, contact } from '../data/site.js';
       button.textContent = 'Sending…';
       try {
         const fd = new FormData(form);
+        const turnstile = await waitForToken();
+        if (!turnstile) {
+          // No token after a real wait means the check itself can't run here — most often a
+          // content blocker or a network that blocks challenges.cloudflare.com. "Reload and try
+          // again" would be a lie; nothing this visitor does on this page will fix it. So don't
+          // post at all, and give them the way through that doesn't depend on it.
+          status.textContent =
+            'The spam check couldn’t load in this browser, so the form can’t send. You can reach me on LinkedIn instead.';
+          status.classList.add('is-error');
+          return;
+        }
         const res = await fetch(form.action, {
           method: 'POST',
           headers: { 'content-type': 'application/json', accept: 'application/json' },
@@ -121,10 +148,10 @@ import { site, contact } from '../data/site.js';
             message: fd.get('message'),
             timeline: fd.get('timeline'),
             website: fd.get('website'),
-            // Read from the widget, not from the form field: form.reset() below wipes the
-            // injected input on a successful send, so a second message would post an empty
-            // token even though the widget holds a good one.
-            turnstile: token(),
+            // Read from the widget (via waitForToken above), not from the form field:
+            // form.reset() below wipes the injected input on a successful send, so a second
+            // message would post an empty token even though the widget holds a good one.
+            turnstile,
           }),
         });
         const data = await res.json().catch(() => ({}));
@@ -148,9 +175,8 @@ import { site, contact } from '../data/site.js';
         button.textContent = label;
         // Unconditional, on success as well as failure: the token just posted is spent either
         // way, so a retry AND a second message both need a fresh one. Contact is strict (since
-        // 2026-11-13), so a visitor who presses Send before the new token arrives gets the
-        // "reload and try again" error rather than a send — and a KNOWN-spent token is always
-        // rejected outright.
+        // 2026-11-13), so a KNOWN-spent token is always rejected — and a visitor who presses
+        // Send again before the new one arrives is held by waitForToken() until it does.
         if (window.turnstile && tsId !== null) window.turnstile.reset(tsId);
       }
     });

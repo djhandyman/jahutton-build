@@ -97,14 +97,18 @@ Four dependencies: Astro, its sitemap plugin, and two fonts.
 only present it. The exception is `/notes`, where bodies are markdown — prose with headings and
 lists inside a JS file is markup smuggled into data, which is what the rule is against.
 
-**The forms work without JavaScript.** Every Function answers JSON to a `fetch` and a 303
-redirect to a native form post, so progressive enhancement is a property of the site rather
-than a claim about it.
+**Two response modes, one decision.** Every Function answers JSON to a `fetch` and a 303
+redirect to a native form post, and every visitor-facing outcome exists in both. What that no
+longer buys is a send with JavaScript off: the spam check needs it, and the one form that
+didn't require the check is the one the bots found.
 
-**Spam defense, strict everywhere.** Turnstile plus a honeypot on all three forms, and since
-2026-11-13 every Function rejects a submit without a valid token. Contact used to be lenient so
-it would still send with JavaScript off; bots found that door within weeks, so it closed, and a
-no-JS visitor now gets a note pointing to LinkedIn instead. A WAF rate limit is the ceiling.
+**Spam defense in layers, on contact most of all.** A same-origin check before the body is
+read, a honeypot, then Turnstile — required on all three forms since 2026-11-13. Contact used
+to accept a post with no token so it would still send with JavaScript off; within weeks every
+message it delivered was a bot using that door. It's closed now, and a no-JS visitor gets a
+note pointing to LinkedIn. The form waits for its token rather than posting an empty one, and
+says so plainly when a content blocker means the check can't run. A WAF rate limit is the
+ceiling.
 
 **The database schema is in the repo.** `supabase/migrations/` — because the first version of
 that table was clicked together in a dashboard, and when the project auto-paused there was no

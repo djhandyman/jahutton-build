@@ -70,11 +70,20 @@ export const RESEND = 'api.resend.com/emails';
 export const SUPABASE = 'supabase.co/rest/v1';
 export const ANTHROPIC = 'api.anthropic.com';
 
-/** A fetch (JS) submit: JSON in, JSON out. */
+/**
+ * A fetch (JS) submit: JSON in, JSON out. Both builders send the Origin header a browser would
+ * — the site's own — because contact.js rejects a post without one. Pass `{ origin: null }` or
+ * another origin in `headers` to play the part of something that isn't the contact page.
+ */
 export function jsonRequest(url, body, headers = {}) {
   return new Request(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', accept: 'application/json', ...headers },
+    headers: clean({
+      'content-type': 'application/json',
+      accept: 'application/json',
+      origin: new URL(url).origin,
+      ...headers,
+    }),
     body: JSON.stringify(body),
   });
 }
@@ -83,13 +92,20 @@ export function jsonRequest(url, body, headers = {}) {
  * A native no-JS form POST: urlencoded in, 303 out. Deliberately sends no `accept: json`, which
  * is the only thing that distinguishes the two response modes.
  */
-export function formRequest(url, fields) {
+export function formRequest(url, fields, headers = {}) {
   return new Request(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    headers: clean({
+      'content-type': 'application/x-www-form-urlencoded',
+      origin: new URL(url).origin,
+      ...headers,
+    }),
     body: new URLSearchParams(fields).toString(),
   });
 }
+
+/** Drop null/undefined headers, so a test can remove a default by passing `{ origin: null }`. */
+const clean = (headers) => Object.fromEntries(Object.entries(headers).filter(([, v]) => v != null));
 
 /** Env presets. Turnstile is OFF unless a secret is given — matching the Functions' own default. */
 export const env = {

@@ -76,6 +76,32 @@ async function turnstileOk(env, token, ip) {
   }
 }
 
+// Same-origin check. Every browser sends an Origin header on a POST — a fetch and a native form
+// post alike — and for a submit from the contact page it is this site. A script that posts
+// straight to the URL usually sends none, and a form on someone else's page sends theirs.
+// Compared against the request's own host rather than a hard-coded domain, so a preview deploy
+// and `wrangler pages dev` accept themselves.
+//
+// This is the cheap layer, not the strong one: a header is trivial to forge, and Turnstile is
+// what a determined bot has to beat. It earns its place for two reasons. It runs before
+// anything else, so the laziest traffic costs no siteverify call. And it is the one check that
+// still holds if TURNSTILE_SECRET_KEY is ever unset, when turnstileOk() lets everything through.
+function sameOrigin(request) {
+  const origin = request.headers.get('origin');
+  if (!origin) return false;
+  try {
+    return new URL(origin).host === new URL(request.url).host;
+  } catch {
+    return false; // "null", or anything else that isn't a URL
+  }
+}
+
+// Every rejection says the same thing to the sender — a bot learns nothing from it, and a real
+// person who trips a check gets somewhere to go. The reason goes to the Pages function log
+// instead, so "is the form being hit, and by what" has an answer.
+const BLOCKED =
+  'That spam check didn’t pass. Please reload the page and try again, or reach me on LinkedIn.';
+
 function wantsJson(request) {
   const accept = request.headers.get('accept') || '';
   const ctype = request.headers.get('content-type') || '';
@@ -153,6 +179,12 @@ export async function onRequestPost(context) {
           },
         });
 
+  // Layer 1 — same origin. Before the body is even read.
+  if (!sameOrigin(request)) {
+    console.error('contact: rejected, cross-origin or no Origin header');
+    return respond(false, 403, { error: BLOCKED });
+  }
+
   let f;
   try {
     f = await readFields(request);
@@ -160,10 +192,13 @@ export async function onRequestPost(context) {
     return respond(false, 400, { error: 'Could not read the form data.' });
   }
 
-  // Honeypot: a bot filled the hidden field. Pretend success, send nothing.
-  if (f.website) return respond(true, 200);
+  // Layer 2 — honeypot: a bot filled the hidden field. Pretend success, send nothing.
+  if (f.website) {
+    console.error('contact: dropped, honeypot filled');
+    return respond(true, 200);
+  }
 
-  // Turnstile — STRICT, as of 2026-11-13. It was lenient (verified only when a token was present)
+  // Layer 3 — Turnstile, STRICT as of 2026-11-13. It was lenient (verified only when a token was present)
   // so a no-JS visitor could still send, with the honeypot as the fallback. Bots found that door:
   // every one of the 14 contact emails from 2026-10-18 to 2026-11-12 was spam ("RobertDef" asking
   // for a price in a different language each time, keyboard-mash names), and they all arrived
@@ -172,10 +207,9 @@ export async function onRequestPost(context) {
   // so by the <noscript> note in ContactForm.astro and pointed at LinkedIn. turnstileOk() still
   // no-ops when TURNSTILE_SECRET_KEY is unset, so local/unconfigured runs keep working — which
   // also means this gate does nothing in production unless that secret is set there.
+  // (turnstileOk logs its own reason: no token, or the error codes Cloudflare returned.)
   if (!(await turnstileOk(env, f.turnstile, request.headers.get('cf-connecting-ip')))) {
-    return respond(false, 403, {
-      error: 'That spam check didn’t pass — please reload the page and try again.',
-    });
+    return respond(false, 403, { error: BLOCKED });
   }
 
   if (!f.name || !f.email || !f.message) {

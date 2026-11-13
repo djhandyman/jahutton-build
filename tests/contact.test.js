@@ -66,6 +66,67 @@ test('the email is the required step — a rejection or an outage fails the requ
   assert.equal(unreachable.body.ok, false);
 });
 
+// --- Same origin: the first layer ---------------------------------------------------------------
+
+test('SAME-ORIGIN: a post with no Origin header is rejected before anything is spent', async () => {
+  // What a script posting straight to the URL looks like. Checked with Turnstile NOT configured,
+  // because this is the one layer that still holds when the secret is unset.
+  const f = stubFetch([]);
+  try {
+    const res = await onRequestPost({
+      request: jsonRequest(URL_, valid, { origin: null }),
+      env: env.minimal(),
+    });
+    assert.equal(res.status, 403);
+    assert.match((await bodyOf(res)).error, /spam check/i);
+    assert.equal(f.calls.length, 0, 'no siteverify call and no email');
+  } finally {
+    f.restore();
+  }
+});
+
+test('SAME-ORIGIN: a post from another site is rejected, valid token or not', async () => {
+  const f = stubFetch([[SITEVERIFY, turnstilePass]]);
+  try {
+    const res = await onRequestPost({
+      request: jsonRequest(URL_, { ...valid, turnstile: 'tok' }, { origin: 'https://example.com' }),
+      env: env.full(),
+    });
+    assert.equal(res.status, 403);
+    assert.equal(f.calls.length, 0);
+  } finally {
+    f.restore();
+  }
+});
+
+test('SAME-ORIGIN: a native post from another site goes back to the form, not to /thanks/', async () => {
+  const f = stubFetch([]);
+  try {
+    const res = await onRequestPost({
+      request: formRequest(URL_, valid, { origin: 'null' }),
+      env: env.minimal(),
+    });
+    assert.equal(res.status, 303);
+    assert.equal(res.headers.get('location'), '/contact/?error=1');
+    assert.equal(f.hit(RESEND), false);
+  } finally {
+    f.restore();
+  }
+});
+
+test('SAME-ORIGIN: a preview deploy accepts itself', async () => {
+  // Compared against the request's own host, not a hard-coded domain.
+  const preview = 'https://abc123.jahutton-build.pages.dev/api/contact';
+  const f = stubFetch([[RESEND, ok({ id: 'e1' })]]);
+  try {
+    const res = await onRequestPost({ request: jsonRequest(preview, valid), env: env.minimal() });
+    assert.equal(res.status, 200);
+    assert.equal(f.count(RESEND), 1);
+  } finally {
+    f.restore();
+  }
+});
+
 // --- Turnstile: strict ------------------------------------------------------------------------
 
 test('no token and no secret: verification is skipped entirely', async () => {
