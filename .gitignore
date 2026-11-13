@@ -40,3 +40,6 @@ Thumbs.db
 
 # claude code local state (worktrees contain full repo copies + node_modules)
 .claude/
+
+# originals for generated pages (738 MB) — scripts/kitchen-images.mjs reads from here
+source-assets/

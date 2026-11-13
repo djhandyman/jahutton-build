@@ -11,14 +11,16 @@ shape of the thing and the dated decision log. When they disagree, the source wi
 
 ## Shape
 
-Astro static build → `dist/` → Cloudflare Pages, plus three Pages Functions. 24 prerendered
-pages and one endpoint.
+Astro static build → `dist/` → Cloudflare Pages, plus three Pages Functions. 23 prerendered
+pages and one endpoint (counted from `dist/` 2026-11-12; the old figure of 24 predated
+`/welcome`'s deletion).
 
 | Route | What it is |
 |---|---|
 | `/` | Home. Positioning, entry points into Work and the offer. |
 | `/work` | One card per project. |
 | `/work/<slug>` | Ten detail pages, one per project with a `slug`. |
+| `/kitchen` | The kitchen remodel, stage by stage — its own page, not a `/work/<slug>`. See the log, 2026-11-12. |
 | `/services` | The offer: Build Assessment first, then three engagement shapes. |
 | `/assessment`, `/assessment/intake` | The assessment explained, and the multi-step intake form. |
 | `/about` | Bio, tool list, Substack link. |
@@ -102,6 +104,45 @@ them in sync. `global.css` builds on it. No framework, no CSS library.
 
 Newest first. Superseded entries are kept, marked, and dated — knowing what was tried is most of
 this file's value.
+
+**2026-11-13** — **`/kitchen`: every photo inline, unprinted extras, and a before/after.** Jon
+asked for more photos and not to hew to the printed set, especially for the before. The print-set-
+first order and the "More photos" fold are gone: each stage shows all its photos in story order
+(4-up from 64rem). Sixteen stills that never made the party CSV were added via `extraPhotos` in
+`kitchen.js` — their ids encode position (`07-13a` sorts between 07-13 and 07-14), the iPhone
+HEICs were converted once to JPEG in the gitignored `Extras/` (sharp's prebuilt libvips can't
+decode HEVC), and their titles and captions are **drafts** carried as `draft: true`. The reveal
+section now leads with three **before/after** pairs: a native range input wipes between the two
+photos (no-JS: side by side), and an unshot "after" is a placeholder in the same frame. The
+script crops a filled after to its before's proportions so the wipe lines up.
+
+**2026-11-12** — **`/kitchen`: the kitchen remodel gets a page of its own.** Built for the people
+who missed the reveal party (2026-11-14) and as the kitchen half of the remodel case study.
+Decisions, in the order they were made:
+- **A standalone page, not a `projects.js` entry.** Eleven stages, two maker sections and a
+  six-card AI exhibit don't fit any `[slug].astro` slot; growing that renderer six slots for one
+  project was the wrong trade. **One remodel card stays on `/work`** (Jon) — its Kitchen gallery
+  group, previously "coming soon", now points here via a new optional `link` on a note group.
+- **`/kitchen`, not `/work/kitchen`** (Jon) — it's the URL that goes out by text. The cost is
+  that "Work" doesn't light in the nav on this page.
+- **Content is data, twice over.** Copy lives in `src/data/kitchen.js`; photo titles and captions
+  are *generated* from the party's CSV into `src/data/kitchen-photos.js` by
+  `scripts/kitchen-images.mjs`, so the source of truth can't drift by hand-copying.
+- **Images pre-built, not `astro:assets`.** Extends the existing public/ + extensionless-`src`
+  convention with a 480/960/1440 WebP ladder and one ≤960 JPEG fallback, built with the `sharp`
+  inside Astro. Rebuilding ~250 variants on every Cloudflare deploy bought nothing. Originals
+  (`source-assets/`, 738 MB) are gitignored; output is ~22 MB.
+- **Withheld, not deleted.** Jon's rules for the page — no recognizable people, no panel or
+  permit number, nothing that locates the house, no dollar figures — are encoded as `heldPhotos`
+  and `hold:` fields. The script skips held photos *entirely*, because a file in `public/` is
+  fetchable whether or not anything links it.
+- **No new components.** README claims fourteen; everything repeated is a loop on one page.
+  The photo viewer is a native `<dialog>` over plain links (no-JS still works) and inlines under
+  the 16 kB limit, so "0 JavaScript bundles" holds.
+- **The posters' violet (`#5f4b6b`) is page-scoped**, for stage numbers and figures only; links
+  and CTAs stay rust.
+- **Showcase slots** ("The reveal") are placeholders until the staged photos are shot — one
+  `source` field and a script run each.
 
 **2026-09-02** — **The Cloudflare Access gate came off**, and `/welcome` went with it. Jon removed
 the Access policies so the site could be submitted with an Anthropic application, which makes the

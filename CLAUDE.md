@@ -114,7 +114,20 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   to this public repo, so a reader can check it in a minute. Adding a package to this feature
   falsifies all five at once.
 
-- **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `services`, `about`, `now`, `contact`,
+- **`/kitchen`** (added 2026-11-12) is the one page that isn't a thin wrapper over a shared
+  shape: the kitchen remodel in eleven stages, for people who missed the reveal party and as the
+  kitchen half of the remodel case study. Copy in `src/data/kitchen.js`; photos and captions are
+  **generated** — `npm run kitchen:images` (`scripts/kitchen-images.mjs`) reads the gitignored
+  `source-assets/kitchen-reveal/` and writes `public/images/kitchen/` plus
+  `src/data/kitchen-photos.js`. **Never hand-edit kitchen-photos.js**; captions come verbatim from
+  the party CSV. **Held items** (`heldPhotos`, `hold:` fields) are Jon's privacy calls — people,
+  the panel and permit number, anything that locates the house, dollar figures — and the script
+  keeps held photos out of `public/` entirely. Release one by deleting its line and re-running the
+  script; never by copying a file in by hand. The "Reveal" showcase slots and the before/after "afters" are
+  placeholders until the staged photos exist. **`extraPhotos`** adds unprinted stills (converted
+  to JPEG in `Extras/`); their id is their position in the story, and their captions are Claude's
+  drafts — the CSV's are Jon's.
+- **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `kitchen`, `services`, `about`, `now`, `contact`,
   `notes`, `notes/[slug]`, `assessment`, `assessment/intake`, `privacy`, `thanks`,
   `thanks/build-assessment`, `404`. Each is
   a thin `.astro` file wrapping `BaseLayout` and rendering data. `rss.xml.js` is the site's

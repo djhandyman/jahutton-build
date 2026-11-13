@@ -309,7 +309,15 @@ const quoteAfterCta = quote?.placement === 'after-cta';
               ))}
             </div>
           )}
-          {group.note && <p class="ba__note">{group.note}</p>}
+          {/* A note WITH a link isn't "pending" — it's a pointer to where the work lives (the
+              kitchen, 2026-11-12) — so it drops the dashed look and gains a ghost pill. */}
+          {group.note && !group.link && <p class="ba__note">{group.note}</p>}
+          {group.note && group.link && (
+            <div class="ba__pointer">
+              <p>{group.note}</p>
+              <a class="btn btn--ghost" href={group.link.href}>{group.link.label} →</a>
+            </div>
+          )}
           {group.caption && <figcaption class="ba__caption">{group.caption}</figcaption>}
         </figure>
       ))}
@@ -612,6 +620,12 @@ const quoteAfterCta = quote?.placement === 'after-cta';
     color: var(--color-text-muted);
     font-size: var(--text-sm);
   }
+  .ba__pointer {
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border-radius: var(--radius);
+  }
+  .ba__pointer p { margin: 0 0 var(--space-4); }
   .ba__label {
     text-transform: uppercase; letter-spacing: 0.06em;
     font-size: var(--text-sm); color: var(--color-text-muted);
