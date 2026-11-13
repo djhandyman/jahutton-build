@@ -87,7 +87,10 @@ describe('built output', { skip: built ? false : 'no dist/ — run `npm run buil
     // The flip side: having removed the class the auto-scan keyed on, make sure the explicit
     // containers themselves didn't get dropped in some later tidy-up. A form with no widget
     // silently posts an empty token, which the strict Functions reject.
-    for (const required of ['contact/index.html', 'assessment/intake/index.html']) {
+    // EMPTY as of 2026-11-13: both forms are off the site (contact.formEnabled in site.js, and
+    // the parked _assessment/ pages). Put 'contact/index.html' and 'assessment/intake/index.html'
+    // back here as each form returns — the guard below is why this test exists.
+    for (const required of []) {
       const page = pages.find((p) => p.path === required);
       assert.ok(page, `missing built page: ${required}`);
       const containers = [...page.html.matchAll(/data-turnstile\b/g)].length;
@@ -146,13 +149,34 @@ describe('built output', { skip: built ? false : 'no dist/ — run `npm run buil
 
   test('the pages that must exist, do', () => {
     // Cheap smoke check that a route rename didn't silently drop a form or a redirect target.
-    for (const required of [
-      'contact/index.html',
-      'assessment/intake/index.html',
-      'thanks/index.html',
-      'thanks/build-assessment/index.html',
-    ]) {
+    // 2026-11-13: 'assessment/intake/index.html', 'thanks/index.html' and
+    // 'thanks/build-assessment/index.html' left this list when those pages were parked. They
+    // go back in when the pages do.
+    for (const required of ['contact/index.html']) {
       assert.ok(pages.some((p) => p.path === required), `missing built page: ${required}`);
+    }
+  });
+
+  test('a form is only on a page while its endpoint is open', () => {
+    // The page-side half of the pairing in functions/api/_middleware.js. Every endpoint in
+    // CLOSED answers 503, so a form rendered over one fails on every submit — and a parked page
+    // that quietly starts building again is an offer back on the site that nobody switched on.
+    // Reopening means editing CLOSED and this test in the same change; that is the point.
+    const formPages = pages.filter(({ html }) => /<form\b[^>]*action="\/api\//.test(html));
+    assert.deepEqual(
+      formPages.map((p) => p.path),
+      [],
+      'these pages render a form that posts to /api/, but every form endpoint is closed',
+    );
+    for (const parked of ['services/', 'assessment/', 'thanks/']) {
+      const stray = pages.filter((p) => p.path.startsWith(parked)).map((p) => p.path);
+      assert.deepEqual(stray, [], `${parked} is parked (src/pages/_*) but was built`);
+    }
+    for (const { path, html } of pages) {
+      assert.ok(
+        !/href="\/(services|assessment|thanks)(\/|")/.test(html),
+        `${path} links to a page that is not built`,
+      );
     }
   });
 });

@@ -114,6 +114,24 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   to this public repo, so a reader can check it in a minute. Adding a package to this feature
   falsifies all five at once.
 
+- **The forms and the offer are OFF as of 2026-11-13** (Jon). Everything below about
+  `/services`, `/assessment`, `/thanks` and the contact form describes machinery that is parked,
+  not deleted. Four things moved together, and they move back together:
+  1. `contact.formEnabled: false` in `site.js` — `/contact` renders `contact.formOffNote` (a
+     LinkedIn link) where `ContactForm` was.
+  2. `services.enabled: false` in `site.js` drops links to the offer, and the Services nav entry
+     is commented out.
+  3. `src/pages/_services.astro`, `_assessment.astro`, `_assessment/`, `_thanks/` — a leading
+     underscore keeps a page out of Astro's router, so these URLs **404**. Deliberately not the
+     `/now` pattern (built but unlinked): an indexed page that still resolves keeps the offer live.
+  4. `functions/api/_middleware.js` — `CLOSED` lists all three form endpoints; they answer 503
+     (fetch) or 303 to `/contact/` (native post) and the handlers are never reached. Removing a
+     form from a page doesn't stop a bot that posts to the URL. The handlers and their tests are
+     untouched; `tests/middleware.test.js` pins the switch, and `tests/build-output.test.js`
+     fails if a form is built over a closed endpoint or a parked page starts building.
+  The public reason is "spam, and the offer is being reworked." Anything more personal than that
+  stays out of the repo — comments, docs and commit messages included.
+
 - **`/kitchen`** (added 2026-11-12) is the one page that isn't a thin wrapper over a shared
   shape: the kitchen remodel in eleven stages, for people who missed the reveal party and as the
   kitchen half of the remodel case study. Copy in `src/data/kitchen.js`; photos and captions are
@@ -187,7 +205,9 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
 - **Two thanks pages, not a query param.** `/thanks/` is the default no-JS redirect target;
   `/thanks/build-assessment/` is the same page plus the Build Assessment offer. They're separate
   prerendered pages because this is a **static build** — `?next=assessment` could only be read by
-  client-side JS, and the no-JS submitter is precisely who gets redirected. A JS submit never
+  client-side JS, and the no-JS submitter is precisely who gets redirected. (Since 2026-11-13
+  a no-JS post can't succeed where `TURNSTILE_SECRET_KEY` is set, so in production these are
+  reached only if that changes; they're kept because the Function still answers in both modes.) A JS submit never
   navigates at all: it reveals the same `NextStepCard` inline on `/contact`. Don't "simplify" this
   into one page with a query string; it silently breaks the case it exists for.
 
@@ -361,9 +381,10 @@ row** is the product, so the insert happens first and enrichment failure is invi
 Shared conventions across all three:
 
 - **Dual-mode responses.** JSON for `fetch` submits, a 303 redirect (`/thanks/` or
-  `?error=1`) for native no-JS form posts. Progressive enhancement is real here — don't
-  regress it by making a form JS-only. Every visitor-facing decision has to be expressible
-  in *both* modes: `contact.js` answers `{ next: 'assessment' }` to a fetch and 303s to
+  `?error=1`) for native form posts. **A send needs JavaScript as of 2026-11-13** — Turnstile
+  does, and all three Functions require a token — so the native path now mostly carries
+  rejections back to the form. Keep both modes anyway: every visitor-facing decision has to be
+  expressible in *both*: `contact.js` answers `{ next: 'assessment' }` to a fetch and 303s to
   `/thanks/build-assessment/` for the same case on a native post.
 - **The contact form's timeline `<select>` submits `key|label`.** The stable key drives
   `QUALIFIED_TIMELINES` (who gets offered the Build Assessment after sending); the label is
@@ -374,9 +395,15 @@ Shared conventions across all three:
 - **Every key is server-side.** The browser only ever talks to this origin; no third-party
   service is reached from the visitor's device. `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS and
   must never reach the client.
-- **Turnstile** (`turnstileOk()`, duplicated in each Function): strict on `assessment-intake`
-  and `feedback` (both spend money per submit), lenient on `contact` (verified when present,
-  honeypot fallback so no-JS still works). **If `TURNSTILE_SECRET_KEY` is unset, verification
+- **Turnstile** (`turnstileOk()`, duplicated in each Function): strict on all three. `contact`
+  was lenient (verified only when present, so no-JS still sent) until 2026-11-13, when bots
+  were found using the token-less path; a `<noscript>` note now covers no-JS visitors. `contact.js` layers
+  three checks in order — **same-origin** (the `Origin` header must be the request's own host;
+  cheap, forgeable, and the only one that holds with no secret set), **honeypot**, **Turnstile** —
+  and every rejection returns the same `BLOCKED` message while logging its real reason.
+  `ContactForm` **waits for a token** before posting (`waitForToken`), and tells a visitor whose
+  browser blocks the check to use LinkedIn instead of "reload". Tests send an `Origin` by default
+  (`tests/helpers.js`); pass `{ origin: null }` to drop it. **If `TURNSTILE_SECRET_KEY` is unset, verification
   is skipped entirely** — forms work, nothing is enforced. The public site key
   (`PUBLIC_TURNSTILE_SITE_KEY`, defaulting to Cloudflare's always-pass test key) and the server
   secret must be swapped from test → real *together*; a mismatch blocks every submit.

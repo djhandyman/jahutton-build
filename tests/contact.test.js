@@ -1,10 +1,9 @@
-// functions/api/contact.js — the LENIENT form.
+// functions/api/contact.js — the Resend email is the product, so it is the only required step.
 //
-// Its failure policy: the Resend email is the product, so it is the only required step. Turnstile
-// is verified when a token is present and skipped when it isn't, because a no-JS submit carries
-// no token and contact is near-zero cost per send. That leniency is exactly why the Turnstile
-// render-mode bug of 2026-08-05 was invisible here while it broke the intake form — so the test
-// that a token-less submit still sends is guarding a real, load-bearing decision, not an accident.
+// Turnstile is STRICT here as of 2026-11-13. It used to be lenient (a token-less submit still
+// sent, to keep a no-JS path), and that is precisely the door the spam bots used: every contact
+// email from 2026-10-18 to 2026-11-12 was a token-less bot post with the honeypot left empty. The
+// STRICT tests below pin the closed door; if one fails, spam is getting through again.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -67,7 +66,68 @@ test('the email is the required step — a rejection or an outage fails the requ
   assert.equal(unreachable.body.ok, false);
 });
 
-// --- Turnstile: lenient by design ------------------------------------------------------------
+// --- Same origin: the first layer ---------------------------------------------------------------
+
+test('SAME-ORIGIN: a post with no Origin header is rejected before anything is spent', async () => {
+  // What a script posting straight to the URL looks like. Checked with Turnstile NOT configured,
+  // because this is the one layer that still holds when the secret is unset.
+  const f = stubFetch([]);
+  try {
+    const res = await onRequestPost({
+      request: jsonRequest(URL_, valid, { origin: null }),
+      env: env.minimal(),
+    });
+    assert.equal(res.status, 403);
+    assert.match((await bodyOf(res)).error, /spam check/i);
+    assert.equal(f.calls.length, 0, 'no siteverify call and no email');
+  } finally {
+    f.restore();
+  }
+});
+
+test('SAME-ORIGIN: a post from another site is rejected, valid token or not', async () => {
+  const f = stubFetch([[SITEVERIFY, turnstilePass]]);
+  try {
+    const res = await onRequestPost({
+      request: jsonRequest(URL_, { ...valid, turnstile: 'tok' }, { origin: 'https://example.com' }),
+      env: env.full(),
+    });
+    assert.equal(res.status, 403);
+    assert.equal(f.calls.length, 0);
+  } finally {
+    f.restore();
+  }
+});
+
+test('SAME-ORIGIN: a native post from another site goes back to the form, not to /thanks/', async () => {
+  const f = stubFetch([]);
+  try {
+    const res = await onRequestPost({
+      request: formRequest(URL_, valid, { origin: 'null' }),
+      env: env.minimal(),
+    });
+    assert.equal(res.status, 303);
+    assert.equal(res.headers.get('location'), '/contact/?error=1');
+    assert.equal(f.hit(RESEND), false);
+  } finally {
+    f.restore();
+  }
+});
+
+test('SAME-ORIGIN: a preview deploy accepts itself', async () => {
+  // Compared against the request's own host, not a hard-coded domain.
+  const preview = 'https://abc123.jahutton-build.pages.dev/api/contact';
+  const f = stubFetch([[RESEND, ok({ id: 'e1' })]]);
+  try {
+    const res = await onRequestPost({ request: jsonRequest(preview, valid), env: env.minimal() });
+    assert.equal(res.status, 200);
+    assert.equal(f.count(RESEND), 1);
+  } finally {
+    f.restore();
+  }
+});
+
+// --- Turnstile: strict ------------------------------------------------------------------------
 
 test('no token and no secret: verification is skipped entirely', async () => {
   const { res, f } = await post(valid, env.minimal(), [[RESEND, ok()]]);
@@ -75,12 +135,26 @@ test('no token and no secret: verification is skipped entirely', async () => {
   assert.equal(f.hit(SITEVERIFY), false, 'nothing to verify, so siteverify must not be called');
 });
 
-test('LENIENT: a token-less submit still sends even when the secret IS configured', async () => {
-  // The no-JS path, and the reason contact kept working through the render-mode bug.
-  const { res, f } = await post(valid, env.full(), [[RESEND, ok()]]);
-  assert.equal(res.status, 200);
-  assert.equal(f.hit(SITEVERIFY), false);
-  assert.equal(f.count(RESEND), 1);
+test('STRICT: a token-less submit is rejected when the secret IS configured, and costs no email', async () => {
+  // The path the spam bots took while contact was lenient (2026-10-18 → 2026-11-12).
+  const { res, body, f } = await post(valid, env.full(), []);
+  assert.equal(res.status, 403);
+  assert.equal(body.ok, false);
+  assert.match(body.error, /spam check/i);
+  assert.equal(f.hit(SITEVERIFY), false, 'no token, so nothing to send to siteverify');
+  assert.equal(f.hit(RESEND), false, 'a token-less bot post must not cost an email');
+});
+
+test('STRICT: a token-less native (no-JS) POST is sent back to the form with an error flag', async () => {
+  const f = stubFetch([]);
+  try {
+    const res = await onRequestPost({ request: formRequest(URL_, valid), env: env.full() });
+    assert.equal(res.status, 303);
+    assert.equal(res.headers.get('location'), '/contact/?error=1');
+    assert.equal(f.hit(RESEND), false);
+  } finally {
+    f.restore();
+  }
 });
 
 test('a token that is present but invalid is rejected, and costs no email', async () => {
