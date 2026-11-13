@@ -112,6 +112,14 @@ export const contact = {
   //      so Jon can rewrite every label freely without changing who gets offered what.
   // An unrecognized key is never an error — it just means "not qualified", and the raw value
   // still prints in the email. Drift degrades to the old behaviour; it can't reject a send.
+  // Shown only with JavaScript off. The form's spam check (Turnstile) needs JS, and since
+  // 2026-11-13 the contact Function rejects a send without it — so say that up front rather
+  // than let the visitor type a message that bounces back to an unexplained /contact/?error=1.
+  noJsNote: {
+    text: 'This form needs JavaScript for its spam check. With it off, you can reach me on',
+    linkLabel: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/jahutton/',
+  },
   timelineLabel: 'Timeline',
   timelineHint: 'Optional',
   timelineOptions: [
