@@ -87,7 +87,7 @@ enrichment failure is invisible to the visitor.
 
 Shared: every Function answers JSON to a `fetch` and a 303 redirect to a native form post, so the
 forms work with JavaScript off. Every key is server-side — the browser only ever talks to this
-origin. Turnstile is strict on the two Functions that spend money per submit, lenient on contact.
+origin. Turnstile is strict on all three Functions (contact since 2026-11-13; see below).
 
 `supabase/migrations/` is the source of truth for both tables. RLS on, no policies, reached only
 via PostgREST with the service-role key.
@@ -102,6 +102,14 @@ them in sync. `global.css` builds on it. No framework, no CSS library.
 
 Newest first. Superseded entries are kept, marked, and dated — knowing what was tried is most of
 this file's value.
+
+**2026-11-13** — **Turnstile is strict on contact too.** It had been lenient (verify a token only
+when present) so the form still sent with JavaScript off, with the honeypot as the fallback. Once
+the site went public, bots used exactly that path: all 14 contact emails from 2026-10-18 to
+2026-11-12 were spam, posted with no token and the honeypot left empty. Contact now rejects a
+token-less submit like the other two Functions, and `ContactForm` carries a `<noscript>` note
+(`contact.noJsNote` in `site.js`) sending no-JS visitors to LinkedIn. The gate still no-ops when
+`TURNSTILE_SECRET_KEY` is unset, so it only bites in production if that secret is set there.
 
 **2026-09-02** — **The Cloudflare Access gate came off**, and `/welcome` went with it. Jon removed
 the Access policies so the site could be submitted with an Anthropic application, which makes the

@@ -1,7 +1,8 @@
 ---
 // Contact form → posts to the /api/contact Cloudflare Pages Function, which emails via Resend.
-// Progressive enhancement: JS submits inline via fetch and shows a status message; with JS off,
-// the native POST still works and the function redirects to /thanks/.
+// JS submits inline via fetch and shows a status message. The native POST path is still wired
+// (the Function 303s to /thanks/), but since 2026-11-13 the Function requires a Turnstile token,
+// which only exists with JS on — so a no-JS visitor gets the <noscript> note instead of a send.
 import NextStepCard from './NextStepCard.astro';
 import { site, contact } from '../data/site.js';
 ---
@@ -33,8 +34,8 @@ import { site, contact } from '../data/site.js';
   </div>
   <!-- Honeypot for spam (a bot that fills this hidden field is silently dropped) -->
   <input type="text" name="website" tabindex="-1" autocomplete="off" class="visually-hidden" aria-hidden="true" />
-  <!-- Cloudflare Turnstile: renders only with JS. The Function verifies the token when present,
-       and falls back to the honeypot for no-JS submits (contact form is near-zero cost per send).
+  <!-- Cloudflare Turnstile: renders only with JS. The Function REQUIRES a valid token (strict
+       since 2026-11-13 — the lenient no-token path was how the spam bots got through).
        appearance="interaction-only" keeps the widget out of sight for ordinary visitors — it
        appears ONLY if Cloudflare decides this visitor has to solve something. Do not swap this
        for `display: none`: a Managed widget that needs interaction would render where nobody can
@@ -48,6 +49,12 @@ import { site, contact } from '../data/site.js';
     data-turnstile
     data-sitekey={site.turnstileSiteKey}
   ></div>
+  <noscript>
+    <p class="contact-form__hint contact-form__nojs">
+      {contact.noJsNote.text}{' '}
+      <a href={contact.noJsNote.href} rel="noopener">{contact.noJsNote.linkLabel}</a>.
+    </p>
+  </noscript>
   <button class="btn" type="submit">Send</button>
   <p class="contact-form__status" role="status" aria-live="polite"></p>
 </form>
@@ -140,9 +147,10 @@ import { site, contact } from '../data/site.js';
         button.disabled = false;
         button.textContent = label;
         // Unconditional, on success as well as failure: the token just posted is spent either
-        // way, so a retry AND a second message both need a fresh one. Contact is the lenient
-        // Function, so even if the visitor beats the new token this still sends — but it must
-        // never send a KNOWN-spent one, which is rejected outright.
+        // way, so a retry AND a second message both need a fresh one. Contact is strict (since
+        // 2026-11-13), so a visitor who presses Send before the new token arrives gets the
+        // "reload and try again" error rather than a send — and a KNOWN-spent token is always
+        // rejected outright.
         if (window.turnstile && tsId !== null) window.turnstile.reset(tsId);
       }
     });

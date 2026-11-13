@@ -101,9 +101,10 @@ lists inside a JS file is markup smuggled into data, which is what the rule is a
 redirect to a native form post, so progressive enhancement is a property of the site rather
 than a claim about it.
 
-**Spam defense sized to what abuse costs.** Turnstile is strict on the two Functions that spend
-money per submit and lenient on contact, which keeps a honeypot fallback so it survives with
-JavaScript off. A WAF rate limit is the ceiling.
+**Spam defense, strict everywhere.** Turnstile plus a honeypot on all three forms, and since
+2026-11-13 every Function rejects a submit without a valid token. Contact used to be lenient so
+it would still send with JavaScript off; bots found that door within weeks, so it closed, and a
+no-JS visitor now gets a note pointing to LinkedIn instead. A WAF rate limit is the ceiling.
 
 **The database schema is in the repo.** `supabase/migrations/` — because the first version of
 that table was clicked together in a dashboard, and when the project auto-paused there was no

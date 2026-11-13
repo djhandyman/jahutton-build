@@ -119,7 +119,7 @@ async function readFields(request) {
     // Honeypot — a real user never fills this hidden field; a bot that does is silently dropped.
     website: get('website'),
     // Turnstile token: 'turnstile' from the fetch (JSON) path, 'cf-turnstile-response' from a
-    // native form POST. Absent on a no-JS submit — see the lenient policy in onRequestPost.
+    // native form POST. Absent on a no-JS submit, which is rejected — see onRequestPost.
     turnstile: get('turnstile') || get('cf-turnstile-response'),
   };
 }
@@ -163,16 +163,19 @@ export async function onRequestPost(context) {
   // Honeypot: a bot filled the hidden field. Pretend success, send nothing.
   if (f.website) return respond(true, 200);
 
-  // Turnstile — LENIENT here: verify only when a token is present (the JS path). A no-JS submit
-  // carries no token and falls back to the honeypot above; the contact form is near-zero cost per
-  // send, so we keep that progressive-enhancement path. A present-but-invalid token is rejected.
-  if (f.turnstile) {
-    const ok = await turnstileOk(env, f.turnstile, request.headers.get('cf-connecting-ip'));
-    if (!ok) {
-      return respond(false, 403, {
-        error: 'That spam check didn’t pass — please reload the page and try again.',
-      });
-    }
+  // Turnstile — STRICT, as of 2026-11-13. It was lenient (verified only when a token was present)
+  // so a no-JS visitor could still send, with the honeypot as the fallback. Bots found that door:
+  // every one of the 14 contact emails from 2026-10-18 to 2026-11-12 was spam ("RobertDef" asking
+  // for a price in a different language each time, keyboard-mash names), and they all arrived
+  // token-less with the honeypot left empty — exactly the path the leniency held open. So contact
+  // now matches assessment-intake and feedback: no valid token, no email. A no-JS visitor is told
+  // so by the <noscript> note in ContactForm.astro and pointed at LinkedIn. turnstileOk() still
+  // no-ops when TURNSTILE_SECRET_KEY is unset, so local/unconfigured runs keep working — which
+  // also means this gate does nothing in production unless that secret is set there.
+  if (!(await turnstileOk(env, f.turnstile, request.headers.get('cf-connecting-ip')))) {
+    return respond(false, 403, {
+      error: 'That spam check didn’t pass — please reload the page and try again.',
+    });
   }
 
   if (!f.name || !f.email || !f.message) {

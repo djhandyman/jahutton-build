@@ -361,9 +361,9 @@ Shared conventions across all three:
 - **Every key is server-side.** The browser only ever talks to this origin; no third-party
   service is reached from the visitor's device. `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS and
   must never reach the client.
-- **Turnstile** (`turnstileOk()`, duplicated in each Function): strict on `assessment-intake`
-  and `feedback` (both spend money per submit), lenient on `contact` (verified when present,
-  honeypot fallback so no-JS still works). **If `TURNSTILE_SECRET_KEY` is unset, verification
+- **Turnstile** (`turnstileOk()`, duplicated in each Function): strict on all three. `contact`
+  was lenient (verified only when present, so no-JS still sent) until 2026-11-13, when bots
+  were found using the token-less path; a `<noscript>` note now covers no-JS visitors. **If `TURNSTILE_SECRET_KEY` is unset, verification
   is skipped entirely** — forms work, nothing is enforced. The public site key
   (`PUBLIC_TURNSTILE_SITE_KEY`, defaulting to Cloudflare's always-pass test key) and the server
   secret must be swapped from test → real *together*; a mismatch blocks every submit.
