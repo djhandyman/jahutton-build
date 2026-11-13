@@ -18,12 +18,17 @@
 //     "Go ahead and touch it", "right here", "this room") that read wrong on a web page.
 //   · hero.lead and closing: DRAFTED by Claude from Jon's poster lines. Needs his sign-off.
 //
-// WITHHELD, NOT DELETED. Anything below carrying `hold: '<reason>'` (and every id in
-// `heldPhotos`) is left off the page pending Jon's decision — his standing rules for this page:
-// no recognizable people, no electrical panel or permit number, nothing that locates the house,
-// no dollar figures. The image script also SKIPS held photos entirely, so they never reach
-// public/ — a file in public/ is reachable by URL even if no page links it. To release one:
-// delete its line here, then `npm run kitchen:images`.
+// HOLDING SOMETHING BACK. An id in `heldPhotos`, or a `hold: '<reason>'` field on a fact or an
+// exhibit, keeps that item off the page. The image script SKIPS held photos entirely, so they
+// never reach public/ — a file in public/ is reachable by URL even if no page links it. To
+// release one: delete its line here, then `npm run kitchen:images`.
+//
+// RELEASED 2026-11-13 (Jon, after reviewing every held item in a local build): the six photos
+// with people in them, the electrical panel, the two 2016 listing photos, two house exteriors,
+// seven views out the window, the $75 window, the permit number and the cost-share chart. They
+// had been withheld on first build under a cautious reading of "no people, no panel or permit,
+// nothing that locates the house, no dollar figures"; the call to publish them is his. The one
+// photo still held is his own editorial cut, not a privacy one.
 
 // Where the image script finds its inputs. source-assets/ is gitignored (738 MB of originals);
 // the generated, web-sized output in public/images/kitchen/ is what's committed.
@@ -31,27 +36,6 @@ export const sourceDir = 'source-assets/kitchen-reveal';
 
 // Photo ids are the CSV's stage-folder prefix ("05-03"). Reasons are for Jon, not the page.
 export const heldPhotos = {
-  // Recognizable people
-  '03-05': 'person (from behind)',
-  '05-09': 'person (partial, setting tile)',
-  '06-03': 'person (hanging the hood)',
-  '07-03': 'person (Jon; caption names him)',
-  '07-17': 'person (hanging doors)',
-  '08-04': 'person (bystander at the freight terminal)',
-  // Electrical panel
-  '09-01': 'electrical panel',
-  // Locates the house
-  '00-01': '2016 listing photo: reverse-image-searchable to the listing and address; listing photographer likely owns it',
-  '00-02': '2016 listing photo: same as 00-01',
-  '01-01': 'house exterior: yard and dumpster',
-  '06-02': 'house exterior: gable, siding and trim',
-  '01-04': 'view out the window: backyard and neighboring houses',
-  '01-07': 'view out the window: backyard, fence and neighboring houses',
-  '03-01': 'view out the window: backyard, fence and neighboring houses',
-  '03-02': 'view out the window: neighboring house',
-  '03-04': 'view out the window: neighboring house',
-  '03-06': 'view out the window: backyard',
-  '07-02': 'view out the window: neighboring house',
   // Jon's call, not privacy (2026-11-13): shows the spots in the pour he later ground out.
   '04-07': 'Jon: cut — shows pour flaws that were ground out later',
 };
@@ -175,7 +159,7 @@ export const stages = [
     when: 'May and June',
     glance: 'Rot repaired, a new footing under the beam, new plywood.',
     summary:
-      'Under the old flooring: diagonal boards, rot by the sink, and a 14-foot beam that was never properly supported.',
+      'Under the old flooring: diagonal boards, rot in the middle of the floor, and a 14-foot beam that was never properly supported.',
     facts: [
       { value: 'New footing', label: 'rebar-reinforced concrete, directly under the beam' },
       { value: 'No more bow', label: 'it fixed a floor that had bowed upward' },
@@ -189,7 +173,7 @@ export const stages = [
     glance: 'A bigger sink window and a reframed wall for the pantry.',
     summary: 'A bigger opening for the sink window, and a wall reframed to hold the pantry.',
     facts: [
-      { value: '$75', label: 'the window, salvaged from Second Use', hold: 'dollar figure' },
+      { value: '$75', label: 'the window, salvaged from Second Use' },
       { value: '1 wall', label: 'reframed for the pantry cabinets' },
       { value: 'Later', label: 'the fir trim went on in November' },
     ],
@@ -265,7 +249,7 @@ export const stages = [
     facts: [
       { value: '200 amp', label: 'main panel, rewired by Jon' },
       { value: 'Oct 27', label: 'final electrical inspection passed' },
-      { value: '26-2544', label: 'City of Olympia permit number', hold: 'permit number — publicly searchable to the address' },
+      { value: '26-2544', label: 'City of Olympia permit number' },
     ],
   },
   {
@@ -523,13 +507,20 @@ export const claude = {
     {
       title: 'Bookkeeper',
       text: 'Rebuilt the project cost from 93 receipts and bank records, and listed every tool bought.',
-      // The poster's cost-share bars (cabinets 31%, countertops 15%, appliances 15%, tile and
-      // heated floor 10%, subfloor and framing 7%) are budget information — held with the
-      // dollar figures until Jon says otherwise.
-      exhibit: { kind: 'costs', hold: 'cost breakdown' },
-      // Poster: "Where the money went · 65 tools · 37 Home Depot trips". The first clause
-      // labels the held chart, so it goes with it.
-      caption: '65 tools · 37 Home Depot trips',
+      // Released 2026-11-13 (Jon). The shares are the poster's; percentages only, no dollar
+      // amounts anywhere on the page.
+      exhibit: {
+        kind: 'costs',
+        rows: [
+          ['Cabinets', 31],
+          ['Countertops', 15],
+          ['Appliances', 15],
+          ['Tile and heated floor', 10],
+          ['Subfloor and framing', 7],
+        ],
+      },
+      // Poster, in full: "Where the money went · 65 tools · 37 Home Depot trips".
+      caption: 'Where the money went · 65 tools · 37 Home Depot trips',
     },
     {
       title: 'Organizer',

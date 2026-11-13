@@ -144,6 +144,14 @@ real person, and there is no spam yet that gets past the token to tune it on), a
 rate limit (it needs a KV or rate-limit binding, which is infrastructure this repo doesn't
 otherwise have — the WAF rule does that job).
 
+**2026-11-13** — **`/kitchen`: the withheld items are released.** The page was first built
+holding back anything with people in it, the panel, the permit number, anything that locates
+the house, and dollar figures — a cautious reading, pending Jon's review. He looked at all of it
+in a local build and released it: 18 photos, the $75 window, the permit number, and the
+cost-share chart, which had been reserved but never drawn and is now five percentage bars with
+no dollar amounts. The hold mechanism stays (`heldPhotos`, `hold:`), with one photo in it: his
+own cut of a pour shot. Supersedes the "Withheld, not deleted" bullet under 2026-11-12 below.
+
 **2026-11-13** — **`/kitchen`: every photo inline, unprinted extras, and a before/after.** Jon
 asked for more photos and not to hew to the printed set, especially for the before. The print-set-
 first order and the "More photos" fold are gone: each stage shows all its photos in story order

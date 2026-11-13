@@ -138,10 +138,14 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   **generated** — `npm run kitchen:images` (`scripts/kitchen-images.mjs`) reads the gitignored
   `source-assets/kitchen-reveal/` and writes `public/images/kitchen/` plus
   `src/data/kitchen-photos.js`. **Never hand-edit kitchen-photos.js**; captions come verbatim from
-  the party CSV. **Held items** (`heldPhotos`, `hold:` fields) are Jon's privacy calls — people,
-  the panel and permit number, anything that locates the house, dollar figures — and the script
+  the party CSV. **Held items** (`heldPhotos`, `hold:` fields) stay off the page, and the script
   keeps held photos out of `public/` entirely. Release one by deleting its line and re-running the
-  script; never by copying a file in by hand. The "Reveal" showcase slots and the before/after "afters" are
+  script; never by copying a file in by hand. **Jon released everything that had been withheld
+  for privacy on 2026-11-13** (people, the panel, the permit number, listing and exterior photos,
+  window views, the $75 window, the cost-share chart) after reviewing it in a local build — don't
+  re-hold any of it on your own judgement. One photo (04-07) is still held: his editorial cut.
+  **Regenerating wipes `public/images/kitchen/`, and a running dev server then 404s every photo
+  until it is restarted.** The "Reveal" showcase slots and the before/after "afters" are
   placeholders until the staged photos exist. **`extraPhotos`** adds unprinted stills (converted
   to JPEG in `Extras/`); their id is their position in the story, and their captions are Claude's
   drafts — the CSV's are Jon's.

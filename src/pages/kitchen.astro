@@ -377,6 +377,19 @@ const ogImage = '/images/kitchen/og.jpg';
                     </tbody>
                   </table>
                 )}
+                {r.exhibit.kind === 'costs' && r.exhibit.rows && (
+                  <dl class="costs">
+                    {r.exhibit.rows.map(([label, pct]) => (
+                      <div class="costs__row">
+                        <dt>{label}</dt>
+                        <dd>
+                          <span class="costs__bar" style={`--pct: ${pct}`} aria-hidden="true"></span>
+                          <span class="costs__pct">{pct}%</span>
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
                 {r.exhibit.kind === 'cutsheet' && (
                   <div class="cut cut--small" set:html={cutSheetSvg(durat.cutPlan.sheets[r.exhibit.sheet], r.exhibit.sheet + 1)} />
                 )}
@@ -771,6 +784,15 @@ const ogImage = '/images/kitchen/og.jpg';
   .role__exhibit { margin-top: var(--space-4); padding: var(--space-4); background: var(--violet-tint); border-radius: var(--radius); }
   .role__exhibit img { width: 100%; border-radius: calc(var(--radius) - 4px); }
   .role__caption { margin: var(--space-3) 0 0; font-size: var(--text-sm); font-weight: 600; color: var(--violet); }
+  /* Cost shares: one bar per row, scaled so the largest share (31%) nearly fills the track. */
+  .costs { margin: 0; font-size: var(--text-sm); }
+  .costs__row { display: grid; grid-template-columns: 11rem 1fr; gap: var(--space-3); align-items: center; margin-bottom: var(--space-2); }
+  .costs dt { color: var(--color-text-muted); }
+  .costs dd { margin: 0; display: flex; align-items: center; gap: var(--space-2); }
+  .costs__bar { height: 0.6rem; width: calc(var(--pct) * 2.6%); background: var(--color-accent); border-radius: 2px; }
+  .costs__pct { font-weight: 600; font-variant-numeric: tabular-nums; }
+  @media (max-width: 30rem) { .costs__row { grid-template-columns: 1fr; gap: 0; } }
+
   .circuits { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
   .circuits th, .circuits td { padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); text-align: right; }
   .circuits th:first-child { text-align: left; font-weight: 400; }

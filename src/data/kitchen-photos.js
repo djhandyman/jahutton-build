@@ -8,6 +8,40 @@
 
 export const photos = [
   {
+    "id": "00-01",
+    "stage": "00",
+    "print": 1,
+    "title": "The kitchen as we bought it",
+    "caption": "The 2016 listing photo: wallpaper, a peninsula, and a closed-in U.",
+    "img": {
+      "src": "/images/kitchen/photos/00-01-the-kitchen-as-we-bought-it",
+      "widths": [
+        480,
+        960,
+        1024
+      ],
+      "width": 1024,
+      "height": 683
+    }
+  },
+  {
+    "id": "00-02",
+    "stage": "00",
+    "print": null,
+    "title": "The old U",
+    "caption": "Original cabinets, laminate counters, and a peninsula that boxed the cook in.",
+    "img": {
+      "src": "/images/kitchen/photos/00-02-the-old-u",
+      "widths": [
+        480,
+        960,
+        1024
+      ],
+      "width": 1024,
+      "height": 683
+    }
+  },
+  {
     "id": "00-03",
     "stage": "00",
     "print": 2,
@@ -77,6 +111,23 @@ export const photos = [
     }
   },
   {
+    "id": "01-01",
+    "stage": "01",
+    "print": 3,
+    "title": "Day one",
+    "caption": "May 6. The dumpster arrives, the first of many loads.",
+    "img": {
+      "src": "/images/kitchen/photos/01-01-day-one",
+      "widths": [
+        480,
+        960,
+        1280
+      ],
+      "width": 1280,
+      "height": 853
+    }
+  },
+  {
     "id": "01-02",
     "stage": "01",
     "print": 4,
@@ -107,6 +158,23 @@ export const photos = [
       ],
       "width": 853,
       "height": 1280
+    }
+  },
+  {
+    "id": "01-04",
+    "stage": "01",
+    "print": null,
+    "title": "Under the sink window",
+    "caption": "Water damage and old drain lines behind the wall.",
+    "img": {
+      "src": "/images/kitchen/photos/01-04-under-the-sink-window",
+      "widths": [
+        480,
+        960,
+        1280
+      ],
+      "width": 1280,
+      "height": 853
     }
   },
   {
@@ -141,6 +209,23 @@ export const photos = [
       ],
       "width": 1440,
       "height": 960
+    }
+  },
+  {
+    "id": "01-07",
+    "stage": "01",
+    "print": 26,
+    "title": "Behind the sink",
+    "caption": "May 26. The original window and old drain lines, with the wall stripped bare.",
+    "img": {
+      "src": "/images/kitchen/photos/01-07-behind-the-sink",
+      "widths": [
+        480,
+        960,
+        1080
+      ],
+      "width": 1080,
+      "height": 1620
     }
   },
   {
@@ -215,7 +300,7 @@ export const photos = [
     "stage": "02",
     "print": 6,
     "title": "The soft spot",
-    "caption": "Rot near the old sink, straight through to the crawlspace.",
+    "caption": "Rot in the middle of the floor, near the high spot, straight through to the crawlspace.",
     "img": {
       "src": "/images/kitchen/photos/02-03-the-soft-spot",
       "widths": [
@@ -359,6 +444,39 @@ export const photos = [
     }
   },
   {
+    "id": "03-01",
+    "stage": "03",
+    "print": null,
+    "title": "The old sink window",
+    "caption": "Stripped to the framing, May 28.",
+    "img": {
+      "src": "/images/kitchen/photos/03-01-the-old-sink-window",
+      "widths": [
+        480,
+        960,
+        1280
+      ],
+      "width": 1280,
+      "height": 853
+    }
+  },
+  {
+    "id": "03-02",
+    "stage": "03",
+    "print": 8,
+    "title": "Framing the new window",
+    "caption": "A bigger opening for the sink window.",
+    "img": {
+      "src": "/images/kitchen/photos/03-02-framing-the-new-window",
+      "widths": [
+        480,
+        853
+      ],
+      "width": 853,
+      "height": 1280
+    }
+  },
+  {
     "id": "03-03",
     "stage": "03",
     "print": null,
@@ -372,6 +490,39 @@ export const photos = [
       ],
       "width": 853,
       "height": 1280
+    }
+  },
+  {
+    "id": "03-04",
+    "stage": "03",
+    "print": null,
+    "title": "New window in",
+    "caption": "Flashed and set. The trim came much later.",
+    "img": {
+      "src": "/images/kitchen/photos/03-04-new-window-in",
+      "widths": [
+        480,
+        853
+      ],
+      "width": 853,
+      "height": 1280
+    }
+  },
+  {
+    "id": "03-05",
+    "stage": "03",
+    "print": 29,
+    "title": "New framing",
+    "caption": "June 20. A new stud wall goes up.",
+    "img": {
+      "src": "/images/kitchen/photos/03-05-new-framing",
+      "widths": [
+        480,
+        960,
+        1440
+      ],
+      "width": 1440,
+      "height": 2160
     }
   },
   {
@@ -390,6 +541,23 @@ export const photos = [
       ],
       "width": 1440,
       "height": 1920
+    }
+  },
+  {
+    "id": "03-06",
+    "stage": "03",
+    "print": 30,
+    "title": "The new window, framed",
+    "caption": "June 20. The sink window in its new opening.",
+    "img": {
+      "src": "/images/kitchen/photos/03-06-the-new-window-framed",
+      "widths": [
+        480,
+        960,
+        1440
+      ],
+      "width": 1440,
+      "height": 2160
     }
   },
   {
@@ -658,6 +826,23 @@ export const photos = [
     }
   },
   {
+    "id": "05-09",
+    "stage": "05",
+    "print": 34,
+    "title": "Setting tile",
+    "caption": "Planks going down over the heated mat, one row at a time.",
+    "img": {
+      "src": "/images/kitchen/photos/05-09-setting-tile",
+      "widths": [
+        480,
+        960,
+        1080
+      ],
+      "width": 1080,
+      "height": 1620
+    }
+  },
+  {
     "id": "06-01",
     "stage": "06",
     "print": null,
@@ -671,6 +856,39 @@ export const photos = [
       ],
       "width": 853,
       "height": 1280
+    }
+  },
+  {
+    "id": "06-02",
+    "stage": "06",
+    "print": 14,
+    "title": "Out through the gable",
+    "caption": "The hood vents outside, high on the gable.",
+    "img": {
+      "src": "/images/kitchen/photos/06-02-out-through-the-gable",
+      "widths": [
+        480,
+        853
+      ],
+      "width": 853,
+      "height": 1280
+    }
+  },
+  {
+    "id": "06-03",
+    "stage": "06",
+    "print": 35,
+    "title": "Hanging the hood",
+    "caption": "September 27. The hood goes up under its new duct.",
+    "img": {
+      "src": "/images/kitchen/photos/06-03-hanging-the-hood",
+      "widths": [
+        480,
+        960,
+        1440
+      ],
+      "width": 1440,
+      "height": 2160
     }
   },
   {
@@ -688,6 +906,38 @@ export const photos = [
       ],
       "width": 1280,
       "height": 853
+    }
+  },
+  {
+    "id": "07-02",
+    "stage": "07",
+    "print": 15,
+    "title": "Cabinets arrive",
+    "caption": "Drywall up and the first base cabinets in place.",
+    "img": {
+      "src": "/images/kitchen/photos/07-02-cabinets-arrive",
+      "widths": [
+        480,
+        853
+      ],
+      "width": 853,
+      "height": 1280
+    }
+  },
+  {
+    "id": "07-03",
+    "stage": "07",
+    "print": 16,
+    "title": "Laying it out",
+    "caption": "Jon marking layout on fresh drywall.",
+    "img": {
+      "src": "/images/kitchen/photos/07-03-laying-it-out",
+      "widths": [
+        480,
+        853
+      ],
+      "width": 853,
+      "height": 1280
     }
   },
   {
@@ -1050,6 +1300,23 @@ export const photos = [
     }
   },
   {
+    "id": "07-17",
+    "stage": "07",
+    "print": 43,
+    "title": "Hanging doors",
+    "caption": "October 11. One hinge at a time.",
+    "img": {
+      "src": "/images/kitchen/photos/07-17-hanging-doors",
+      "widths": [
+        480,
+        960,
+        1440
+      ],
+      "width": 1440,
+      "height": 2160
+    }
+  },
+  {
     "id": "07-17a",
     "stage": "07",
     "print": null,
@@ -1134,6 +1401,23 @@ export const photos = [
     }
   },
   {
+    "id": "08-04",
+    "stage": "08",
+    "print": 45,
+    "title": "Three sheets on a flatbed",
+    "caption": "September 9. The countertop material, picked up from the freight terminal.",
+    "img": {
+      "src": "/images/kitchen/photos/08-04-three-sheets-on-a-flatbed",
+      "widths": [
+        480,
+        960,
+        1440
+      ],
+      "width": 1440,
+      "height": 2160
+    }
+  },
+  {
     "id": "08-05",
     "stage": "08",
     "print": 46,
@@ -1166,6 +1450,22 @@ export const photos = [
       ],
       "width": 1440,
       "height": 1920
+    }
+  },
+  {
+    "id": "09-01",
+    "stage": "09",
+    "print": 21,
+    "title": "The finished panel",
+    "caption": "Every new kitchen circuit runs back to this panel. Final electrical inspection passed October 27.",
+    "img": {
+      "src": "/images/kitchen/photos/09-01-the-finished-panel",
+      "widths": [
+        480,
+        853
+      ],
+      "width": 853,
+      "height": 1280
     }
   },
   {
