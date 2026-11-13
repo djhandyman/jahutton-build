@@ -35,6 +35,12 @@ A static Astro site on Cloudflare Pages, plus three Pages Functions. The browser
 talks to this site — every key stays on the server, and nothing third-party loads on a
 visitor's device.
 
+**The forms are switched off as of 2026-11-13.** The contact form was delivering nothing but bot
+spam and the offer pages are being reworked, so `/contact` shows a LinkedIn link in place of the
+form and `/services`, `/assessment` and `/thanks` aren't built. The three Functions below are
+still in the repo and still tested; `functions/api/_middleware.js` answers for them until the
+forms come back. What follows describes the machinery as built.
+
 ```mermaid
 flowchart LR
   C1["Contact form"]
