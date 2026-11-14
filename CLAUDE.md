@@ -145,8 +145,11 @@ every var). Minimum per Function: `RESEND_API_KEY` for contact/assessment-intake
   window views, the $75 window, the cost-share chart) after reviewing it in a local build — don't
   re-hold any of it on your own judgement. One photo (04-07) is still held: his editorial cut.
   **Regenerating wipes `public/images/kitchen/`, and a running dev server then 404s every photo
-  until it is restarted.** The "Reveal" showcase slots and the before/after "afters" are
-  placeholders until the staged photos exist. **`extraPhotos`** adds unprinted stills (converted
+  until it is restarted.** The hero and the seven "Reveal" showcase slots carry Jon's finished-kitchen
+  photos as of 2026-11-14 (sources in `Showcase/`; the hero has a landscape source and a portrait
+  one for phones); the before/after "afters" are still placeholders. A third maker card, Steel
+  Lighting Co., joined Durat and SawBox the same day — its claims are the supplier's, linked to
+  the supplier's page, like the other two. **`extraPhotos`** adds unprinted stills (converted
   to JPEG in `Extras/`); their id is their position in the story, and their captions are Claude's
   drafts — the CSV's are Jon's.
 - **Pages** (`src/pages/`): `index`, `work`, `work/[slug]`, `kitchen`, `services`, `about`, `now`, `contact`,

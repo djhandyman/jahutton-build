@@ -8,16 +8,17 @@
 // which is the same call [slug].astro makes for .hero/.mark/.path ("markup, not logic").
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
-  page, hero, stages, revealTile, beforeAfter, showcase, durat, sawbox, claude, closing,
+  page, hero, stages, revealTile, beforeAfter, showcase, durat, sawbox, steel, claude, closing,
 } from '../data/kitchen.js';
-import { photos, exhibits, heroImage, showcaseImages, afterImages } from '../data/kitchen-photos.js';
+import { photos, exhibits, heroImage, heroPhoneImage, showcaseImages, detailImages, afterImages } from '../data/kitchen-photos.js';
 
 // ── image helpers ── (shape: see the header of kitchen-photos.js)
 const srcset = (img) => img.widths.map((w) => `${img.src}-${w}.webp ${w}w`).join(', ');
 const largest = (img) => `${img.src}-${img.widths.at(-1)}.webp`;
 // Alt text = title + caption (Jon's spec). The caption is also visible under the photo, so a
 // screen reader hears it twice in the gallery; the alone-in-the-viewer case is why it's worth it.
-const altOf = (p) => `${p.title}: ${p.caption}`;
+// A photo that carries its own `alt` (the finished-kitchen detail shots — Jon's descriptions) uses it.
+const altOf = (p) => p.alt ?? `${p.title}: ${p.caption}`;
 
 // Grid photo widths, matched to the .photos grid below: 2-up on a phone, 3-up from 48rem,
 // 4-up from 64rem, capped by the 70rem container.
@@ -41,6 +42,12 @@ const pairs = beforeAfter.pairs.map((pair) => ({
   beforePhoto: photos.find((p) => p.id === pair.before),
   afterImg: afterImages[pair.id] ?? null,
 }));
+
+// The lighting card's photos: finished-kitchen images already generated for the hero and the
+// showcase, cropped in by CSS. One that's missing drops out rather than breaking the build.
+const steelPhotos = steel.photos
+  .map((sp) => ({ ...sp, img: sp.image === 'heroPhone' ? heroPhoneImage : showcaseImages[sp.image] }))
+  .filter((sp) => sp.img);
 
 // Plain-string segment renderer for the few credit lines that carry a link — same shape as
 // about.js, so nothing new to learn.
@@ -90,10 +97,21 @@ const ogImage = '/images/kitchen/og.jpg';
       <p class="k-eyebrow">{page.eyebrow}</p>
       <h1>{page.title}</h1>
       {page.lead.map((p) => <p class="k-lead">{p}</p>)}
-      {/* The one eager image on the page. Stand-in until the showcase photos exist — swap it in
-          kitchen.js → hero, not here. */}
+      {/* The one eager image on the page. Landscape from 40rem up, the portrait shot of the same
+          view on a phone; width/height on each <source> keep the box right for whichever loads.
+          Swap either in kitchen.js → hero, not here. */}
       <figure class="k-hero__fig" style={`--ar: ${heroImage.width / heroImage.height}`}>
         <picture>
+          {heroPhoneImage && (
+            <source
+              media="(max-width: 39.99rem)"
+              type="image/webp"
+              srcset={srcset(heroPhoneImage)}
+              sizes="100vw"
+              width={heroPhoneImage.width}
+              height={heroPhoneImage.height}
+            />
+          )}
           <source type="image/webp" srcset={srcset(heroImage)} sizes="(min-width: 60rem) 56rem, 100vw" />
           <img
             src={`${heroImage.src}.jpg`}
@@ -199,8 +217,8 @@ const ogImage = '/images/kitchen/og.jpg';
     ))}
 
     <!-- ── The reveal: showcase ─────────────────────────────────────────────── -->
-    {/* The finished room, shot after clean-up. Empty slots are placeholders — see kitchen.js →
-        showcase for how to fill them. Dashed and muted: the site's existing "pending" look. */}
+    {/* The finished room. A slot with no source renders as a placeholder — see kitchen.js →
+        showcase. Dashed and muted: the site's existing "pending" look. */}
     <section class="container reveal" id="reveal" aria-labelledby="reveal-h">
       <h2 id="reveal-h">{showcase.heading}</h2>
       {showcase.lead && <p class="k-lead">{showcase.lead}</p>}
@@ -263,7 +281,7 @@ const ogImage = '/images/kitchen/og.jpg';
                 <figure class="photo">
                   <a class="photo__link" href={largest(img)} data-viewer data-title="" data-caption={slot.caption}>
                     <picture>
-                      <source type="image/webp" srcset={srcset(img)} sizes="(min-width: 60rem) 56rem, 100vw" />
+                      <source type="image/webp" srcset={srcset(img)} sizes="(min-width: 60rem) 18rem, (min-width: 48rem) 31vw, 46vw" />
                       <img src={`${img.src}.jpg`} width={img.width} height={img.height} alt={slot.alt} loading="lazy" decoding="async" />
                     </picture>
                   </a>
@@ -295,6 +313,16 @@ const ogImage = '/images/kitchen/og.jpg';
           ))}
         </ul>
         <p class="source"><a href={durat.claimsSource.href} rel="noopener">{durat.claimsSource.text}</a></p>
+        {detailImages.durat && (
+          <figure class="photo maker__photo">
+            <a class="photo__link" href={largest(detailImages.durat)} data-viewer data-title="" data-caption="">
+              <picture>
+                <source type="image/webp" srcset={srcset(detailImages.durat)} sizes="(min-width: 40rem) 28rem, 92vw" />
+                <img src={`${detailImages.durat.src}.jpg`} width={detailImages.durat.width} height={detailImages.durat.height} alt={durat.photo.alt} loading="lazy" decoding="async" />
+              </picture>
+            </a>
+          </figure>
+        )}
 
         <h4 class="maker__sub">{durat.stepsHeading}</h4>
         <ol class="steps">
@@ -349,6 +377,50 @@ const ogImage = '/images/kitchen/og.jpg';
           </div>
         </div>
         <p class="credits"><span><a href={sawbox.href} rel="noopener">sawbox.com</a></span><span>{sawbox.footer}</span></p>
+      </article>
+
+      <article class="maker" aria-labelledby="steel-h">
+        <p class="k-eyebrow">{steel.eyebrow}</p>
+        <h3 id="steel-h" class="maker__title"><a href={steel.href} rel="noopener">{steel.name}</a></h3>
+        <p class="k-lead">{steel.lead}</p>
+        <ul class="stats">
+          {steel.stats.map((s) => (
+            <li><span class="stats__value">{s.value}</span> <span class="stats__label">{s.label}</span></li>
+          ))}
+        </ul>
+        <p class="source"><a href={steel.claimsSource.href} rel="noopener">{steel.claimsSource.text}</a></p>
+        <h4 class="maker__sub">{steel.specsHeading}</h4>
+        <dl class="specs">
+          {steel.specs.map(([k, v]) => (
+            <div><dt>{k}</dt><dd>{v}</dd></div>
+          ))}
+        </dl>
+        {steelPhotos.length > 0 && (
+          <ul class="lights">
+            {steelPhotos.map(({ img, focus, caption }) => (
+              <li>
+                <figure class="photo">
+                  <a class="photo__link" href={largest(img)} data-viewer data-title="" data-caption={caption}>
+                    <picture>
+                      <source type="image/webp" srcset={srcset(img)} sizes="(min-width: 60rem) 26rem, (min-width: 40rem) 46vw, 92vw" />
+                      <img
+                        src={`${img.src}.jpg`}
+                        width={img.width}
+                        height={img.height}
+                        alt={caption}
+                        style={`object-position: ${focus}`}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
+                  </a>
+                  <figcaption>{caption}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        )}
+        <p class="credits"><span><a href={steel.href} rel="noopener">steellightingco.com</a></span><span>{steel.footer}</span></p>
       </article>
     </section>
 
@@ -668,12 +740,11 @@ const ogImage = '/images/kitchen/og.jpg';
 
   .showcase {
     list-style: none; margin: var(--space-8) 0 0; padding: 0; max-width: 56rem;
-    display: grid; gap: var(--space-6); grid-template-columns: 1fr; align-items: start;
+    display: grid; gap: var(--space-4); grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start;
   }
-  @media (min-width: 40rem) {
-    .showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .showcase__item:first-child { grid-column: 1 / -1; }
-  }
+  /* Uniform columns since 2026-11-14: the finished-kitchen photos are all portrait, and the old
+     "first one full width" rule made a 56rem-wide portrait taller than two screens. */
+  @media (min-width: 48rem) { .showcase { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); } }
   /* Short and uniform on purpose (2026-11-12). At the shots' real aspect ratios, a full-width
      3:2 placeholder was ~600px of empty box on a phone — a broken-looking page, not "coming
      soon" — and aspect-ratio + max-height collapsed the portrait ones into slivers. A filled
@@ -685,7 +756,6 @@ const ogImage = '/images/kitchen/og.jpg';
     border: 1.5px dashed color-mix(in srgb, var(--violet) 45%, var(--color-border));
     border-radius: var(--radius); background: var(--violet-tint);
   }
-  .showcase__item:first-child .slot { min-height: 12rem; }
   .slot__label { margin: 0; font-family: var(--font-heading); font-size: var(--text-lg); color: var(--violet); }
   .slot__note { margin: var(--space-1) 0 0; font-size: var(--text-sm); color: var(--color-text-muted); }
 
@@ -697,6 +767,7 @@ const ogImage = '/images/kitchen/og.jpg';
   }
   @media (min-width: 48rem) { .maker { padding: var(--space-8); } }
   .maker__title { font-size: var(--text-4xl); margin-bottom: var(--space-3); }
+  .maker__photo { margin-top: var(--space-6); max-width: 28rem; }
   .maker__title a { color: inherit; text-decoration-thickness: 2px; }
   .maker__sub {
     font-family: var(--font-body); font-size: var(--text-sm); font-weight: 700;
@@ -752,6 +823,11 @@ const ogImage = '/images/kitchen/og.jpg';
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2) var(--space-6);
     font-size: var(--text-sm); color: var(--color-text-muted);
   }
+  /* The lighting card's two photos, cropped in on the fixture. The crop is CSS only — the
+     link opens the whole photo. */
+  .lights { list-style: none; margin: var(--space-8) 0 0; padding: 0; display: grid; gap: var(--space-4); }
+  @media (min-width: 40rem) { .lights { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .lights .photo img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
   .maker__cols { display: grid; gap: 0 var(--space-8); }
   @media (min-width: 48rem) { .maker__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .specs { margin: 0; }

@@ -95,20 +95,28 @@ export const extraPhotos = [
     caption: 'October 11. Pantry doors on, the oven tower still open.' },
   { id: '09-00a', file: '09-00a IMG_8166.jpg', title: 'First light',
     caption: 'September 6. A test bulb hanging from the new ceiling wiring.' },
+  // Finished-kitchen detail shots (Jon, 2026-11-14), placed in the stage they belong to. These
+  // two use `source` (a path under sourceDir) instead of `file` (a name in Extras/), and `alt`
+  // is Jon's description verbatim; the titles are drafts like the rest of this list.
+  { id: '08-05a', source: 'Showcase/IMG_9077.png', title: 'Maple meets Durat',
+    caption: 'The maple block meeting the countertop.', alt: 'Maple block meeting the countertop' },
+  { id: '10-04a', source: 'Showcase/IMG_9081.png', title: 'The ramp, finished',
+    caption: 'The maple ramp between the oak floor and the tile.', alt: 'Maple ramp between oak floor and tile' },
 ];
 
-// The finished-kitchen slot. A STAND-IN until the final photos exist: "Almost there" from the
-// print set. To swap: put the new photo anywhere under sourceDir, point `source` at it, rewrite
-// `alt`/`caption`, and run `npm run kitchen:images` — that regenerates the hero sizes AND the
-// share image (og.jpg) from it. Nothing in the page changes.
+// The finished kitchen (Jon's photos, 2026-11-14 — replaced the "Almost there" stand-in). Two
+// sources because the room is wide and a phone is tall: `source` is the landscape shot, used
+// from 40rem up and for the share image; `phoneSource` is the portrait shot of the same view.
+// To swap either: change the path, run `npm run kitchen:images`. Nothing in the page changes.
 export const hero = {
-  source: 'Reveal prints/All photos by stage/10 Finishing touches/10-05 Almost there.jpg',
-  alt: 'Almost there: the island painted, pendants up, and the Ash Violet pantry wall with its pulls on.',
-  // The CSV caption for this photo, verbatim. Replace with the finished-kitchen caption.
-  caption: 'October 18. Island painted, pendants up, pulls on.',
-  // Where the share-image crop sits vertically, 0 (top) to 1 (bottom). This photo is portrait
-  // and the share card is 1.9:1, so it has to choose a band; 0.45 keeps island and pantry.
-  ogFocus: 0.45,
+  source: 'Showcase/IMG_9085.png',
+  phoneSource: 'Showcase/IMG_9058.png',
+  // DRAFT (Claude, 2026-11-14), written from what's in the frame.
+  alt: 'The finished kitchen: the island in front, the Ash Violet pantry wall and wall oven on the left, the sink window straight ahead under the beam, and the range hood on the right.',
+  caption: '',
+  // Where the share-image crop sits vertically, 0 (top) to 1 (bottom). The share card is 1.9:1
+  // and this photo is 4:3, so it has to choose a band; 0.5 keeps pendants, beam and island.
+  ogFocus: 0.5,
 };
 
 export const page = {
@@ -282,6 +290,11 @@ export const revealTile = {
 // not be held). Until `after.source` is set, the after half is a PLACEHOLDER, so the pair still
 // shows what the slider will do.
 //
+// FILLED 2026-11-14 (Claude) from Jon's finished-kitchen set, picking the listed photo closest
+// to each before. They were not shot to match, so the framing is approximate — the third is a
+// portrait cropped to the before's landscape. Captions are drafts. Reshoot from the `shotNote`
+// spot for an exact wipe.
+//
 // To fill one: shoot from where the before was taken (the `shotNote` is the hint), drop the photo
 // under sourceDir, set `after.source`, `after.alt`, `after.caption`, run `npm run kitchen:images`.
 // The script crops the after to the before's proportions (centered), because a wipe between two
@@ -299,21 +312,25 @@ export const beforeAfter = {
       label: 'The whole room',
       before: '00-03',
       shotNote: 'From the living room doorway, looking toward the sink window',
-      after: { source: null, alt: '', caption: '' },
+      after: { source: 'Showcase/IMG_9085.png', alt: 'The whole finished kitchen, from the living room side', caption: 'The whole kitchen.' },
     },
     {
       id: 'sink',
       label: 'The sink corner',
       before: '00-04',
       shotNote: 'From beside the old sink, looking across to the cooktop corner',
-      after: { source: null, alt: '', caption: '' },
+      // Same photo and same porch blur as the showcase "range-wall" slot — keep the two in step.
+      after: { source: 'Showcase/IMG_9063.png', alt: 'Wide view of the range wall', caption: 'The range wall, from the sink.',
+        blur: [[0.755, 0.355], [0.982, 0.355], [0.982, 0.648], [0.972, 0.648], [0.972, 0.615], [0.915, 0.615],
+          [0.915, 0.652], [0.880, 0.652], [0.880, 0.695], [0.902, 0.708], [0.902, 0.748], [0.791, 0.752],
+          [0.789, 0.622], [0.757, 0.620]] },
     },
     {
       id: 'peninsula',
       label: 'Where the peninsula was',
       before: '00-05a',
       shotNote: 'From the doorway by the wall oven',
-      after: { source: null, alt: '', caption: '' },
+      after: { source: 'Showcase/IMG_9067.png', alt: 'Looking past the oven to the sink', caption: 'Past the oven to the sink.' },
     },
   ],
 };
@@ -324,31 +341,37 @@ export const beforeAfter = {
 // shot once it's cleaned and staged. It sits after stage 10 because it's the end of the story,
 // and the at-a-glance "The reveal" tile links here.
 //
-// Each slot is a PLACEHOLDER while `source` is null — a short dashed box labelled with what goes
-// there, the same "pending" language the remodel card's empty Kitchen group used. To fill one:
-// drop the photo under sourceDir (e.g. Showcase/), set `source` (a path relative to sourceDir),
-// write `alt` and `caption`, run `npm run kitchen:images`. Reorder, rename or delete slots
-// freely. A filled slot renders at the photo's own proportions; the first one runs full width
-// and the rest pair up below it. The `label`s are a starting shot list, not page copy anyone
-// signed off — they only show while a slot is empty.
+// FILLED 2026-11-14 with Jon's finished-kitchen photos, in the order he gave; each `alt` is his
+// description of the shot, verbatim. A slot with `source: null` still renders as a dashed
+// placeholder labelled with `label`, so a new one can be added before its photo exists. To
+// change one: set `source` (a path relative to sourceDir), `alt`, optionally `caption`, and run
+// `npm run kitchen:images`. All seven are portrait, so the grid is uniform columns.
 //
-// ⚠️ Same rules as the rest of the page before a slot is filled: no people, nothing out the
-// window that locates the house (the sink window faces the backyard and neighbors — shoot it
-// with the blinds or from an angle), no visible paperwork with the address.
+// Jon chose these knowing what's in them (the sink window's view was released 2026-11-13).
+// IMG_9063 (wide view of the range wall) shows the porch through the glass door; Jon's call
+// (2026-11-14) was to use it with the porch blurred. `blur` is that region — the glass, minus
+// the island block and chair in front of it — as [x, y] fractions of the photo. The script bakes
+// the blur into every generated file, so don't remove the field without asking him.
 export const showcase = {
   heading: 'The reveal',
-  // DRAFT (Claude, 2026-11-12).
-  lead: 'The finished kitchen, cleaned up and photographed after the party.',
+  // DRAFT (Claude). Was "…cleaned up and photographed after the party" until 2026-11-14; the
+  // photos arrived the day of the party, so the timing claim came out.
+  lead: 'The finished kitchen.',
   placeholderNote: 'Photo coming soon',
   // DRAFT (Claude, 2026-11-13). Subheading under the before/after pairs, over these slots.
   roomHeading: 'Around the room',
   slots: [
-    { id: 'room', label: 'The whole room, from the living room doorway', source: null, alt: '', caption: '' },
-    { id: 'island', label: 'The island and its maple block', source: null, alt: '', caption: '' },
-    { id: 'pantry', label: 'The Ash Violet pantry wall', source: null, alt: '', caption: '' },
-    { id: 'sink', label: 'The sink run and the fir-trimmed window', source: null, alt: '', caption: '' },
-    { id: 'counter', label: 'Durat up close', source: null, alt: '', caption: '' },
-    { id: 'ramp', label: 'Where the tile meets the oak', source: null, alt: '', caption: '' },
+    { id: 'sink', source: 'Showcase/IMG_9066.png', alt: 'Sink and window, straight on', caption: '' },
+    { id: 'counter', source: 'Showcase/IMG_9064.png', alt: 'Along the countertop to the sink', caption: '' },
+    { id: 'range', source: 'Showcase/IMG_9065.png', alt: 'Rangetop and hood', caption: '' },
+    { id: 'pantry', source: 'Showcase/IMG_9075.png', alt: 'Pantry wall and wall oven', caption: '' },
+    { id: 'island', source: 'Showcase/IMG_9072.png', alt: 'Island block with the pantry wall and beam behind', caption: '' },
+    { id: 'island-above', source: 'Showcase/IMG_9073.png', alt: 'Island block, pantry wall and oven from above', caption: '' },
+    { id: 'past-oven', source: 'Showcase/IMG_9067.png', alt: 'Looking past the oven to the sink', caption: '' },
+    { id: 'range-wall', source: 'Showcase/IMG_9063.png', alt: 'Wide view of the range wall', caption: '',
+      blur: [[0.755, 0.355], [0.982, 0.355], [0.982, 0.648], [0.972, 0.648], [0.972, 0.615], [0.915, 0.615],
+        [0.915, 0.652], [0.880, 0.652], [0.880, 0.695], [0.902, 0.708], [0.902, 0.748], [0.791, 0.752],
+        [0.789, 0.622], [0.757, 0.620]] },
   ],
 };
 
@@ -375,6 +398,8 @@ export const durat = {
     { value: '1/2″', label: 'thick, solid color and chips all the way through' },
   ],
   claimsSource: { href: 'https://www.durat.com/pages/solid-surface', text: 'Material and recycling figures: Durat' },
+  // Jon's detail shot (2026-11-14); `alt` is his description, verbatim.
+  photo: { source: 'Showcase/FullSizeRender (1).png', alt: 'Countertop edge and speckle' },
   stepsHeading: 'How three sheets became a countertop',
   steps: [
     { title: 'Plan every cut', text: 'Each piece, edge strip and backsplash was mapped onto the sheets before a saw came out.' },
@@ -452,6 +477,49 @@ export const sawbox = {
   ],
   footer: 'Showroom in Kent, WA · visits by appointment',
   // The poster's top-down shop drawing is SawBox's document; left out rather than reproduced.
+};
+
+// Added 2026-11-14 (Jon: "the pendant and above sink lights were sourced from Steel Lighting Co,
+// made in the USA. let's showcase them"). Same rule as the other two: supplier claims are the
+// supplier's words and link to the supplier's page. Checked 2026-11-14:
+//   steellightingco.com/american-made-barn-style-lighting/ — "100% American Made", "We make lights
+//     the old fashioned way right out of Southern California", "handspun American steel".
+//   steellightingco.com/about/how-lights-are-made/ — "Our domes are made from the highest quality
+//     18-gauge steel", "We powder coat our fixtures".
+//   Name: "Steel Lighting Co." with the period, as their footer and body text write it.
+// Everything but the eyebrow's fact is DRAFT (Claude, 2026-11-14) and needs Jon's sign-off.
+// Model names are Jon's (2026-11-14): "pendants are Inglewood and overhead is El Segundo".
+// TODO(jon): sizes, finish name and how many are over the sink — not stated, so not on the page.
+//
+// `photos` reuse finished-kitchen images already on the page (Jon, 2026-11-14: "replace the
+// Steel Lighting photos with ones from this set"), shown cropped in on the fixture: `image` is
+// 'heroPhone' or a showcase slot id, `focus` is a CSS object-position, and the full photo opens
+// in the viewer. Captions and alts are drafts.
+export const steel = {
+  eyebrow: 'The lights over the island and the sink are from',
+  name: 'Steel Lighting Co.',
+  href: 'https://steellightingco.com/',
+  lead: 'Steel barn lights, made in the USA. Each one is handcrafted in Southern California.',
+  stats: [
+    { value: 'USA', label: 'made in Southern California' },
+    { value: 'Hand-spun', label: 'domes, shaped from American steel' },
+    { value: '18-gauge', label: 'steel in every dome' },
+    { value: 'Finish', label: 'powder coated for durability' },
+  ],
+  claimsSource: {
+    href: 'https://steellightingco.com/american-made-barn-style-lighting/',
+    text: 'Where and how they’re made: Steel Lighting Co.',
+  },
+  specsHeading: 'In this kitchen',
+  specs: [
+    ['Island', 'Inglewood pendants'],
+    ['Sink', 'El Segundo, overhead'],
+  ],
+  photos: [
+    { image: 'heroPhone', focus: '50% 0%', caption: 'Inglewood pendants over the island.' },
+    { image: 'sink', focus: '50% 0%', caption: 'El Segundo over the sink window.' },
+  ],
+  footer: 'Wired and hung by Jon',
 };
 
 // ── Built with Claude ───────────────────────────────────────────────────────────────────────
