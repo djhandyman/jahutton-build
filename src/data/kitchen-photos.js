@@ -1435,6 +1435,25 @@ export const photos = [
     }
   },
   {
+    "id": "08-05a",
+    "stage": "08",
+    "print": null,
+    "title": "Maple meets Durat",
+    "caption": "The maple block meeting the countertop.",
+    "alt": "Maple block meeting the countertop",
+    "draft": true,
+    "img": {
+      "src": "/images/kitchen/photos/08-05a-maple-meets-durat",
+      "widths": [
+        480,
+        960,
+        1440
+      ],
+      "width": 1440,
+      "height": 1920
+    }
+  },
+  {
     "id": "09-00a",
     "stage": "09",
     "print": null,
@@ -1535,6 +1554,25 @@ export const photos = [
     }
   },
   {
+    "id": "10-04a",
+    "stage": "10",
+    "print": null,
+    "title": "The ramp, finished",
+    "caption": "The maple ramp between the oak floor and the tile.",
+    "alt": "Maple ramp between oak floor and tile",
+    "draft": true,
+    "img": {
+      "src": "/images/kitchen/photos/10-04a-the-ramp-finished",
+      "widths": [
+        480,
+        960,
+        1440
+      ],
+      "width": 1440,
+      "height": 1920
+    }
+  },
+  {
     "id": "10-05",
     "stage": "10",
     "print": 47,
@@ -1612,9 +1650,153 @@ export const heroImage = {
     1600
   ],
   "width": 1600,
-  "height": 2400
+  "height": 1200
 };
 
-export const showcaseImages = {};
+export const heroPhoneImage = {
+  "src": "/images/kitchen/hero-phone",
+  "widths": [
+    480,
+    960,
+    1440
+  ],
+  "width": 1440,
+  "height": 1920
+};
 
-export const afterImages = {};
+export const showcaseImages = {
+  "sink": {
+    "src": "/images/kitchen/showcase/sink",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 2400
+  },
+  "counter": {
+    "src": "/images/kitchen/showcase/counter",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 2400
+  },
+  "range": {
+    "src": "/images/kitchen/showcase/range",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 2400
+  },
+  "pantry": {
+    "src": "/images/kitchen/showcase/pantry",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 2400
+  },
+  "island": {
+    "src": "/images/kitchen/showcase/island",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 2400
+  },
+  "island-above": {
+    "src": "/images/kitchen/showcase/island-above",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 2400
+  },
+  "past-oven": {
+    "src": "/images/kitchen/showcase/past-oven",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 2400
+  },
+  "range-wall": {
+    "src": "/images/kitchen/showcase/range-wall",
+    "widths": [
+      480,
+      960,
+      1440,
+      1800
+    ],
+    "width": 1800,
+    "height": 1350
+  }
+};
+
+export const detailImages = {
+  "durat": {
+    "src": "/images/kitchen/showcase/durat-detail",
+    "widths": [
+      480,
+      960,
+      1440
+    ],
+    "width": 1440,
+    "height": 1440
+  }
+};
+
+export const afterImages = {
+  "room": {
+    "src": "/images/kitchen/before-after/room",
+    "widths": [
+      480,
+      960,
+      1440
+    ],
+    "width": 1440,
+    "height": 960
+  },
+  "sink": {
+    "src": "/images/kitchen/before-after/sink",
+    "widths": [
+      480,
+      960,
+      1440
+    ],
+    "width": 1440,
+    "height": 960
+  },
+  "peninsula": {
+    "src": "/images/kitchen/before-after/peninsula",
+    "widths": [
+      480,
+      960,
+      1440
+    ],
+    "width": 1440,
+    "height": 1080
+  }
+};

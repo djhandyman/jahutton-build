@@ -189,7 +189,11 @@ Decisions, in the order they were made:
 - **The posters' violet (`#5f4b6b`) is page-scoped**, for stage numbers and figures only; links
   and CTAs stay rust.
 - **Showcase slots** ("The reveal") are placeholders until the staged photos are shot — one
-  `source` field and a script run each.
+  `source` field and a script run each. **Filled 2026-11-14** with the finished-kitchen photos:
+  the hero (a landscape source, plus a portrait one served to phones), seven showcase slots in a
+  uniform grid (they're all portrait; the "first one full width" rule went), and three detail
+  shots placed where they belong. The before/after "afters" are still to shoot. A third maker
+  card, Steel Lighting Co., was added the same day, reusing two of those photos cropped in CSS.
 
 **2026-09-02** — **The Cloudflare Access gate came off**, and `/welcome` went with it. Jon removed
 the Access policies so the site could be submitted with an Anthropic application, which makes the

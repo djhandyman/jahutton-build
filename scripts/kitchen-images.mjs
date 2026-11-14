@@ -22,13 +22,13 @@
 //     2026-11-12, but a replacement showcase photo straight off a phone will.
 //   · Adds kitchen.js → extraPhotos (unprinted stills, pre-converted into Extras/), drafts flagged.
 //   · Crops any filled before/after "after" photo to its before's proportions.
-//   · Generates the hero ladder and the 1200×630 share image (og.jpg) from kitchen.js → hero,
-//     and any filled showcase slots.
+//   · Generates the hero ladder (plus a portrait one for phones) and the 1200×630 share image
+//     (og.jpg) from kitchen.js → hero, any filled showcase slots, and the Durat detail photo.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
-import { sourceDir, heldPhotos, extraPhotos, hero, beforeAfter, showcase } from '../src/data/kitchen.js';
+import { sourceDir, heldPhotos, extraPhotos, hero, beforeAfter, showcase, durat } from '../src/data/kitchen.js';
 
 const OUT = 'public/images/kitchen';
 const URL_BASE = '/images/kitchen';
@@ -81,6 +81,28 @@ async function ladder(src, base, { ladderMax = LADDER.at(-1) } = {}) {
   };
 }
 
+// Blurs one polygon of a photo and returns the result as a buffer (kitchen.js → a showcase
+// slot's `blur`: [x, y] points as fractions of width and height). The blur is baked into every
+// generated file — the unblurred original never reaches public/ — and it's heavy on purpose:
+// the region is shrunk to a few dozen pixels before it's smoothed, so there is no detail left
+// to recover, only colour.
+async function blurRegion(src, points) {
+  const base = await sharp(src).rotate().toBuffer({ resolveWithObject: true });
+  const { width: w, height: h } = base.info;
+  const soft = await sharp(base.data)
+    .resize({ width: Math.round(w / 90) }).blur(1.2)
+    .resize(w, h, { kernel: 'cubic' }).blur(Math.round(w / 120))
+    .toBuffer();
+  const poly = points.map(([x, y]) => `${Math.round(x * w)},${Math.round(y * h)}`).join(' ');
+  // The mask is the polygon, white on transparent, feathered; dest-in keeps the blurred copy only
+  // where the mask is opaque.
+  const mask = await sharp(Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><polygon points="${poly}" fill="#fff"/></svg>`
+  )).blur(Math.max(1, w / 700)).png().toBuffer();
+  const patch = await sharp(soft).ensureAlpha().composite([{ input: mask, blend: 'dest-in' }]).png().toBuffer();
+  return sharp(base.data).composite([{ input: patch }]).jpeg({ quality: 96 }).toBuffer();
+}
+
 // ── go ──
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(path.join(OUT, 'photos'), { recursive: true });
@@ -110,10 +132,14 @@ for (const r of rows) {
 // The extras (kitchen.js → extraPhotos): unprinted stills, already converted to JPEG in Extras/.
 // Their titles and captions are Claude's drafts, so they carry `draft: true` through to the data.
 for (const x of extraPhotos) {
-  const src = path.join(sourceDir, 'Extras', x.file);
+  // `file` is a name in Extras/; `source` is a path under sourceDir (the finished-kitchen shots).
+  const src = x.source ? path.join(sourceDir, x.source) : path.join(sourceDir, 'Extras', x.file);
   if (!fs.existsSync(src)) throw new Error(`extraPhotos names a file that isn't there: ${src}`);
   const img = await ladder(src, `photos/${x.id}-${slugify(x.title)}`);
-  photos.push({ id: x.id, stage: x.id.slice(0, 2), print: null, title: x.title, caption: x.caption, draft: true, img });
+  photos.push({
+    id: x.id, stage: x.id.slice(0, 2), print: null, title: x.title, caption: x.caption,
+    ...(x.alt ? { alt: x.alt } : {}), draft: true, img,
+  });
 }
 // The id is the position: "07-13a" lands between 07-13 and 07-14.
 photos.sort((a, b) => a.id.localeCompare(b.id));
@@ -128,6 +154,10 @@ for (const f of fs.readdirSync(path.join(sourceDir, 'Exhibits')).filter((f) => !
 // Hero + share image.
 const heroSrc = path.join(sourceDir, hero.source);
 const heroImg = await ladder(heroSrc, 'hero', { ladderMax: 1600 });
+// The portrait version of the same view, served to phones (kitchen.js → hero.phoneSource).
+const heroPhoneImg = hero.phoneSource
+  ? await ladder(path.join(sourceDir, hero.phoneSource), 'hero-phone')
+  : null;
 {
   const m = await sharp(heroSrc).rotate().resize({ width: 1200 }).toBuffer({ resolveWithObject: true });
   const h = m.info.height;
@@ -142,7 +172,14 @@ const heroImg = await ladder(heroSrc, 'hero', { ladderMax: 1600 });
 const showcaseImages = {};
 for (const slot of showcase.slots) {
   if (!slot.source) continue;
-  showcaseImages[slot.id] = await ladder(path.join(sourceDir, slot.source), `showcase/${slot.id}`, { ladderMax: 1800 });
+  const src = path.join(sourceDir, slot.source);
+  showcaseImages[slot.id] = await ladder(slot.blur ? await blurRegion(src, slot.blur) : src, `showcase/${slot.id}`, { ladderMax: 1800 });
+}
+
+// One-off detail photos that sit inside a section rather than a gallery (kitchen.js → durat.photo).
+const detailImages = {};
+if (durat.photo?.source) {
+  detailImages.durat = await ladder(path.join(sourceDir, durat.photo.source), 'showcase/durat-detail');
 }
 
 // Before/after pairs whose after photo exists. The after is cropped (centered) to the before's
@@ -154,7 +191,8 @@ for (const pair of beforeAfter.pairs) {
   if (!pair.after.source) continue;
   const { width, height } = before.img;
   const w = 1440;
-  const cropped = await sharp(path.join(sourceDir, pair.after.source)).rotate()
+  const afterSrc = path.join(sourceDir, pair.after.source);
+  const cropped = await sharp(pair.after.blur ? await blurRegion(afterSrc, pair.after.blur) : afterSrc).rotate()
     .resize(w, Math.round((height * w) / width), { fit: 'cover' }).jpeg({ quality: 95 }).toBuffer();
   afterImages[pair.id] = await ladder(cropped, `before-after/${pair.id}`);
 }
@@ -175,7 +213,11 @@ export const exhibits = ${JSON.stringify(exhibits, null, 2)};
 
 export const heroImage = ${JSON.stringify(heroImg, null, 2)};
 
+export const heroPhoneImage = ${JSON.stringify(heroPhoneImg, null, 2)};
+
 export const showcaseImages = ${JSON.stringify(showcaseImages, null, 2)};
+
+export const detailImages = ${JSON.stringify(detailImages, null, 2)};
 
 export const afterImages = ${JSON.stringify(afterImages, null, 2)};
 `
