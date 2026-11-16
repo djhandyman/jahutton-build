@@ -8,7 +8,7 @@
 // which is the same call [slug].astro makes for .hero/.mark/.path ("markup, not logic").
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
-  page, hero, stages, revealTile, beforeAfter, showcase, durat, sawbox, steel, claude, closing,
+  page, toc, hero, stages, revealTile, beforeAfter, showcase, durat, sawbox, steel, induction, claude, closing,
 } from '../data/kitchen.js';
 import { photos, exhibits, heroImage, heroPhoneImage, showcaseImages, detailImages, afterImages } from '../data/kitchen-photos.js';
 
@@ -48,6 +48,9 @@ const pairs = beforeAfter.pairs.map((pair) => ({
 const steelPhotos = steel.photos
   .map((sp) => ({ ...sp, img: sp.image === 'heroPhone' ? heroPhoneImage : showcaseImages[sp.image] }))
   .filter((sp) => sp.img);
+
+// Induction Hardware reuses the finished "range" showcase slot (the hood over the cooktop).
+const inductionPhoto = showcaseImages[induction.photo.image];
 
 // Plain-string segment renderer for the few credit lines that carry a link — same shape as
 // about.js, so nothing new to learn.
@@ -126,10 +129,18 @@ const ogImage = '/images/kitchen/og.jpg';
       </figure>
     </header>
 
+    <!-- ── On this page: a short map to the big sections, supplementing the stage timeline. Added 2026-11-16. ── -->
+    <nav class="container k-toc" aria-label="On this page">
+      <span class="k-toc__label">On this page</span>
+      <ul>
+        {toc.map((t) => <li><a href={t.href}>{t.label}</a></li>)}
+      </ul>
+    </nav>
+
     <!-- ── At a glance ──────────────────────────────────────────────────────── -->
     {/* Modelled on the printed Stages overview: eleven tiles in order, each a jump link, then the
         reveal. A <nav> because it IS the page's table of contents. */}
-    <nav class="container k-glance" aria-labelledby="glance-h">
+    <nav class="container k-glance" id="glance" aria-labelledby="glance-h">
       <h2 id="glance-h">{page.glanceHeading}</h2>
       <ol class="glance">
         {byStage.map((s) => {
@@ -300,7 +311,7 @@ const ogImage = '/images/kitchen/og.jpg';
     </section>
 
     <!-- ── Materials and makers ─────────────────────────────────────────────── -->
-    <section class="container makers" aria-labelledby="makers-h">
+    <section class="container makers" id="makers" aria-labelledby="makers-h">
       <h2 id="makers-h">Materials and makers</h2>
 
       <article class="maker" aria-labelledby="durat-h">
@@ -422,10 +433,40 @@ const ogImage = '/images/kitchen/og.jpg';
         )}
         <p class="credits"><span><a href={steel.href} rel="noopener">steellightingco.com</a></span><span>{steel.footer}</span></p>
       </article>
+
+      <!-- ── Induction Hardware: the range hood + induction cooktop. Added 2026-11-16. ── -->
+      <article class="maker" aria-labelledby="induction-h">
+        <p class="k-eyebrow">{induction.eyebrow}</p>
+        <h3 id="induction-h" class="maker__title"><a href={induction.href} rel="noopener">{induction.name}</a></h3>
+        <p class="k-lead">{induction.lead}</p>
+        <ul class="stats">
+          {induction.stats.map((s) => (
+            <li><span class="stats__value">{s.value}</span> <span class="stats__label">{s.label}</span></li>
+          ))}
+        </ul>
+        <p class="source"><a href={induction.claimsSource.href} rel="noopener">{induction.claimsSource.text}</a></p>
+        <h4 class="maker__sub">{induction.specsHeading}</h4>
+        <dl class="specs">
+          {induction.specs.map(([k, v]) => (
+            <div><dt>{k}</dt><dd>{v}</dd></div>
+          ))}
+        </dl>
+        {inductionPhoto && (
+          <figure class="photo maker__photo">
+            <a class="photo__link" href={largest(inductionPhoto)} data-viewer data-title="" data-caption={induction.photo.alt}>
+              <picture>
+                <source type="image/webp" srcset={srcset(inductionPhoto)} sizes="(min-width: 40rem) 28rem, 92vw" />
+                <img src={`${inductionPhoto.src}.jpg`} width={inductionPhoto.width} height={inductionPhoto.height} alt={induction.photo.alt} loading="lazy" decoding="async" />
+              </picture>
+            </a>
+          </figure>
+        )}
+        <p class="credits"><span><a href={induction.href} rel="noopener">inductionhardware.com</a></span><span>{induction.footer}</span></p>
+      </article>
     </section>
 
     <!-- ── Built with Claude ────────────────────────────────────────────────── -->
-    <section class="container claude" aria-labelledby="claude-h">
+    <section class="container claude" id="claude" aria-labelledby="claude-h">
       <p class="k-eyebrow">{claude.eyebrow}</p>
       <h2 id="claude-h">{claude.title}</h2>
       <p class="k-lead">{claude.lead}</p>
@@ -606,6 +647,11 @@ const ogImage = '/images/kitchen/og.jpg';
   }
 
   /* ── at a glance ── */
+  /* On-this-page map, above the stage timeline. Added 2026-11-16. */
+  .k-toc { margin-top: var(--space-8); display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); }
+  .k-toc__label { font-size: var(--text-sm); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); }
+  .k-toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+  .k-toc li { font-size: var(--text-sm); }
   .k-glance { margin-top: var(--space-16); }
   .glance {
     list-style: none; margin: var(--space-6) 0 0; padding: 0;

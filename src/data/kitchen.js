@@ -134,6 +134,15 @@ export const page = {
   glanceHeading: 'Old kitchen to new, in eleven stages',
 };
 
+// A short map to the page's big sections, up top, supplementing the at-a-glance stage timeline.
+// Added 2026-11-16 (Jon). Hrefs are section ids on this page; labels are the landmark headings.
+export const toc = [
+  { href: '#glance', label: 'The stages' },
+  { href: '#reveal', label: 'The reveal' },
+  { href: '#makers', label: 'Materials & makers' },
+  { href: '#claude', label: 'Built with Claude' },
+];
+
 // One entry per placard. `id` is also the anchor (#stage-05). `glance` is the overview poster's
 // one-liner; `summary`/`facts`/`when` are the placard's.
 export const stages = [
@@ -520,6 +529,52 @@ export const steel = {
     { image: 'sink', focus: '50% 0%', caption: 'El Segundo over the sink window.' },
   ],
   footer: 'Wired and hung by Jon',
+};
+
+// ── Induction Hardware: the range hood and the induction cooktop ─────────────────────────────
+// Added 2026-11-16 (Jon: "add a brand poster of sorts for Induction Hardware — the range hood
+// and the induction cooktop"). Same rule as the other makers: supplier claims are the supplier's
+// words and link to the supplier's page.
+//
+// ⚠️ CLAIMS ARE DRAFT AND NOT YET VERIFIED AGAINST THE MAKER (Claude, 2026-11-16) — need Jon's
+// sign-off. inductionhardware.com HARD-RATE-LIMITED every fetch at build time (HTTP 429), the same
+// problem the Durat/CaraGreen note above hit. So the wording below was taken from the ChefPro
+// retailer listings, NOT the manufacturer's own pages:
+//   chefproappliances.com/product/S-RH30-PW-BS (hood): "Up to 400 CFM Ventilation", "DC Motor
+//     Technology — Ultra-Quiet Operation at All Speeds", "Laser-Cut 304 Stainless Steel Baffle
+//     Filters — Dishwasher Safe", "Premium LED Lighting", "Over-the-Air Software Updates",
+//     "Pyramid Wall-Mount Design", "Lifetime Warranty", "ETL Certified". Dims 30 × 19.5 × 7.5 in.
+//   chefproappliances.com/product/IRT30-SS (cooktop): "4 Induction Burners With Boost Function",
+//     "Durable Ceramic Glass Surface", "Lifetime Warranty on Induction Hobs", "ETL Certified".
+// BEFORE LAUNCH: confirm each claim against inductionhardware.com and repoint claimsSource at the
+// maker's own product page (the hood page is most likely
+// inductionhardware.com/products/smart-30-inch-pyramid-wall-range-hood-in-black-stainless).
+export const induction = {
+  eyebrow: 'The range hood and cooktop are from',
+  name: 'Induction Hardware',
+  href: 'https://inductionhardware.com/',
+  lead: 'A pyramid-profile range hood over a four-burner induction cooktop.',
+  stats: [
+    { value: '400 CFM', label: 'ventilation, on an ultra-quiet DC motor' },
+    { value: '4 burners', label: 'induction, each with a boost function' },
+    { value: '304', label: 'laser-cut stainless baffle filters, dishwasher-safe' },
+    { value: 'Lifetime', label: 'warranty, and ETL certified' },
+  ],
+  claimsSource: {
+    href: 'https://inductionhardware.com/products/smart-30-inch-pyramid-wall-range-hood-in-black-stainless',
+    text: 'Specs and features: Induction Hardware',
+  },
+  specsHeading: 'In this kitchen',
+  specs: [
+    ['Hood', '30-inch pyramid wall-mount, black stainless (S-RH30-PW-BS)'],
+    ['Filters', 'Laser-cut 304 stainless baffle, dishwasher-safe'],
+    ['Lighting', 'Premium LED'],
+    ['Cooktop', '30-inch induction, stainless (IRT30-SS)'],
+    ['Surface', 'Ceramic glass, four burners with boost'],
+  ],
+  // Reuses the finished-kitchen "range" showcase photo (the hood over the cooktop). alt is DRAFT.
+  photo: { image: 'range', alt: 'The pyramid range hood over the induction cooktop on the range wall.' },
+  footer: 'Vented, wired and installed by Jon',
 };
 
 // ── Built with Claude ───────────────────────────────────────────────────────────────────────
