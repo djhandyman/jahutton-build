@@ -536,39 +536,40 @@ export const steel = {
 // and the induction cooktop"). Same rule as the other makers: supplier claims are the supplier's
 // words and link to the supplier's page.
 //
-// ⚠️ CLAIMS ARE DRAFT AND NOT YET VERIFIED AGAINST THE MAKER (Claude, 2026-11-16) — need Jon's
-// sign-off. inductionhardware.com HARD-RATE-LIMITED every fetch at build time (HTTP 429), the same
-// problem the Durat/CaraGreen note above hit. So the wording below was taken from the ChefPro
-// retailer listings, NOT the manufacturer's own pages:
-//   chefproappliances.com/product/S-RH30-PW-BS (hood): "Up to 400 CFM Ventilation", "DC Motor
-//     Technology — Ultra-Quiet Operation at All Speeds", "Laser-Cut 304 Stainless Steel Baffle
-//     Filters — Dishwasher Safe", "Premium LED Lighting", "Over-the-Air Software Updates",
-//     "Pyramid Wall-Mount Design", "Lifetime Warranty", "ETL Certified". Dims 30 × 19.5 × 7.5 in.
-//   chefproappliances.com/product/IRT30-SS (cooktop): "4 Induction Burners With Boost Function",
-//     "Durable Ceramic Glass Surface", "Lifetime Warranty on Induction Hobs", "ETL Certified".
-// BEFORE LAUNCH: confirm each claim against inductionhardware.com and repoint claimsSource at the
-// maker's own product page (the hood page is most likely
-// inductionhardware.com/products/smart-30-inch-pyramid-wall-range-hood-in-black-stainless).
+// Claims checked 2026-11-17 against the maker, not the retailer: Jon's spec sheet for the hood
+// (.temp/IH_Spec_Sheet_S-RH30-PW.pdf, "Spec sheet 2026 v1.0") and the product pages on
+// inductionhardware.com, which answered this time (the 2026-11-16 draft had to fall back on
+// ChefPro listings after HTTP 429s). Two corrections came out of that:
+//   - The finish is plain stainless (S-RH30-PW-SS), not black stainless — Jon, 2026-11-17.
+//   - The hood is rated 1,000 CFM. 400 CFM is a limit the owner can select at first startup, not
+//     the rating; the retailer's "up to 400 CFM" had it backwards. Jon's is not limited
+//     (2026-11-17), so the card gives the full rating and leaves the 400 option off.
+// Retailer phrases with no maker source were dropped: "ultra-quiet", "premium LED", OTA updates.
+//   Hood (sheet + page): DC motor; 1,000 CFM, 400 selectable; laser-cut 304 stainless baffles,
+//     dishwasher-safe; LED task lighting dimmable with the fan control; lifetime parts warranty;
+//     ETL; 10-inch round duct, top exit.
+//   Cooktop (inductionhardware.com/products/30-inch-induction-rangetop-in-stainless-steel):
+//     4 burners, Boost on every burner, ceramic glass, lifetime parts warranty.
 export const induction = {
   eyebrow: 'The range hood and cooktop are from',
   name: 'Induction Hardware',
   href: 'https://inductionhardware.com/',
   lead: 'A pyramid-profile range hood over a four-burner induction cooktop.',
   stats: [
-    { value: '400 CFM', label: 'ventilation, on an ultra-quiet DC motor' },
+    { value: '1,000 CFM', label: 'ventilation, on a DC motor' },
     { value: '4 burners', label: 'induction, each with a boost function' },
     { value: '304', label: 'laser-cut stainless baffle filters, dishwasher-safe' },
-    { value: 'Lifetime', label: 'warranty, and ETL certified' },
+    { value: 'Lifetime', label: 'parts warranty, and ETL certified' },
   ],
   claimsSource: {
-    href: 'https://inductionhardware.com/products/smart-30-inch-pyramid-wall-range-hood-in-black-stainless',
+    href: 'https://inductionhardware.com/products/smart-30-inch-pyramid-wall-range-hood-in-stainless-steel',
     text: 'Specs and features: Induction Hardware',
   },
   specsHeading: 'In this kitchen',
   specs: [
-    ['Hood', '30-inch pyramid wall-mount, black stainless (S-RH30-PW-BS)'],
+    ['Hood', '30-inch pyramid wall-mount, stainless steel (S-RH30-PW-SS)'],
     ['Filters', 'Laser-cut 304 stainless baffle, dishwasher-safe'],
-    ['Lighting', 'Premium LED'],
+    ['Lighting', 'LED, dimmable with the fan control'],
     ['Cooktop', '30-inch induction, stainless (IRT30-SS)'],
     ['Surface', 'Ceramic glass, four burners with boost'],
   ],
